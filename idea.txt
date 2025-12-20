@@ -1,0 +1,12 @@
+- e-commerce application
+    - services
+        - customers
+        - product-catalog
+        - orders
+        - inventory
+        - shipping
+        - payment
+        - notifications
+
+- healthcare appointments
+    - 

@@ -1,0 +1,326 @@
+- my list
+    - grpc
+    - message broker/async communication
+    - SAGAs
+    - api gateway
+    - CQRS
+    - REST
+    - Consistency
+        - Transactional
+        - Eventual
+    - Event sourcing
+    - 
+    - 
+
+- chatgpt list
+    - Service Communication
+Synchronous
+
+REST (HTTP/JSON)
+
+gRPC (protobuf, streaming, deadlines)
+
+Service-to-service authentication
+
+Versioning APIs (backward compatibility)
+
+Idempotency
+
+Asynchronous
+
+Message broker concepts
+
+Queues vs Topics
+
+Pub/Sub
+
+At-least-once / At-most-once / Exactly-once delivery
+
+Message ordering
+
+Message schema evolution
+
+Poison messages / Dead letter queues
+
+Outbox pattern
+
+✅ Practice outcome:
+One request-response flow and one event-driven flow between services.
+
+2️⃣ Data & Consistency (VERY IMPORTANT)
+Data Ownership
+
+Database per service
+
+No shared database anti-pattern
+
+Read models vs write models
+
+Consistency Models
+
+Transactional consistency (local only)
+
+Eventual consistency
+
+Compensating actions
+
+Distributed Transactions
+
+Why 2PC is bad in microservices
+
+SAGA patterns
+
+Choreography
+
+Orchestration
+
+Retry & compensation logic
+
+Event-Driven Data
+
+Event sourcing
+
+Event replay
+
+Snapshots
+
+Temporal coupling problems
+
+✅ Practice outcome:
+A workflow that fails halfway and still ends in a correct state.
+
+3️⃣ API Layer & Edge Concerns
+
+API Gateway responsibilities
+
+Routing
+
+Aggregation
+
+Auth
+
+Rate limiting
+
+Backend-for-Frontend (BFF)
+
+API composition vs chatty APIs
+
+GraphQL (optional but useful)
+
+✅ Practice outcome:
+Clients talk to one endpoint, not many services.
+
+4️⃣ Architecture Patterns
+
+CQRS
+
+Event-driven architecture
+
+Hexagonal / Clean Architecture per service
+
+Anti-corruption layer
+
+Strangler pattern
+
+Decomposition strategies
+
+By business capability
+
+By subdomain (DDD)
+
+✅ Practice outcome:
+Each service has clear boundaries and rules.
+
+5️⃣ Domain-Driven Design (Microservices-Specific)
+
+Bounded Contexts
+
+Context mapping
+
+Aggregate boundaries
+
+Domain events vs integration events
+
+Anemic vs rich domain models
+
+Shared Kernel (when it’s justified)
+
+✅ Practice outcome:
+You can explain why a service boundary exists — not just that it does.
+
+6️⃣ Resilience & Fault Tolerance
+
+This is where many “microservices” fail in real life.
+
+Timeouts everywhere
+
+Retries with backoff
+
+Circuit breakers
+
+Bulkheads
+
+Graceful degradation
+
+Partial failure handling
+
+✅ Practice outcome:
+Kill a service → system degrades, not dies.
+
+7️⃣ Observability (NON-NEGOTIABLE)
+
+Centralized logging
+
+Correlation IDs
+
+Distributed tracing
+
+Metrics
+
+Health checks
+
+Readiness vs liveness probes
+
+✅ Practice outcome:
+You can answer:
+
+“Why did request X fail across 6 services?”
+
+8️⃣ Security
+
+Service-to-service authentication
+
+OAuth2 / OpenID Connect
+
+Token propagation
+
+mTLS (conceptually at least)
+
+Secrets management
+
+Zero trust principles
+
+✅ Practice outcome:
+No service blindly trusts another.
+
+9️⃣ Deployment & Infrastructure
+
+Containerization (Docker)
+
+Kubernetes basics
+
+Service discovery
+
+Configuration management
+
+Environment-specific config
+
+Blue-green / Canary deployments
+
+✅ Practice outcome:
+Deploy services independently without breaking others.
+
+🔟 Data & Performance
+
+Caching strategies
+
+Client-side
+
+Gateway-level
+
+Service-level
+
+Cache invalidation
+
+Read replicas
+
+Event-driven cache updates
+
+✅ Practice outcome:
+System scales without hammering databases.
+
+1️⃣1️⃣ Testing Strategies (Often Ignored)
+
+Unit tests per service
+
+Contract testing (consumer-driven)
+
+Integration tests
+
+End-to-end tests
+
+Test data management
+
+✅ Practice outcome:
+Deploy with confidence without full E2E tests.
+
+1️⃣2️⃣ Versioning & Evolution
+
+API versioning strategies
+
+Message versioning
+
+Backward compatibility
+
+Schema migration without downtime
+
+✅ Practice outcome:
+You can evolve services without coordinated deployments.
+
+1️⃣3️⃣ Operational Concerns
+
+Rate limiting
+
+Throttling
+
+Feature flags
+
+Kill switches
+
+Graceful shutdown
+
+✅ Practice outcome:
+Operations can control behavior without redeploying.
+
+1️⃣4️⃣ Anti-Patterns (You MUST experience these)
+
+You should intentionally fall into some of these once:
+
+Distributed monolith
+
+Chatty services
+
+Shared database
+
+Sync-only communication
+
+Over-fine-grained services
+
+God API Gateway
+
+✅ Practice outcome:
+You feel why they are bad — not just know it.
+
+🧭 Suggested Coding Order (Very Important)
+
+Since you’re .NET-focused, here’s a practical path:
+
+Start with REST + database per service
+
+Add message broker
+
+Introduce eventual consistency
+
+Implement SAGA
+
+Add API Gateway
+
+Introduce CQRS
+
+Add observability
+
+Add resilience patterns
+
+Add security
+
+Only then consider event sourcing

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared-kernel\Amazon.SharedKernel\Amazon.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="EMP.SharedKernel">
+      <HintPath>..\..\..\..\..\07-My Work\03- SURE\0-Projects\NCNP\EMP.SharedKernel\obj\Debug\net8.0\EMP.SharedKernel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
