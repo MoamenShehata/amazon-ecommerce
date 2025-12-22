@@ -15,13 +15,36 @@ public class ProductsService(
     {
         var category = await _categoriesRepository.GetByIdAsync(categoryId) ?? throw new Exception();
 
-        var productBySameName = await _productsRepository.FilterSingleAsync(p => p.Name.ToLower() == name.ToLower());
-        if (productBySameName != null) throw new Exception();
-
         var product = category.NewProduct(name, price);
         _productsRepository.Add(product);
 
         await _unitOfWork.CommitAsync();
         return product;
+    }
+
+    public async Task<ApiResult<bool>> UpdateAsync(Product productNewVersion)
+    {
+        var existingProduct = await _productsRepository.GetByIdAsync(productNewVersion.Id);
+        if (existingProduct is null) throw new Exception();
+
+        var updateResult = existingProduct.UpdateFrom(productNewVersion);
+        if (!updateResult.Success)
+            return updateResult;
+
+        await _unitOfWork.CommitAsync();
+
+        return ApiResponseExtentions.Success(true);
+    }
+
+    public async Task DeleteAsync(Guid productId, bool isSoftDelete)
+    {
+        var product = await _productsRepository.GetByIdAsync(productId);
+
+        if (isSoftDelete)
+            product.SoftDelete();
+        else
+            _productsRepository.Remove(product);
+
+        await _unitOfWork.CommitAsync();
     }
 }

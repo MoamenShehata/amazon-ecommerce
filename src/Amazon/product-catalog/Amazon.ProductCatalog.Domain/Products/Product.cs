@@ -9,7 +9,7 @@ public class Product : AuditableAggregate<Guid>
 {
     public string Name { get; private set; }
 
-    private HashSet<ProductProperty> _properties { get; } = new(new ProductPropertyComparer());
+    private HashSet<ProductProperty> _properties { get; set; } = new(new ProductPropertyComparer());
     public IReadOnlyCollection<ProductProperty> Properties => _properties.ToList();
     public ApiResult<bool> TryAddProperty(string name, string value)
     {
@@ -28,6 +28,20 @@ public class Product : AuditableAggregate<Guid>
 
         _priceChanges.Add(new(Price, newPrice, DateTime.UtcNow));
         Price = Price.WithNew(newPrice);
+    }
+
+    public bool IsDeleted { get; private set; }
+    public void SoftDelete() => IsDeleted = true;
+
+    public ApiResult<bool> UpdateFrom(Product newVersion)
+    {
+        Name = newVersion.Name;
+
+        UpdatePrice(newVersion.Price);
+
+        _properties = newVersion.Properties.ToHashSet();
+
+        return ApiResponseExtentions.Success(true);
     }
 
     public Guid CategoryId { get; private set; }
