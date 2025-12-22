@@ -6,15 +6,35 @@ public class CategoriesService(
 IRepository<Category, Guid> _categoriesRepository
 )
 {
-    public async Task<Category> CreateAsync(string name)
+    private async Task<bool> DoesCategoryExistByName(string name)
     {
         var categoryBySameName = await _categoriesRepository.FilterSingleAsync(p => p.Name.ToLower() == name.ToLower());
-        if (categoryBySameName != null) throw new Exception();
+        return categoryBySameName != null;
+    }
+
+    public async Task<Category> CreateAsync(string name)
+    {
+        if (await DoesCategoryExistByName(name))
+            throw new Exception();
 
         var category = new Category(name);
         _categoriesRepository.Add(category);
 
         return category;
+    }
+
+    public async Task UpdateAsync(Guid categoryId, string name, Guid newParentCategoryId)
+    {
+        var category = await _categoriesRepository.GetByIdAsync(categoryId)
+                ?? throw new Exception();
+
+        if (await DoesCategoryExistByName(name))
+            throw new Exception();
+
+        var newParentCategory = await _categoriesRepository.GetByIdAsync(newParentCategoryId)
+                ?? throw new Exception();
+
+        category.Update(name, newParentCategory);
     }
 
     /* delete category that has products
