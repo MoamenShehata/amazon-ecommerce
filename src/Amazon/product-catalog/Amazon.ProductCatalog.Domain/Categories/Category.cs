@@ -9,6 +9,15 @@ public class Category : AuditableAggregate<Guid>
 {
     public string Name { get; private set; }
 
+    public bool IsDeleted { get; private set; }
+    public void SoftDelete(Guid? orphanProductsNewCategoryId)
+    {
+        if (IsDeleted) return;
+
+        IsDeleted = true;
+        RaiseEvent(new CategorySoftDeletedEvent(Id, orphanProductsNewCategoryId));
+    }
+
     public Guid? ParentCategoryId { get; private set; }
     public Category? ParentCategory { get; private set; }
 

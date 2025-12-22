@@ -16,4 +16,21 @@ IRepository<Category, Guid> _categoriesRepository
 
         return category;
     }
+
+    /* delete category that has products
+    1- either pass new category id to attach orphan products to
+    2- either orphans will be soft deleted
+    */
+    public async Task DeleteAsync(Guid categoryId, Guid? orphanProductsNewCategoryId)
+    {
+        if (orphanProductsNewCategoryId.HasValue)
+        {
+            var orphanProductsNewCategory = await _categoriesRepository.GetByIdAsync(orphanProductsNewCategoryId.Value)
+                ?? throw new Exception();
+        }
+
+        var category = await _categoriesRepository.GetByIdAsync(categoryId);
+
+        category.SoftDelete(orphanProductsNewCategoryId);
+    }
 }
