@@ -7,8 +7,7 @@ namespace Amazon.ProductCatalog.Domain.Products;
 
 public class ProductsService(
     IRepository<Category, Guid> _categoriesRepository,
-    IRepository<Product, Guid> _productsRepository,
-    IUnitOfWork _unitOfWork
+    IRepository<Product, Guid> _productsRepository
     )
 {
     public async Task<Product> CreateAsync(Guid categoryId, string name, ProductPrice price)
@@ -18,7 +17,6 @@ public class ProductsService(
         var product = category.NewProduct(name, price);
         _productsRepository.Add(product);
 
-        await _unitOfWork.CommitAsync();
         return product;
     }
 
@@ -31,8 +29,6 @@ public class ProductsService(
         if (!updateResult.Success)
             return updateResult;
 
-        await _unitOfWork.CommitAsync();
-
         return ApiResponseExtentions.Success(true);
     }
 
@@ -44,7 +40,5 @@ public class ProductsService(
             product.SoftDelete();
         else
             _productsRepository.Remove(product);
-
-        await _unitOfWork.CommitAsync();
     }
 }

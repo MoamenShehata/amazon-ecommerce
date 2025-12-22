@@ -1,4 +1,5 @@
-﻿using Amazon.ProductCatalog.Domain.Products;
+﻿using Amazon.ProductCatalog.Domain.Categories.Events;
+using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using EMP.SharedKernel.DDD.Definitions;
 
@@ -14,6 +15,8 @@ public class Category : AuditableAggregate<Guid>
     internal Category(string name) : base(Guid.NewGuid())
     {
         Name = name;
+
+        RaiseEvent(new CategoryCreatedEvent(Id));
     }
 
     public Product NewProduct(string name, ProductPrice price) => new(Id, name, price);
