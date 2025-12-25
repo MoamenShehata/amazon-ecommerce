@@ -47,7 +47,7 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
 
         public Task<Category> GetByIdAsync(Guid id)
         {
-            return Task.FromResult(_categories.FirstOrDefault(x=>x.Id == id));
+            return Task.FromResult(_categories.FirstOrDefault(x => x.Id == id));
         }
 
         public Task<Category> GetByIdAsync<TProperty>(Guid id, Expression<Func<Category, TProperty>> include)
@@ -69,8 +69,7 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
         [InlineData("Electronics")]
         public async Task Throw_When_CategoryName_Exists(string categoryName)
         {
-            var repoMoq = new TestRepo();
-            var service = new CategoriesService(repoMoq);
+            var service = GetService();
             await Assert.ThrowsAnyAsync<Exception>(async () => await service.CreateAsync(categoryName, null));
         }
 
@@ -80,8 +79,7 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
         [InlineData("Airpods")]
         public async Task Create_New_Categories_WithoutParents(string categoryName)
         {
-            var repoMoq = new TestRepo();
-            var service = new CategoriesService(repoMoq);
+            var service = GetService();
             var createdCategory = await service.CreateAsync(categoryName, null);
 
             Assert.Equal(categoryName, createdCategory.Name);
@@ -102,6 +100,38 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
 
             Assert.Equal(categoryName, createdCategory.Name);
             Assert.Equal(parentCategoryName, parentCategory.Name);
+        }
+
+        [Fact]
+        public async Task Throw_To_Update_Non_Existing()
+        {
+            var service = GetService();
+
+            await Assert.ThrowsAnyAsync<Exception>(async () => await service.UpdateAsync(Guid.NewGuid(), "newCategoryName", null));
+        }
+
+        private static CategoriesService GetService()
+        {
+            var repoMoq = new TestRepo();
+            var service = new CategoriesService(repoMoq);
+            return service;
+        }
+
+        //to do we need to get a category in the service
+        [Theory]
+        [InlineData("Furniture")]
+        [InlineData("Shoes")]
+        [InlineData("Electronics")]
+        public async Task Throw_To_Update_Using_Existing_Category_Names(string categoryName)
+        {
+            var repoMoq = new TestRepo();
+            var service = new CategoriesService(repoMoq);
+
+            var categoryToUpdate = await repoMoq.FilterSingleAsync(c => c.Name == categoryName);
+
+            
+
+            await Assert.ThrowsAnyAsync<Exception>(async () => await service.UpdateAsync(categoryToUpdate.Id, categoryName, null));
         }
     }
 }
