@@ -43,9 +43,12 @@ IRepository<Category, Guid> _categoriesRepository
     */
     public async Task DeleteAsync(Guid categoryId, Guid? orphanProductsNewCategoryId)
     {
+        if (orphanProductsNewCategoryId == categoryId)
+            throw new Exception();
+
         if (orphanProductsNewCategoryId.HasValue)
         {
-            var orphanProductsNewCategory = await _categoriesRepository.GetByIdAsync(orphanProductsNewCategoryId.Value)
+            _ = await _categoriesRepository.GetByIdAsync(orphanProductsNewCategoryId.Value)
                 ?? throw new Exception();
         }
 
