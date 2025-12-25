@@ -12,12 +12,17 @@ IRepository<Category, Guid> _categoriesRepository
         return categoryBySameName != null;
     }
 
-    public async Task<Category> CreateAsync(string name)
+    public async Task<Category> CreateAsync(string name, Guid? parentCategoryId)
     {
         if (await DoesCategoryExistByName(name))
             throw new Exception();
 
-        var category = new Category(name);
+        var parentCategory = parentCategoryId.HasValue
+            ? await _categoriesRepository.GetByIdAsync(parentCategoryId.Value)
+            : null;
+
+        var category = new Category(name, parentCategory);
+
         _categoriesRepository.Add(category);
 
         return category;
@@ -31,7 +36,7 @@ IRepository<Category, Guid> _categoriesRepository
         if (await DoesCategoryExistByName(name))
             throw new Exception();
 
-        var newParentCategory = newParentCategoryId.HasValue 
+        var newParentCategory = newParentCategoryId.HasValue
             ? await _categoriesRepository.GetByIdAsync(newParentCategoryId.Value)
             : null;
 

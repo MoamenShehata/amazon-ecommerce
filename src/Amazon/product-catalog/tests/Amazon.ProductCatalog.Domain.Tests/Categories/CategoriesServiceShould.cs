@@ -9,14 +9,15 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
     {
         private List<Category> _categories = new()
         {
-            new Category("Furniture"),
-            new Category("Electronics"),
-            new Category("Shoes"),
+            new Category("Furniture",null),
+            new Category("Electronics",null),
+            new Category("Shoes",null),
+            new Category("Clothes", null),
         };
 
         public void Add(Category aggregate)
         {
-            throw new NotImplementedException();
+            _categories.Add(aggregate);
         }
 
         public Task<int> CountAsync(Expression<Func<Category, bool>> predicate)
@@ -31,7 +32,7 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
 
         public Task<Category> FilterSingleAsync(Expression<Func<Category, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_categories.FirstOrDefault(predicate.Compile()));
         }
 
         public Task<Category> FilterSingleAsync<TProperty>(Expression<Func<Category, bool>> predicate, Func<IQueryable<Category>, Microsoft.EntityFrameworkCore.Query.IIncludableQueryable<Category, TProperty>> include)
@@ -46,7 +47,7 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
 
         public Task<Category> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_categories.FirstOrDefault(x=>x.Id == id));
         }
 
         public Task<Category> GetByIdAsync<TProperty>(Guid id, Expression<Func<Category, TProperty>> include)
@@ -70,7 +71,37 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
         {
             var repoMoq = new TestRepo();
             var service = new CategoriesService(repoMoq);
-            await Assert.ThrowsAnyAsync<Exception>(async () => await service.CreateAsync(categoryName));
+            await Assert.ThrowsAnyAsync<Exception>(async () => await service.CreateAsync(categoryName, null));
+        }
+
+        [Theory]
+        [InlineData("Computers")]
+        [InlineData("Pants")]
+        [InlineData("Airpods")]
+        public async Task Create_New_Categories_WithoutParents(string categoryName)
+        {
+            var repoMoq = new TestRepo();
+            var service = new CategoriesService(repoMoq);
+            var createdCategory = await service.CreateAsync(categoryName, null);
+
+            Assert.Equal(categoryName, createdCategory.Name);
+        }
+
+        [Theory]
+        [InlineData("Computers", "Electronics")]
+        [InlineData("Pants", "Clothes")]
+        [InlineData("Airpods", "Electronics")]
+        public async Task Create_New_Categories_WithParents(string categoryName, string parentCategoryName)
+        {
+            var repoMoq = new TestRepo();
+            var service = new CategoriesService(repoMoq);
+
+            var parentCategory = await repoMoq.FilterSingleAsync(c => c.Name == parentCategoryName);
+
+            var createdCategory = await service.CreateAsync(categoryName, parentCategory.Id);
+
+            Assert.Equal(categoryName, createdCategory.Name);
+            Assert.Equal(parentCategoryName, parentCategory.Name);
         }
     }
 }

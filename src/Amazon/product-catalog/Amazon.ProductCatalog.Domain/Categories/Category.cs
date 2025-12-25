@@ -12,11 +12,24 @@ public class Category : AuditableAggregate<Guid>
     public Guid? ParentCategoryId { get; private set; }
     public Category? ParentCategory { get; private set; }
 
-    internal Category(string name) : base(Guid.NewGuid())
+    internal Category(string name, Category? newParentCategory) : base(Guid.NewGuid())
     {
         Name = name;
 
+        SetParentCategory(newParentCategory);
+
         RaiseEvent(new CategoryCreatedEvent(Id));
+    }
+
+    private void SetParentCategory(Category? newParentCategory)
+    {
+        if (newParentCategory is null) return;
+
+        if (newParentCategory.Id == Id || newParentCategory == this)
+            throw new Exception("A category cannot be parent of itself.");
+
+        ParentCategory = newParentCategory;
+        ParentCategoryId = newParentCategory.Id;
     }
 
     public Product NewProduct(string name, ProductPrice price) => new(Id, name, price);
@@ -25,11 +38,7 @@ public class Category : AuditableAggregate<Guid>
     {
         Name = name;
 
-        if (newParentCategory is null)
-            return;
-
-        ParentCategory = newParentCategory;
-        ParentCategoryId = newParentCategory.Id;
+        SetParentCategory(newParentCategory);
     }
 
     public bool IsDeleted { get; private set; }
