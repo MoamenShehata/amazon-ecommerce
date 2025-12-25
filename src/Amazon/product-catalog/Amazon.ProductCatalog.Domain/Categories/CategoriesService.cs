@@ -23,7 +23,7 @@ IRepository<Category, Guid> _categoriesRepository
         return category;
     }
 
-    public async Task UpdateAsync(Guid categoryId, string name, Guid newParentCategoryId)
+    public async Task UpdateAsync(Guid categoryId, string name, Guid? newParentCategoryId)
     {
         var category = await _categoriesRepository.GetByIdAsync(categoryId)
                 ?? throw new Exception();
@@ -31,8 +31,9 @@ IRepository<Category, Guid> _categoriesRepository
         if (await DoesCategoryExistByName(name))
             throw new Exception();
 
-        var newParentCategory = await _categoriesRepository.GetByIdAsync(newParentCategoryId)
-                ?? throw new Exception();
+        var newParentCategory = newParentCategoryId.HasValue 
+            ? await _categoriesRepository.GetByIdAsync(newParentCategoryId.Value)
+            : null;
 
         category.Update(name, newParentCategory);
     }

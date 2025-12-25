@@ -21,9 +21,13 @@ public class Category : AuditableAggregate<Guid>
 
     public Product NewProduct(string name, ProductPrice price) => new(Id, name, price);
 
-    public void Update(string name, Category newParentCategory)
+    public void Update(string name, Category? newParentCategory)
     {
         Name = name;
+
+        if (newParentCategory is null)
+            return;
+
         ParentCategory = newParentCategory;
         ParentCategoryId = newParentCategory.Id;
     }
