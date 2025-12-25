@@ -129,9 +129,21 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
 
             var categoryToUpdate = await repoMoq.FilterSingleAsync(c => c.Name == categoryName);
 
-            
-
             await Assert.ThrowsAnyAsync<Exception>(async () => await service.UpdateAsync(categoryToUpdate.Id, categoryName, null));
+        }
+
+        [Theory]
+        [InlineData("Furniture", "Furniture-")]
+        [InlineData("Shoes", "Shoes-")]
+        [InlineData("Electronics", "Electronics-")]
+        public async Task Update(string categoryName, string newName)
+        {
+            var repoMoq = new TestRepo();
+            var service = new CategoriesService(repoMoq);
+
+            var categoryToUpdate = await repoMoq.FilterSingleAsync(c => c.Name == categoryName);
+
+            await service.UpdateAsync(categoryToUpdate.Id, newName, null);
         }
     }
 }
