@@ -2,7 +2,7 @@
 
 public class ProductPrice
 {
-    public decimal Value { get; private set; }
+    public decimal Amount { get; private set; }
     public decimal Min { get; private set; }
     public decimal Max { get; private set; }
 
@@ -11,11 +11,12 @@ public class ProductPrice
         ArgumentOutOfRangeException.ThrowIfLessThan(value, min);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(value, max);
 
-        Value = value;
+        Amount = value;
         Min = min;
         Max = max;
     }
     public ProductPrice WithNew(decimal value) => new ProductPrice(value, Min, Max);
 
-    public static implicit operator decimal(ProductPrice price) => price.Value;
+    public static implicit operator decimal(ProductPrice price) => price.Amount;
+    private ProductPrice() { }
 }

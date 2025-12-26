@@ -49,4 +49,5 @@ public class Category : AuditableAggregate<Guid>
         IsDeleted = true;
         RaiseEvent(new CategorySoftDeletedEvent(Id, orphanProductsNewCategoryId));
     }
+    private Category() : base(Guid.Empty) { }
 }

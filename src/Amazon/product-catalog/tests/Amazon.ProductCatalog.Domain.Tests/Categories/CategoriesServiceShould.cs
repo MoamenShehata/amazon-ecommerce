@@ -29,9 +29,9 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
         [InlineData("Airpods")]
         public async Task Create_New_Categories_WithoutParents(string categoryName)
         {
-            var createdCategory = await _service.CreateAsync(categoryName, null);
+            var createdCategoryResult = await _service.CreateAsync(categoryName, null);
 
-            Assert.Equal(categoryName, createdCategory.Name);
+            Assert.Equal(categoryName, createdCategoryResult.Value.Name);
         }
 
         [Theory]
@@ -44,7 +44,7 @@ namespace Amazon.ProductCatalog.Domain.Tests.Categories
 
             var createdCategory = await _service.CreateAsync(categoryName, parentCategory.Id);
 
-            Assert.Equal(categoryName, createdCategory.Name);
+            Assert.Equal(categoryName, createdCategory.Value.Name);
             Assert.Equal(parentCategoryName, parentCategory.Name);
         }
 

@@ -21,10 +21,10 @@ public class ProductsService(
         var product = category.NewProduct(name, price);
         _productsRepository.Add(product);
 
-        return RestResponse<Product>.Created(product);
+        return RestResponse<Product>.Created(product,product.Id.ToString());
     }
 
-    public async Task<RestResponse<bool>> UpdateAsync(Guid id, string newName, decimal productPrice, IEnumerable<ProductProperty> properties)
+    public async Task<RestResponse<bool>> UpdateAsync(Guid id, string newName, decimal productPrice, List<ProductProperty> properties)
     {
         var existingProduct = await _productsRepository.GetByIdAsync(id);
         if (existingProduct is null)

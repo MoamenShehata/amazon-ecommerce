@@ -8,10 +8,12 @@ namespace Amazon.ProductCatalog.Application
 {
     public static class ApplicationDependencyRegistrar
     {
-        public static void RegisterApplicationDependencies(this IServiceCollection services)
+        public static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
         {
             AddDomainServices(services);
             AddApplicationServices(services);
+
+            return services;
         }
 
         private static void AddDomainServices(IServiceCollection services)

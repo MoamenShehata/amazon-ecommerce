@@ -1,17 +1,46 @@
+using Amazon.ProductCatalog.Infrastructure;
+using Amazon.ProductCatalog.Application;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// Register OpenAPI + Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Amazon Product Catalog API",
+        Version = "v1",
+        Description = "API for product catalog management"
+    });
+});
+
+// Existing app registrations
+builder.Services
+    .RegisterApplicationDependencies()
+    .RegisterInfrastructureDependencies(builder.Configuration)
+    ;
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Map OpenAPI document (existing)
     app.MapOpenApi();
+
+    // Serve Swagger JSON and UI (dashboard) at /swagger
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Amazon Product Catalog API v1");
+        options.RoutePrefix = "swagger"; // UI available at /swagger
+    });
 }
 
 app.UseHttpsRedirection();

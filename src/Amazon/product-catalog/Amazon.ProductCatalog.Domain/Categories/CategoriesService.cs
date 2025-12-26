@@ -27,7 +27,7 @@ IRepository<Category, Guid> _categoriesRepository
 
         _categoriesRepository.Add(category);
 
-        return RestResponse<Category>.Success(category);
+        return RestResponse<Category>.Created(category, category.Id.ToString());
     }
 
     public async Task<RestResponse<bool>> UpdateAsync(Guid categoryId, string name, Guid? newParentCategoryId)

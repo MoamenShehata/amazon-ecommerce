@@ -62,7 +62,7 @@ public class ProductsAppService(
             Id: product.Id,
             CategoryId: product.CategoryId,
             Name: product.Name,
-            Price: product.Price.Value,
+            Price: product.Price.Amount,
             Properties: product.Properties.ToList(),
             CreatedAt: product.CreatedOn,
             UpdatedAt: product.UpdatedOn

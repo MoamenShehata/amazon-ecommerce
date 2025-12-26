@@ -11,15 +11,15 @@ public class Product : AuditableAggregate<Guid>
     public string Name { get; private set; }
 
     private HashSet<ProductProperty> _properties { get; set; } = new(new ProductPropertyComparer());
-    public IReadOnlyCollection<ProductProperty> Properties => _properties.ToList();
-    public ApiResult<bool> TryAddProperty(string name, string value)
-    {
-        var result = _properties.Add(new ProductProperty(name, value));
-        if (!result) return ApiResponseExtentions.Error<bool>($"Property with the name {name} already added on Product {Name}");
+    public List<ProductProperty> Properties { get; private set; }
+    //public ApiResult<bool> TryAddProperty(string name, string value)
+    //{
+    //    var result = _properties.Add(new ProductProperty(name, value));
+    //    if (!result) return ApiResponseExtentions.Error<bool>($"Property with the name {name} already added on Product {Name}");
 
-        return ApiResponseExtentions.Success(result);
-    }
-    public void RemoveProperty(string name) => _properties.RemoveWhere(x => x.Name.ToLower() == name.ToLower());
+    //    return ApiResponseExtentions.Success(result);
+    //}
+    //public void RemoveProperty(string name) => _properties.RemoveWhere(x => x.Name.ToLower() == name.ToLower());
 
     public ProductPrice Price { get; private set; }
     private ICollection<ProductPriceChange> _priceChanges { get; } = new List<ProductPriceChange>();
@@ -34,13 +34,13 @@ public class Product : AuditableAggregate<Guid>
     public bool IsDeleted { get; private set; }
     public void SoftDelete() => IsDeleted = true;
 
-    public Result<bool> UpdateFrom(string newName, decimal productPrice, IEnumerable<ProductProperty> properties)
+    public Result<bool> UpdateFrom(string newName, decimal productPrice, List<ProductProperty> properties)
     {
         Name = newName;
 
         UpdatePrice(productPrice);
 
-        _properties = properties.ToHashSet();
+        Properties = properties;
 
         return Result<bool>.Success(true);
     }

@@ -8,6 +8,8 @@ namespace Amazon.ProductCatalog.Api.Controllers;
 [Route("api/categories/{categoryId}/[controller]")]
 public class ProductsController(ProductsAppService _productsAppService) : ApiControllerBase
 {
+    public override string CreatedAtURI => nameof(GetProduct);
+
     [HttpPost]
     public async Task<IActionResult> CreateProduct(
         [FromBody] CreateProductDto request)

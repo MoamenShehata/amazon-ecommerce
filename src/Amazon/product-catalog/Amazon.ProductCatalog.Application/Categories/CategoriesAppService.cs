@@ -14,8 +14,10 @@ public class CategoriesAppService(
     public async Task<RestResponse<CategoryDto>> CreateAsync(CreateCategoryRequest request)
     {
         var result = await _categoriesService.CreateAsync(request.Name, request.ParentCategoryId);
-        if (result.IsSuccess)
-            await _unitOfWork.CommitAsync();
+        if (!result.IsSuccess)
+            return result.MapTo((CategoryDto)null);
+
+        await _unitOfWork.CommitAsync();
 
         return result.MapTo(new CategoryDto(result.Value.Id, result.Value.Name));
     }

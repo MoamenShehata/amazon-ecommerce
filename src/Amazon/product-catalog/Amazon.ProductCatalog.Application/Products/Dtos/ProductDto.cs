@@ -25,6 +25,6 @@ namespace Amazon.ProductCatalog.Application.Products.Dtos
     public record UpdateProductDto(
         string Name,
         decimal Price,
-        IEnumerable<ProductProperty> Properties
+        List<ProductProperty> Properties
     );
 }

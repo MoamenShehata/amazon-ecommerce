@@ -7,6 +7,8 @@ namespace Amazon.ProductCatalog.Api.Controllers;
 [Route("api/[controller]")]
 public abstract class ApiControllerBase : ControllerBase
 {
+    public abstract string CreatedAtURI { get; }
+
     protected IActionResult RestResult<TValue>(RestResponse<TValue> restResponse)
     {
         switch (restResponse.StatusCode)
@@ -15,7 +17,7 @@ public abstract class ApiControllerBase : ControllerBase
                 return Ok(restResponse.Value);
 
             case System.Net.HttpStatusCode.Created:
-                return Created(string.Empty, restResponse.Value);
+                return Created($"{CreatedAtURI}/{restResponse.Id}", restResponse.Value);
 
             case System.Net.HttpStatusCode.BadRequest:
                 return BadRequest(restResponse.Error);
