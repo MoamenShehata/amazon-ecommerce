@@ -1,5 +1,6 @@
 ﻿using Amazon.ProductCatalog.Domain.Products.Events;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
+using Amazon.SharedKernel.Common;
 using EMP.SharedKernel;
 using EMP.SharedKernel.DDD.Definitions;
 
@@ -33,15 +34,15 @@ public class Product : AuditableAggregate<Guid>
     public bool IsDeleted { get; private set; }
     public void SoftDelete() => IsDeleted = true;
 
-    public ApiResult<bool> UpdateFrom(Product newVersion)
+    public Result<bool> UpdateFrom(string newName, decimal productPrice, IEnumerable<ProductProperty> properties)
     {
-        Name = newVersion.Name;
+        Name = newName;
 
-        UpdatePrice(newVersion.Price);
+        UpdatePrice(productPrice);
 
-        _properties = newVersion.Properties.ToHashSet();
+        _properties = properties.ToHashSet();
 
-        return ApiResponseExtentions.Success(true);
+        return Result<bool>.Success(true);
     }
 
     public Guid CategoryId { get; private set; }

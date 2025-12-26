@@ -1,5 +1,7 @@
 ﻿using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
+using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Common;
 using EMP.SharedKernel;
 using EMP.SharedKernel.Repositories;
 
@@ -10,35 +12,40 @@ public class ProductsService(
     IRepository<Product, Guid> _productsRepository
     )
 {
-    public async Task<Product> CreateAsync(Guid categoryId, string name, ProductPrice price)
+    public async Task<RestResponse<Product>> CreateAsync(Guid categoryId, string name, ProductPrice price)
     {
-        var category = await _categoriesRepository.GetByIdAsync(categoryId) ?? throw new Exception();
+        var category = await _categoriesRepository.GetByIdAsync(categoryId);
+        if (category is null)
+            return RestResponse<Product>.NotFound($"Category with id {categoryId} not found");
 
         var product = category.NewProduct(name, price);
         _productsRepository.Add(product);
 
-        return product;
+        return RestResponse<Product>.Created(product);
     }
 
-    public async Task<ApiResult<bool>> UpdateAsync(Product productNewVersion)
+    public async Task<RestResponse<bool>> UpdateAsync(Guid id, string newName, decimal productPrice, IEnumerable<ProductProperty> properties)
     {
-        var existingProduct = await _productsRepository.GetByIdAsync(productNewVersion.Id);
-        if (existingProduct is null) throw new Exception();
+        var existingProduct = await _productsRepository.GetByIdAsync(id);
+        if (existingProduct is null)
+            return RestResponse<bool>.NotFound($"Product with id {id} not found");
 
-        var updateResult = existingProduct.UpdateFrom(productNewVersion);
-        if (!updateResult.Success)
-            return updateResult;
+        var updateResult = existingProduct.UpdateFrom(newName, productPrice, properties);
 
-        return ApiResponseExtentions.Success(true);
+        return RestResponse<bool>.Success(true);
     }
 
-    public async Task DeleteAsync(Guid productId, bool isSoftDelete)
+    public async Task<RestResponse<bool>> DeleteAsync(Guid productId, bool isSoftDelete)
     {
-        var product = await _productsRepository.GetByIdAsync(productId);
+        var existingProduct = await _productsRepository.GetByIdAsync(productId);
+        if (existingProduct is null)
+            return RestResponse<bool>.NotFound($"Product with id {productId} not found");
 
         if (isSoftDelete)
-            product.SoftDelete();
+            existingProduct.SoftDelete();
         else
-            _productsRepository.Remove(product);
+            _productsRepository.Remove(existingProduct);
+
+        return RestResponse<bool>.Success(true);
     }
 }

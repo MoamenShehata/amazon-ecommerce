@@ -1,5 +1,7 @@
 ﻿using Amazon.ProductCatalog.Application.Categories.Dtos;
 using Amazon.ProductCatalog.Domain.Categories;
+using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Extensions;
 using EMP.SharedKernel;
 
 namespace Amazon.ProductCatalog.Application.Categories;
@@ -9,24 +11,31 @@ public class CategoriesAppService(
     IUnitOfWork _unitOfWork
     )
 {
-    public async Task<CategoryDto> CreateAsync(string name)
+    public async Task<RestResponse<CategoryDto>> CreateAsync(CreateCategoryRequest request)
     {
-        var createdCategory = await _categoriesService.CreateAsync(name);
-        await _unitOfWork.CommitAsync();
-        return new CategoryDto(createdCategory.Id, createdCategory.Name);
+        var result = await _categoriesService.CreateAsync(request.Name, request.ParentCategoryId);
+        if (result.IsSuccess)
+            await _unitOfWork.CommitAsync();
+
+        return result.MapTo(new CategoryDto(result.Value.Id, result.Value.Name));
     }
 
-    public async Task UpdateAsync(Guid categoryId, string newName, Guid? newParentCategoryId)
+    public async Task<RestResponse<bool>> UpdateAsync(Guid categoryId, UpdateCategoryRequest updateCategoryRequest)
     {
-        await _categoriesService.UpdateAsync(categoryId, newName, newParentCategoryId);
-        await _unitOfWork.CommitAsync();
+        var result = await _categoriesService.UpdateAsync(categoryId, updateCategoryRequest.Name, updateCategoryRequest.NewParentCategoryId);
+        if (result.IsSuccess)
+            await _unitOfWork.CommitAsync();
+
+        return result;
     }
 
-    public async Task DeleteAsync(Guid categoryId, Guid? orphanProductsNewCategoryId)
+    public async Task<RestResponse<bool>> DeleteAsync(Guid categoryId, Guid? orphanProductsNewCategoryId)
     {
+        var result = await _categoriesService.DeleteAsync(categoryId, orphanProductsNewCategoryId);
+        if (result.IsSuccess)
+            await _unitOfWork.CommitAsync();
 
-        await _categoriesService.DeleteAsync(categoryId, orphanProductsNewCategoryId);
-        await _unitOfWork.CommitAsync();
+        return result;
     }
 
 }
