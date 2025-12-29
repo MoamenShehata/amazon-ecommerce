@@ -27,16 +27,14 @@ namespace Amazon.SharedKernel.API
     public class RestResponse<TValue> : RestResponse
     {
         public TValue Value { get; set; }
-        public string Id { get; set; }
-        public RestResponse(TValue value, HttpStatusCode statusCode, object error = null, Exception exception = null, string id = null)
+        public RestResponse(TValue value, HttpStatusCode statusCode, object error = null, Exception exception = null)
             : base(statusCode, error, exception)
         {
             Value = value;
-            Id = id;
         }
 
         public static RestResponse<TValue> Success(TValue value) => new(value, HttpStatusCode.OK);
-        public static RestResponse<TValue> Created(TValue value, string id) => new(value, HttpStatusCode.Created, id: id);
+        public static RestResponse<TValue> Created(TValue value, string id) => new(value, HttpStatusCode.Created);
         public new static RestResponse<TValue> NotFound(object error) => new(default, HttpStatusCode.NotFound, error);
         public new static RestResponse<TValue> Conflict(object error) => new(default, HttpStatusCode.Conflict, error);
         public new static RestResponse<TValue> BadRequest(BadRequestModel error) => new(default, HttpStatusCode.BadRequest, error);

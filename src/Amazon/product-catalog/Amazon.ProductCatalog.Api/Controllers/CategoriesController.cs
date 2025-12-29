@@ -8,13 +8,12 @@ namespace Amazon.ProductCatalog.Api.Controllers;
 [Route("api/[controller]")]
 public class CategoriesController(CategoriesAppService _categoriesAppService) : ApiControllerBase
 {
-    public override string CreatedAtURI => $"api/categories";
-
     [HttpPost]
     public async Task<IActionResult> CreateCategory(
         [FromBody] CreateCategoryRequest request)
     {
-        return RestResult(await _categoriesAppService.CreateAsync(request));
+        var result = await _categoriesAppService.CreateAsync(request);
+        return Created($"/api/categories/{result.Value.Id}", result.Value);
     }
 
     [HttpGet("{id}")]
