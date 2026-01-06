@@ -22,7 +22,6 @@ namespace Amazon.ProductCatalog.Infrastructure
 
             services
                 .AddGenericRepos()
-                .AddScoped(typeof(IRepository<,>), typeof(EfCoreRepositoryBase<,>))
                 .AddScoped<DbContext>(sp => sp.GetRequiredService<CatalogDbContext>())
                 .AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CatalogDbContext>())
                 ;

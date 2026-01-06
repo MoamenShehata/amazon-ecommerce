@@ -5,6 +5,7 @@ namespace Amazon.ProductCatalog.Application.Products.Dtos
     public record ProductDto(
         Guid Id,
         Guid CategoryId,
+        string Category,
         string Name,
         decimal Price,
         List<ProductProperty> Properties,

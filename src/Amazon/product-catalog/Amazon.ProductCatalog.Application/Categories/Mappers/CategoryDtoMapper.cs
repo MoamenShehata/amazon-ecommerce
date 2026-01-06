@@ -10,4 +10,9 @@ public static class CategoryDtoMapper
         var dto = new CategoryDto(category.Id, category.Name, category.ParentCategory?.ToDto() ?? null, category.Children.Select(x => x.Name).ToList());
         return dto;
     }
+    
+    public static CategoryForListDto ToDtoForList(this Category category)
+    {
+        return new CategoryForListDto(category.Id, category.Name);
+    }
 }

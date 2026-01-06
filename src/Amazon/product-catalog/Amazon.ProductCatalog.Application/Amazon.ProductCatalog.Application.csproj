@@ -19,6 +19,9 @@
     <Reference Include="EMP.SharedKernel">
       <HintPath>..\..\..\..\..\07-My Work\03- SURE\0-Projects\NCNP\EMP.SharedKernel\obj\Debug\net8.0\EMP.SharedKernel.dll</HintPath>
     </Reference>
+    <Reference Include="Moamen.SDKs.Repository">
+      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.Repository\bin\Release\net9.0\Moamen.SDKs.Repository.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

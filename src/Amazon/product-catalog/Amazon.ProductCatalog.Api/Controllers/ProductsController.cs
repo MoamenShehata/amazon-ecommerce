@@ -1,4 +1,3 @@
-using Amazon.ProductCatalog.Application.Categories;
 using Amazon.ProductCatalog.Application.Products;
 using Amazon.ProductCatalog.Application.Products.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -6,19 +5,23 @@ using Microsoft.AspNetCore.Mvc;
 namespace Amazon.ProductCatalog.Api.Controllers;
 
 [ApiController]
-[Route("api/categories/{categoryId}/[controller]")]
+[Route("api/[controller]")]
 public class ProductsController(ProductsAppService _productsAppService) : ApiControllerBase
 {
-
     [HttpPost]
     public async Task<IActionResult> CreateProduct(
         [FromBody] CreateProductDto request)
     {
-        var product = await _productsAppService.CreateAsync(request);
-        return Created($"/api/categories/{product.Value.CategoryId}/products/{product.Value.Id}", product.Value);
+        var productCreateResult = await _productsAppService.CreateAsync(request);
+
+        if (productCreateResult.IsSuccess)
+            return CreatedAtRoute("GetProductById", new { id = productCreateResult.Value.Id }, productCreateResult.Value);
+
+        return RestResult(productCreateResult);
+
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetProductById")]
     public async Task<IActionResult> GetProduct(Guid id)
     {
         var product = await _productsAppService.GetByIdAsync(id);

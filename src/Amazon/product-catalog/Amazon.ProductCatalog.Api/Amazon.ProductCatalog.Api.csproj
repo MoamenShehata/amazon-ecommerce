@@ -20,4 +20,10 @@
     <ProjectReference Include="..\Amazon.ProductCatalog.Infrastructure\Amazon.ProductCatalog.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Moamen.SDKs.Repository">
+      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.Repository\bin\Release\net9.0\Moamen.SDKs.Repository.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

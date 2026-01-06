@@ -1,5 +1,6 @@
 using Amazon.ProductCatalog.Application.Categories;
 using Amazon.ProductCatalog.Application.Categories.Dtos;
+using Amazon.ProductCatalog.Application.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.ProductCatalog.Api.Controllers;
@@ -8,21 +9,27 @@ namespace Amazon.ProductCatalog.Api.Controllers;
 [Route("api/[controller]")]
 public class CategoriesController(CategoriesAppService _categoriesAppService) : ApiControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> GetCategories(Guid id, [FromQuery] PageRequest pageRequest)
+    {
+        return Ok(await _categoriesAppService.GetPageAsync(pageRequest));
+    }
+
+    [HttpGet("{id}", Name = "GetCategoryById")]
+    public async Task<IActionResult> GetCategory(Guid id)
+    {
+        return RestResult(await _categoriesAppService.GetByIdAsync(id));
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateCategory(
         [FromBody] CreateCategoryRequest request)
     {
         var result = await _categoriesAppService.CreateAsync(request);
         if (result.IsSuccess)
-            return CreatedAtRoute("GetCategoryId", new { id = result.Value.Id }, result.Value);
+            return CreatedAtRoute("GetCategoryById", new { id = result.Value.Id }, result.Value);
 
         return RestResult(result);
-    }
-
-    [HttpGet("{id}", Name = "GetCategoryId")]
-    public async Task<IActionResult> GetCategory(Guid id)
-    {
-        return RestResult(await _categoriesAppService.GetByIdAsync(id));
     }
 
     [HttpPut("{id}")]

@@ -3,10 +3,11 @@ using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.Common;
 using EMP.SharedKernel;
 using EMP.SharedKernel.DDD.Definitions;
+using Moamen.SDKs.Repository;
 
 namespace Amazon.ProductCatalog.Domain.Products;
 
-public class Product : AuditableAggregate<Guid>
+public class Product : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public string Name { get; private set; }
 
