@@ -24,7 +24,8 @@ public class ProductsAppService(
         var createdProductResult = await _productsService.CreateAsync(
             createProductDto.CategoryId,
             createProductDto.Name,
-            productPrice
+            productPrice,
+            createProductDto.Properties.Select(x => new ProductProperty(x.Key, x.Value)).ToList()
         );
         if (!createdProductResult.IsSuccess)
             return createdProductResult.MapTo((ProductDto)null!);

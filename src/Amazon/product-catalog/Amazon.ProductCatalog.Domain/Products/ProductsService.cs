@@ -10,13 +10,13 @@ public class ProductsService(
     IEfCoreRepository<Product, Guid> _productsRepository
     )
 {
-    public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, ProductPrice price)
+    public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, ProductPrice price, List<ProductProperty> properties)
     {
         var category = await _categoriesRepository.GetInstanceAsync(categoryId);
         if (category is null)
             return RestResponse<(Product, Category)>.NotFound($"Category with id {categoryId} not found");
 
-        var product = category.NewProduct(name, price);
+        var product = category.NewProduct(name, price, properties);
         _productsRepository.Add(product);
 
         return RestResponse<(Product, Category)>.Created((product, category), product.Id.ToString());

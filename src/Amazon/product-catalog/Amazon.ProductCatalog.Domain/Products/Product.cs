@@ -48,11 +48,13 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
 
     public Guid CategoryId { get; private set; }
 
-    internal Product(Guid categoryId, string name, ProductPrice price) : base(Guid.NewGuid())
+    internal Product(Guid categoryId, string name, ProductPrice price, List<ProductProperty> properties) : base(Guid.NewGuid())
     {
         CategoryId = categoryId;
         Name = name;
         Price = price;
+
+        Properties = properties;
 
         RaiseEvent(new ProductCreatedEvent(categoryId, Id));
     }
