@@ -1,8 +1,11 @@
 ﻿using Amazon.ProductCatalog.Application.Categories.Dtos;
+using Amazon.ProductCatalog.Application.Categories.Mappers;
 using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using EMP.SharedKernel;
+using EMP.SharedKernel.Repositories;
+using MediatR;
 
 namespace Amazon.ProductCatalog.Application.Categories;
 
@@ -40,4 +43,12 @@ public class CategoriesAppService(
         return result;
     }
 
+    public async Task<RestResponse<CategoryDto>> GetByIdAsync(Guid id)
+    {
+        var categoryResult = await _categoriesService.GetByIdAsync(id, true);
+        if (!categoryResult.IsSuccess)
+            return categoryResult.MapTo((CategoryDto)null);
+
+        return categoryResult.MapTo(categoryResult.Value.ToDto());
+    }
 }

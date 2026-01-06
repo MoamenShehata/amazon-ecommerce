@@ -2,15 +2,19 @@
 using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using EMP.SharedKernel.DDD.Definitions;
+using Moamen.SDKs.Repository;
 
 namespace Amazon.ProductCatalog.Domain.Categories;
 
-public class Category : AuditableAggregate<Guid>
+public class Category : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public string Name { get; private set; }
 
     public Guid? ParentCategoryId { get; private set; }
     public Category? ParentCategory { get; private set; }
+
+    private ICollection<Category> _children = [];
+    public IReadOnlyCollection<Category> Children => _children.ToList();
 
     internal Category(string name, Category? newParentCategory) : base(Guid.NewGuid())
     {

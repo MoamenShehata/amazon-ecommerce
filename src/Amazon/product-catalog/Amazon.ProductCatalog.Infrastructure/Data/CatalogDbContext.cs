@@ -38,7 +38,7 @@ public class CatalogDbContext : DbContext, IUnitOfWork
             entity.Property(e => e.Name).IsRequired().HasMaxLength(150);
 
             entity.HasOne(e => e.ParentCategory)
-                  .WithMany()
+                  .WithMany(x => x.Children)
                   .HasForeignKey(e => e.ParentCategoryId)
                   .IsRequired(false);
 

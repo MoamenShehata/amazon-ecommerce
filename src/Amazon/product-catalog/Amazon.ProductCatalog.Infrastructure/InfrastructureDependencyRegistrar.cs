@@ -6,6 +6,7 @@ using EMP.SharedKernel.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moamen.SDKs.Repository.Extensions;
 
 namespace Amazon.ProductCatalog.Infrastructure
 {
@@ -20,6 +21,7 @@ namespace Amazon.ProductCatalog.Infrastructure
             });
 
             services
+                .AddGenericRepos()
                 .AddScoped(typeof(IRepository<,>), typeof(EfCoreRepositoryBase<,>))
                 .AddScoped<DbContext>(sp => sp.GetRequiredService<CatalogDbContext>())
                 .AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CatalogDbContext>())

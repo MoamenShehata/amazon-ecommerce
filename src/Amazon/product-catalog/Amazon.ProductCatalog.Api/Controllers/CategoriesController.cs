@@ -13,13 +13,16 @@ public class CategoriesController(CategoriesAppService _categoriesAppService) : 
         [FromBody] CreateCategoryRequest request)
     {
         var result = await _categoriesAppService.CreateAsync(request);
-        return Created($"/api/categories/{result.Value.Id}", result.Value);
+        if (result.IsSuccess)
+            return CreatedAtRoute("GetCategoryId", new { id = result.Value.Id }, result.Value);
+
+        return RestResult(result);
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<CategoryDto>> GetCategory(Guid id)
+    [HttpGet("{id}", Name = "GetCategoryId")]
+    public async Task<IActionResult> GetCategory(Guid id)
     {
-        return Ok();
+        return RestResult(await _categoriesAppService.GetByIdAsync(id));
     }
 
     [HttpPut("{id}")]

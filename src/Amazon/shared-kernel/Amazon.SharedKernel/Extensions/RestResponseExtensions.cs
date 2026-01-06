@@ -10,8 +10,7 @@ public static class RestResponseExtensions
             destination,
             response.StatusCode,
             response.Error,
-            response.Exception,
-            response.Id
+            response.Exception
         );
     }
 }

@@ -39,5 +39,7 @@ namespace Amazon.SharedKernel.API
         public new static RestResponse<TValue> Conflict(object error) => new(default, HttpStatusCode.Conflict, error);
         public new static RestResponse<TValue> BadRequest(BadRequestModel error) => new(default, HttpStatusCode.BadRequest, error);
         public static new RestResponse<TValue> Failure(Exception exception) => new(default, HttpStatusCode.InternalServerError, null, exception);
+
+        public static implicit operator TValue(RestResponse<TValue> response) => response.Value;
     }
 }
