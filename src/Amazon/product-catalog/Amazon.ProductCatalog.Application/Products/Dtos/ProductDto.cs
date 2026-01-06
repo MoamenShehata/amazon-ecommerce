@@ -21,7 +21,7 @@ namespace Amazon.ProductCatalog.Application.Products.Dtos
         decimal Price,
         decimal MinimumPrice,
         decimal MaximumPrice,
-        List<KeyValuePair<string, string>> Properties
+        List<ProductProperty> Properties
     );
 
     public record UpdateProductDto(

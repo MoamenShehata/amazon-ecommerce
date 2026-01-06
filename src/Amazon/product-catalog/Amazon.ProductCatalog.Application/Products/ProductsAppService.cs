@@ -25,7 +25,7 @@ public class ProductsAppService(
             createProductDto.CategoryId,
             createProductDto.Name,
             productPrice,
-            createProductDto.Properties.Select(x => new ProductProperty(x.Key, x.Value)).ToList()
+            createProductDto.Properties
         );
         if (!createdProductResult.IsSuccess)
             return createdProductResult.MapTo((ProductDto)null!);
@@ -46,11 +46,12 @@ public class ProductsAppService(
 
     public async Task<RestResponse<bool>> UpdateAsync(Guid productId, UpdateProductDto updateProductDto)
     {
-        var existingProduct = await _productsRepository.GetInstanceAsync(productId);
-        if (existingProduct is null)
-            return RestResponse<bool>.NotFound($"Product with id {productId} not found");
+        var productModelResult = await _productsService.GetByIdAsync(productId);
+        if (!productModelResult.IsSuccess)
+            return RestResponse<bool>.NotFound(productModelResult.Error!);
 
-        var updateResult = existingProduct.UpdateFrom(updateProductDto.Name, updateProductDto.Price, updateProductDto.Properties);
+        var updateResult = productModelResult.Value.UpdateFrom(updateProductDto.Name, updateProductDto.Price, updateProductDto.Properties);
+        await _unitOfWork.CommitAsync();
 
         return RestResponse<bool>.Success(true);
     }
