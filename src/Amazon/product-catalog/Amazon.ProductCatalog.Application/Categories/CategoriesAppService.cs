@@ -25,6 +25,15 @@ public class CategoriesAppService(
         return result.MapTo(new CategoryDto(result.Value.Id, result.Value.Name));
     }
 
+    public async Task<RestResponse<CategoryDto>> GetByIdAsync(Guid id)
+    {
+        var categoryResult = await _categoriesService.GetByIdAsync(id, true);
+        if (!categoryResult.IsSuccess)
+            return categoryResult.MapTo((CategoryDto)null);
+
+        return categoryResult.MapTo(categoryResult.Value.ToDto());
+    }
+
     public async Task<RestResponse<bool>> UpdateAsync(Guid categoryId, UpdateCategoryRequest updateCategoryRequest)
     {
         var result = await _categoriesService.UpdateAsync(categoryId, updateCategoryRequest.Name, updateCategoryRequest.NewParentCategoryId);
@@ -41,14 +50,5 @@ public class CategoriesAppService(
             await _unitOfWork.CommitAsync();
 
         return result;
-    }
-
-    public async Task<RestResponse<CategoryDto>> GetByIdAsync(Guid id)
-    {
-        var categoryResult = await _categoriesService.GetByIdAsync(id, true);
-        if (!categoryResult.IsSuccess)
-            return categoryResult.MapTo((CategoryDto)null);
-
-        return categoryResult.MapTo(categoryResult.Value.ToDto());
     }
 }
