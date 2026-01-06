@@ -26,6 +26,11 @@ namespace Amazon.ProductCatalog.Application
 
         private static void AddApplicationServices(IServiceCollection services)
         {
+            services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssembly(typeof(ApplicationDependencyRegistrar).Assembly);
+            });
+
             services
                 .AddScoped<CategoriesAppService>()
                 .AddScoped<ProductsAppService>()

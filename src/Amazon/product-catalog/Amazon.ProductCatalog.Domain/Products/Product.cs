@@ -46,6 +46,8 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         return Result<bool>.Success(true);
     }
 
+    public void AttachToCategory(Guid categoryId) => CategoryId = categoryId;
+
     public Guid CategoryId { get; private set; }
 
     internal Product(Guid categoryId, string name, ProductPrice price, List<ProductProperty> properties) : base(Guid.NewGuid())

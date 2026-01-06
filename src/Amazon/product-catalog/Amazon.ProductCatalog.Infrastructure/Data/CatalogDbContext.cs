@@ -4,15 +4,18 @@ using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using EMP.SharedKernel;
 using EMP.SharedKernel.DDD.Definitions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Amazon.ProductCatalog.Infrastructure.Data;
 
 public class CatalogDbContext : DbContext, IUnitOfWork
 {
-    public CatalogDbContext(DbContextOptions<CatalogDbContext> dbContextOptions) : base(dbContextOptions)
+    public CatalogDbContext(DbContextOptions<CatalogDbContext> dbContextOptions
+        ) : base(dbContextOptions)
     {
     }
+
 
     public DbSet<Category> Categories { get; private set; }
     public DbSet<Product> Products { get; private set; }
