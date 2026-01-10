@@ -1,6 +1,7 @@
 ﻿using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
+using MediatR;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.ProductCatalog.Domain.Products;
@@ -59,5 +60,16 @@ public class ProductsService(
             _productsRepository.Remove(product);
 
         return RestResponse<bool>.Success(true);
+    }
+
+    public async Task ReAttachOrphanProductsForDeletedCategory(Guid deletedCategoryId, Guid? newCategoryIdToReattach)
+    {
+        var orphanProducts = await _productsRepository.GetAllAsync(p => p.CategoryId == deletedCategoryId);
+        Action<Product> deleteAction = newCategoryIdToReattach.HasValue
+            ? p => p.AttachToCategory(newCategoryIdToReattach.Value)
+            : p => p.SoftDelete();
+
+        foreach (var product in orphanProducts)
+            deleteAction(product);
     }
 }

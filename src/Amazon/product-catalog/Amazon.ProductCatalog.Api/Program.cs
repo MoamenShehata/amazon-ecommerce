@@ -1,5 +1,6 @@
-using Amazon.ProductCatalog.Infrastructure;
+using Amazon.ProductCatalog.Api.Jobs;
 using Amazon.ProductCatalog.Application;
+using Amazon.ProductCatalog.Infrastructure;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHostedService<CategoriesSoftDeleteJob>();
 
 // Register OpenAPI + Swagger
 builder.Services.AddEndpointsApiExplorer();

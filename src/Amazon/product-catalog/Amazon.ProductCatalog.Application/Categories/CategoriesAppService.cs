@@ -1,18 +1,24 @@
-﻿using Amazon.ProductCatalog.Application.Categories.Dtos;
+﻿using System.Text.Json;
+using Amazon.ProductCatalog.Application.Categories.Dtos;
 using Amazon.ProductCatalog.Application.Categories.Mappers;
 using Amazon.ProductCatalog.Application.Common.Dtos;
 using Amazon.ProductCatalog.Domain.Categories;
+using Amazon.ProductCatalog.Domain.Categories.Events;
+using Amazon.ProductCatalog.Domain.Products;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.Repository.Pagination;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.ProductCatalog.Application.Categories;
 
 public class CategoriesAppService(
     CategoriesService _categoriesService,
     IEfCoreRepository<Category, Guid> _categoriesRepository,
+    ProductsService _productsService,
+    IEfCoreRepository<OutboxMessage, int> _eventStore,
     IUnitOfWork _unitOfWork
     )
 {
@@ -61,5 +67,34 @@ public class CategoriesAppService(
             await _unitOfWork.CommitAsync();
 
         return result;
+    }
+
+    public async Task SoftDeleteCategories()
+    {
+        var softDeleteEvents = await _eventStore
+            .GetAllAsync(e => e.Type == typeof(CategorySoftDeletedEvent).AssemblyQualifiedName && !e.HandledAt.HasValue);
+
+        foreach (var message in softDeleteEvents)
+            await HandleCategorySoftDelete(message);
+
+        await _unitOfWork.CommitAsync();
+    }
+
+    private async Task HandleCategorySoftDelete(OutboxMessage outboxMessage)
+    {
+        try
+        {
+            var notification = JsonSerializer.Deserialize<CategorySoftDeletedEvent>(outboxMessage.Body);
+
+            await _productsService.ReAttachOrphanProductsForDeletedCategory(notification.CategoryId, notification.OrphanProductsNewCategoryId);
+
+            await _unitOfWork.CommitAsync();
+
+            outboxMessage.MarkAsSent();
+        }
+        catch (Exception ex)
+        {
+            outboxMessage.MarkAsFailed(ex.Message);
+        }
     }
 }
