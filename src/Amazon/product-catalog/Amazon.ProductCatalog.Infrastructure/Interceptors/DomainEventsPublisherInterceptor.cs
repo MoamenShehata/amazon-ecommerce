@@ -1,6 +1,7 @@
 ﻿using EMP.SharedKernel.DDD.Definitions;
 using MediatR;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
 namespace Amazon.ProductCatalog.Infrastructure.Interceptors;
 
@@ -19,9 +20,6 @@ public class DomainEventsPublisherInterceptor(IMediator _mediator) : SaveChanges
         foreach (var @event in domainEvents)
             await _mediator.Publish(@event);
         
-        // or save in an event store
-        // and later on a background job can handle those events
-
         return await base.SavedChangesAsync(eventData, result, cancellationToken);
     }
 }

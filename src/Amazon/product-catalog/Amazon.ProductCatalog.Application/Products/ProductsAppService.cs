@@ -4,10 +4,9 @@ using Amazon.ProductCatalog.Application.Products.Mappers;
 using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
-using Amazon.SharedKernel.Common;
 using Amazon.SharedKernel.Extensions;
-using EMP.SharedKernel;
 using Moamen.SDKs.Repository;
+using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.ProductCatalog.Application.Products;
 

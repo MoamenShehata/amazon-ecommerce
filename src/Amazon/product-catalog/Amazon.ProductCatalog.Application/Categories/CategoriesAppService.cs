@@ -4,11 +4,9 @@ using Amazon.ProductCatalog.Application.Common.Dtos;
 using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
-using EMP.SharedKernel;
-using EMP.SharedKernel.Repositories;
-using MediatR;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.Repository.Pagination;
+using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.ProductCatalog.Application.Categories;
 

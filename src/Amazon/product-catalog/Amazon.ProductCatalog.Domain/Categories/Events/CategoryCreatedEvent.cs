@@ -1,10 +1,10 @@
-﻿using EMP.SharedKernel.DDD.Definitions;
+﻿using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.ProductCatalog.Domain.Categories.Events;
 
-public class CategoryCreatedEvent : DomainEvent
+public class CategoryCreatedEvent : DomainEventBase
 {
-    public CategoryCreatedEvent(Guid categoryId) : base(DateTime.UtcNow, false)
+    public CategoryCreatedEvent(Guid categoryId) : base(DateTime.UtcNow)
     {
         CategoryId = categoryId;
     }

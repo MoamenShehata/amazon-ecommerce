@@ -1,14 +1,11 @@
-﻿using Amazon.ProductCatalog.Domain.Categories;
-using Amazon.ProductCatalog.Domain.Products;
-using Amazon.ProductCatalog.Infrastructure.Data;
+﻿using Amazon.ProductCatalog.Infrastructure.Data;
 using Amazon.ProductCatalog.Infrastructure.Interceptors;
-using EMP.SharedKernel;
-using EMP.SharedKernel.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moamen.SDKs.Repository.Extensions;
+using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.ProductCatalog.Infrastructure
 {
@@ -25,6 +22,7 @@ namespace Amazon.ProductCatalog.Infrastructure
 
             services
                 .AddGenericRepos()
+                .AddOutboxServices()
                 .AddScoped<DbContext>(sp => sp.GetRequiredService<CatalogDbContext>())
                 .AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CatalogDbContext>())
                 ;

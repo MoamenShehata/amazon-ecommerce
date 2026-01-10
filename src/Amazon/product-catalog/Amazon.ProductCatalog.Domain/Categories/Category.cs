@@ -1,8 +1,8 @@
 ﻿using Amazon.ProductCatalog.Domain.Categories.Events;
 using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
-using EMP.SharedKernel.DDD.Definitions;
 using Moamen.SDKs.Repository;
+using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
 namespace Amazon.ProductCatalog.Domain.Categories;
 

@@ -1,10 +1,10 @@
-﻿using EMP.SharedKernel.DDD.Definitions;
+﻿using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.ProductCatalog.Domain.Categories.Events;
 
-public class CategorySoftDeletedEvent : DomainEvent
+public class CategorySoftDeletedEvent : DomainEventBase
 {
-    public CategorySoftDeletedEvent(Guid categoryId, Guid? orphanProductsNewCategoryId) : base(DateTime.UtcNow, false)
+    public CategorySoftDeletedEvent(Guid categoryId, Guid? orphanProductsNewCategoryId) : base(DateTime.UtcNow)
     {
         CategoryId = categoryId;
         OrphanProductsNewCategoryId = orphanProductsNewCategoryId;
