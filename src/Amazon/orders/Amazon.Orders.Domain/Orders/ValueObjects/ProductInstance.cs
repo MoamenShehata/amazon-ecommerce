@@ -15,8 +15,11 @@ public record ProductInstance
         UnitPrice = unitPrice;
     }
 
+    public ProductInstance WithPrice(decimal newPrice) => new(ProductId, newPrice);
+
     public OrderItem CreateOrderItem(int quantity)
     {
         return new OrderItem(this, quantity);
     }
+
 }

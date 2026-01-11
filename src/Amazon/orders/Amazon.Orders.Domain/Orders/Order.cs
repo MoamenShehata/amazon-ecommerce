@@ -14,6 +14,10 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
         _orderItems = orderItems;
     }
 
+    public decimal Price => _orderItems.Sum(x => x.Price);
+    public int UniqueItemsCount => _orderItems.Count;
 
+    #region Infra
     private Order() : base(Guid.Empty) { }
+    #endregion
 }
