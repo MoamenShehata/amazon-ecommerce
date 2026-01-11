@@ -1,13 +1,20 @@
-﻿using Amazon.Orders.Domain.Orders;
+﻿using Amazon.SharedKernel.API;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.Orders.Domain.Products
 {
     public class ProductsService(IRepository<Product, Guid> _productsRepo)
     {
-        public async Task<bool> IsAnyProductNotInventoryAvailableAsync(List<Guid> productIds)
+        public async Task<RestResponse<bool>> ValidateProducts(List<Guid> productIds)
         {
-            return await _productsRepo.CountAsync(p => productIds.Contains(p.Id) && p.InStockCount == 0) > 0;
+            var products = (await _productsRepo.GetAllAsync(p => productIds.Contains(p.Id), x => new { x.Id, x.InStockCount })).ToList();
+            if (products.Count == 0)
+                return RestResponse<bool>.NotFound("Some of the products were not found!");
+
+            if (products.Count(p => p.InStockCount == 0) > 0)
+                return RestResponse<bool>.BadRequest(new BadRequestModel("Cannot full fill this whole order request due to lack of some products in inventory"));
+
+            return RestResponse<bool>.Success(true);
         }
     }
 }

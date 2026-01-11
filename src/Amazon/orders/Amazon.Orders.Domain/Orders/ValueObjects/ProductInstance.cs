@@ -17,9 +17,8 @@ public record ProductInstance
 
     public ProductInstance WithPrice(decimal newPrice) => new(ProductId, newPrice);
 
-    public OrderItem CreateOrderItem(int quantity)
+    private ProductInstance()
     {
-        return new OrderItem(this, quantity);
-    }
 
+    }
 }

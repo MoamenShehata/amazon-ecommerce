@@ -12,15 +12,15 @@ public class OrdersService(
     OrderFactory _orderFactory
     )
 {
-    public async Task<RestResponse<bool>> PlaceOrderAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems)
+    public async Task<RestResponse<Order>> PlaceOrderAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems)
     {
-        var isInventoryInvalidForAnyProduct = await _productsService.IsAnyProductNotInventoryAvailableAsync(cartItems.Select(x => x.Key).ToList());
-        if (isInventoryInvalidForAnyProduct)
-            return RestResponse<bool>.Failure($"Cannot full fill this whole order request due to lack of some products in inventory");
+        var productsValidationResult = await _productsService.ValidateProducts(cartItems.Select(x => x.Key).ToList());
+        if (!productsValidationResult.IsSuccess)
+            return RestResponse<Order>.Failure(productsValidationResult.Error.ToString());
 
         var order = await _orderFactory.CreateAsync(customerInfo, cartItems);
         _ordersRepo.Add(order);
 
-        return RestResponse<bool>.Created(true, order.Id.ToString());
+        return RestResponse<Order>.Created(order, order.Id.ToString());
     }
 }

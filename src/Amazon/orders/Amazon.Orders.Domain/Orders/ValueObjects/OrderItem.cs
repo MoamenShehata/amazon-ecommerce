@@ -1,6 +1,8 @@
-﻿namespace Amazon.Orders.Domain.Orders.ValueObjects;
+﻿using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
-public class OrderItem
+namespace Amazon.Orders.Domain.Orders.ValueObjects;
+
+public class OrderItem : IdentifiedValue<int>
 {
     public ProductInstance ProductInfo { get; private set; }
     public int Quantity { get; private set; }
@@ -12,4 +14,9 @@ public class OrderItem
     }
 
     public decimal Price => Quantity * ProductInfo.UnitPrice;
+
+    private OrderItem()
+    {
+
+    }
 }
