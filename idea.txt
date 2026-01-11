@@ -1,7 +1,7 @@
 - e-commerce application
     - services
         - customers
-        - product-catalog
+        - product-catalog  => DONE
         - orders
         - inventory
         - shipping

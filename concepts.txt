@@ -7,10 +7,20 @@
     - REST
     - Consistency
         - Transactional
-        - Eventual
+        - Eventual  => DONE
+            - through product-catalog
+                - when deleting a category
+                    - we raise a domain event
+                    - that we act upon receieving it Asynchronously
+                        - by either reattachnig the orphan products to the new choosen new category or soft deleting those products
+                            - which aligns perfectly with the business
+                                - like a store owner totally ends an era of selling some kind of products(android)
+
     - Event sourcing
     - 
     - 
+
+///////////////////////////////////////////////////////////////
 
 - chatgpt list
     - Service Communication
@@ -42,7 +52,8 @@ Message schema evolution
 
 Poison messages / Dead letter queues
 
-Outbox pattern
+Outbox pattern  => DONE
+    - implemented in product-catalog to handle the events Asynchronously
 
 ✅ Practice outcome:
 One request-response flow and one event-driven flow between services.
