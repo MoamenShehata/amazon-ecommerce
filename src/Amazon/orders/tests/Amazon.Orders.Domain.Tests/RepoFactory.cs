@@ -13,6 +13,7 @@ namespace Amazon.Orders.Domain.Tests
         public void Add(TEntity aggregate)
         {
             _ctxt.Set<TEntity>().Add(aggregate);
+            _ctxt.SaveChanges();
         }
 
         public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)

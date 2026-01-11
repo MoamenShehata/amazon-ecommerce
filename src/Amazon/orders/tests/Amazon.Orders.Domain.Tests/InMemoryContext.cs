@@ -3,6 +3,7 @@ using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Products;
 using Microsoft.EntityFrameworkCore;
+using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
 namespace Amazon.Orders.Domain.Tests
 {
@@ -23,6 +24,18 @@ namespace Amazon.Orders.Domain.Tests
             .HasConversion(
             ls => JsonSerializer.Serialize(ls, (JsonSerializerOptions)null),
             json => JsonSerializer.Deserialize<List<OrderItem>>(json, (JsonSerializerOptions)null));
+        }
+
+        public override int SaveChanges()
+        {
+            var auditableEntities = ChangeTracker.Entries<IAuditableEntity>().Select(x => x.Entity);
+            foreach (var item in auditableEntities)
+            {
+                item.CreatedOn = DateTime.UtcNow;
+                item.CreatedBy = "asd";
+            }
+
+            return base.SaveChanges();
         }
     }
 }

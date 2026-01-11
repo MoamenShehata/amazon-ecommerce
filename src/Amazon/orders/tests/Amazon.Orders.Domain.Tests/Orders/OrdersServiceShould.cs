@@ -11,6 +11,9 @@ namespace Amazon.Orders.Domain.Tests.Orders
         private OrdersService CreateOrderService()
         {
             var productRepo = RepoFactory.Create<Product, Guid>();
+            var productId = Guid.Parse("F954B880-3C4A-4AEA-AAFA-ADE614AE8576");
+            productRepo.Add(new Product(productId, 25, 500));
+
 
             var productService = new ProductsService(productRepo);
             var orderFactory = new OrderFactory(productRepo);
@@ -48,13 +51,16 @@ namespace Amazon.Orders.Domain.Tests.Orders
 
             var cartItems = new List<KeyValuePair<Guid, int>>
             {
-                new KeyValuePair<Guid, int>()
+                new KeyValuePair<Guid, int>(Guid.Parse("F954B880-3C4A-4AEA-AAFA-ADE614AE8576"),7)
             };
 
             var result = await orderService.PlaceOrderAsync(new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), cartItems);
 
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Value);
+            Assert.Single(result.Value.Items);
+            Assert.Equal(7, result.Value.Items.FirstOrDefault().Quantity);
+            Assert.Equal(7 * 500, result.Value.Price);
             Assert.Equal(HttpStatusCode.Created, result.StatusCode);
         }
     }

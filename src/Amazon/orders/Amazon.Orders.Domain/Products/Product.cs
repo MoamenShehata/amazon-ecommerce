@@ -10,7 +10,11 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
     public int InStockCount { get; private set; }
     public decimal CurrentPrice { get; private set; }
 
-    public Product(Guid id) : base(id) { }
+    public Product(Guid id, int inStockCount, decimal currentPrice) : base(id)
+    {
+        InStockCount = inStockCount;
+        CurrentPrice = currentPrice;
+    }
 
     public OrderItem CreateOrderItem(int quantity)
     {
