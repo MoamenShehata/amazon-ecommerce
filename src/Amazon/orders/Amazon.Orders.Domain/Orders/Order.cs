@@ -6,11 +6,14 @@ namespace Amazon.Orders.Domain.Orders;
 
 public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 {
+    public CustomerInfo Customer { get; private set; }
+
     private List<OrderItem> _orderItems = new();
     public IReadOnlyCollection<OrderItem> Items => [.. _orderItems];
 
-    public Order(List<OrderItem> orderItems) : base(Guid.NewGuid())
+    public Order(CustomerInfo customer, List<OrderItem> orderItems) : base(Guid.NewGuid())
     {
+        Customer = customer;
         _orderItems = orderItems;
     }
 

@@ -4,16 +4,19 @@ namespace Amazon.Orders.Domain.Orders.Factories;
 
 public class ProductInstanceFactory
 {
-    private static List<ProductInstance> _pool = new();
+    //should handle concurrency
+    private static List<ProductInstance> _cache = new();
 
     public ProductInstance Create(Guid productId, decimal unitPrice)
     {
-        var cached = _pool.FirstOrDefault(x => x.ProductId == productId && x.UnitPrice == unitPrice);
-        if(cached != null)
+        var cached = _cache.FirstOrDefault(x => x.ProductId == productId && x.UnitPrice == unitPrice);
+        if (cached != null)
             return cached;
 
         var instance = new ProductInstance(productId, unitPrice);
-        _pool.Add(instance);
+
+        //should handle concurrency
+        _cache.Add(instance);
 
         return instance;
     }
