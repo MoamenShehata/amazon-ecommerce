@@ -57,7 +57,7 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
 
         Properties = properties;
 
-        RaiseEvent(new ProductCreatedEvent(categoryId, Id));
+        RaiseEvent(new ProductCreatedEvent(categoryId, Id, Name, Price.Amount));
     }
 
     private Product() : base(Guid.Empty) { }

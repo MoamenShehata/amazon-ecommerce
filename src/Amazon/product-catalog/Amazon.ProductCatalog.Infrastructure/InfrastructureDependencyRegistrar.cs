@@ -1,5 +1,6 @@
 ﻿using Amazon.ProductCatalog.Infrastructure.Data;
 using Amazon.ProductCatalog.Infrastructure.Interceptors;
+using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,23 @@ namespace Amazon.ProductCatalog.Infrastructure
                 .AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CatalogDbContext>())
                 ;
 
+            services.AddMassTransit(config =>
+            {
+                config.SetKebabCaseEndpointNameFormatter();
+
+                //if (subscribersAssembly != null)
+                //    config.AddConsumers(subscribersAssembly);
+
+                config.UsingRabbitMq((ctxt, configurator) =>
+                {
+                    configurator.Host(new Uri(configuration["MessageBroker:Host"]), host =>
+                    {
+                        host.Username(configuration["MessageBroker:User"]);
+                        host.Password(configuration["MessageBroker:Password"]);
+                    });
+                    configurator.ConfigureEndpoints(ctxt);
+                });
+            });
         }
     }
 }

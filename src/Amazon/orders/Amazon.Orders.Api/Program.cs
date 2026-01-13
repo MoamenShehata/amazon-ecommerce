@@ -1,8 +1,14 @@
+using Amazon.Orders.Application;
+using Amazon.Orders.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services
+    .RegisterApplicationDependencies(builder.Configuration)
+    .RegisterInfrastructureDependencies();
 
 var app = builder.Build();
 

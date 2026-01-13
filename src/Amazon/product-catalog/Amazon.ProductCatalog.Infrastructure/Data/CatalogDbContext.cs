@@ -2,9 +2,9 @@
 using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
-using EMP.SharedKernel.DDD.Definitions;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Definitions;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.ProductCatalog.Infrastructure.Data;

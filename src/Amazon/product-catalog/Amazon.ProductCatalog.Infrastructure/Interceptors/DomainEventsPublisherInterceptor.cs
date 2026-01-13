@@ -1,5 +1,4 @@
-﻿using EMP.SharedKernel.DDD.Definitions;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 

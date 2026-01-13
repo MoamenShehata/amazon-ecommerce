@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddHostedService<CategoriesSoftDeleteJob>();
+builder.Services.AddHostedService<IntegrationEventsPublishJob>();
 
 // Register OpenAPI + Swagger
 builder.Services.AddEndpointsApiExplorer();
