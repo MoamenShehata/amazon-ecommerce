@@ -9,7 +9,7 @@ using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.ProductCatalog.Infrastructure.Data;
 
-public class CatalogDbContext : DbContext, IUnitOfWork
+public class CatalogDbContext : DbContextBase
 {
     public CatalogDbContext(DbContextOptions<CatalogDbContext> dbContextOptions
         ) : base(dbContextOptions)
@@ -20,18 +20,6 @@ public class CatalogDbContext : DbContext, IUnitOfWork
     public DbSet<Category> Categories { get; private set; }
     public DbSet<Product> Products { get; private set; }
     public DbSet<OutboxMessage> EventStore { get; private set; }
-
-    public async Task CommitAsync()
-    {
-        var entries = ChangeTracker.Entries<IAuditableEntity>().Where(s => s.State == EntityState.Added);
-        foreach (var item in entries)
-        {
-            item.Entity.CreatedOn = DateTime.UtcNow;
-            item.Entity.CreatedBy = "Test";
-        }
-
-        await SaveChangesAsync();
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services
     .RegisterApplicationDependencies(builder.Configuration)
-    .RegisterInfrastructureDependencies();
+    .RegisterInfrastructureDependencies(builder.Configuration);
 
 var app = builder.Build();
 

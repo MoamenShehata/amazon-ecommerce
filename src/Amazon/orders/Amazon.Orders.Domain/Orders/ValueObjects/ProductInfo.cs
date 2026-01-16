@@ -2,23 +2,22 @@
 
 namespace Amazon.Orders.Domain.Orders.ValueObjects;
 
-public record ProductInstance
+public record ProductInfo
 {
     public Guid ProductId { get; init; }
     public decimal UnitPrice { get; init; }
+    public string Name { get; init; }
 
-    public ProductInstance(Guid productId, decimal unitPrice)
+    public ProductInfo(Guid productId, decimal unitPrice, string name)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(unitPrice, 0, nameof(unitPrice));
 
         ProductId = productId;
         UnitPrice = unitPrice;
+        Name = name;
     }
 
-    public ProductInstance WithPrice(decimal newPrice) => new(ProductId, newPrice);
+    public ProductInfo WithPrice(decimal newPrice) => new(ProductId, newPrice, Name);
 
-    private ProductInstance()
-    {
-
-    }
+    private ProductInfo() { }
 }

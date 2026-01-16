@@ -24,8 +24,7 @@ namespace Amazon.ProductCatalog.Infrastructure
             services
                 .AddGenericRepos()
                 .AddOutboxServices()
-                .AddScoped<DbContext>(sp => sp.GetRequiredService<CatalogDbContext>())
-                .AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CatalogDbContext>())
+                .AddBaseContext<CatalogDbContext>()
                 ;
 
             services.AddMassTransit(config =>

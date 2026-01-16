@@ -12,7 +12,7 @@ namespace Amazon.Orders.Domain.Tests.Orders
         {
             var productRepo = RepoFactory.Create<Product, Guid>();
             var productId = Guid.Parse("F954B880-3C4A-4AEA-AAFA-ADE614AE8576");
-            productRepo.Add(new Product(productId, 25, 500));
+            productRepo.Add(new Product(productId, "product", 25, 500));
 
 
             var productService = new ProductsService(productRepo);

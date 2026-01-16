@@ -11,7 +11,7 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
     private List<OrderItem> _orderItems = new();
     public IReadOnlyCollection<OrderItem> Items => [.. _orderItems];
 
-    public Order(CustomerInfo customer, List<OrderItem> orderItems) : base(Guid.NewGuid())
+    public Order(Guid orderId, CustomerInfo customer, List<OrderItem> orderItems) : base(orderId)
     {
         Customer = customer;
         _orderItems = orderItems;

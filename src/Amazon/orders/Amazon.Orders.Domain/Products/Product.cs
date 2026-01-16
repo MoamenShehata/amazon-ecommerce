@@ -17,9 +17,9 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         CurrentPrice = currentPrice;
     }
 
-    public OrderItem CreateOrderItem(int quantity)
+    public OrderItem CreateOrderItem(Guid orderId, int quantity)
     {
-        return new OrderItem(new ProductInstance(Id, CurrentPrice), quantity);
+        return new OrderItem(orderId, new ProductInfo(Id, CurrentPrice, Name), quantity);
     }
 
     #region Infra

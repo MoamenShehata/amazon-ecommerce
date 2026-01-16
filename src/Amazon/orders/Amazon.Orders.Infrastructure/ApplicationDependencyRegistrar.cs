@@ -1,17 +1,21 @@
-﻿using MassTransit;
+﻿using Amazon.Orders.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moamen.SDKs.Repository.Extensions;
 
 namespace Amazon.Orders.Infrastructure
 {
     public static class ApplicationDependencyRegistrar
     {
-        public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
+        public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services,
+            IConfiguration configuration)
         {
-            //services
-            //    .AddGenericRepos()
-            //    .AddScoped<DbContext>(sp => sp.GetRequiredService<CatalogDbContext>())
-            //    .AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CatalogDbContext>())
-            //    ;
+            services
+                .AddDbContext<OrdersContext>(op => op.UseSqlServer(configuration.GetConnectionString("Orders")))
+                .AddGenericRepos()
+                .AddBaseContext<OrdersContext>()
+                ;
 
             //services.AddMassTransit(config =>
             //{
