@@ -17,6 +17,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             b.Property(d => d.Email);
         });
 
+        //builder.Property(x => x.Items).HasField("_orderItems");
+
         builder.OwnsMany(x => x.Items, b =>
         {
             b.WithOwner().HasForeignKey(x => x.OrderId);

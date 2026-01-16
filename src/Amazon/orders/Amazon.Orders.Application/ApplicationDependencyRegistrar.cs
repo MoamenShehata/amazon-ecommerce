@@ -1,4 +1,7 @@
-﻿using Amazon.Orders.Domain.Products;
+﻿using Amazon.Orders.Application.Orders;
+using Amazon.Orders.Domain.Orders;
+using Amazon.Orders.Domain.Orders.Factories;
+using Amazon.Orders.Domain.Products;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,12 +33,19 @@ namespace Amazon.Orders.Application
             services
                 .AddDomainServices();
 
+            services.AddScoped<OrdersAppService>()
+                ;
+
             return services;
         }
 
         private static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
-            services.AddScoped<ProductsService>();
+            services
+                .AddScoped<ProductsService>()
+                .AddScoped<OrdersService>()
+                .AddScoped<OrderFactory>()
+                ;
 
             return services;
         }
