@@ -15,10 +15,7 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
     //}
 
     [HttpGet("{id}", Name = "GetOrderById")]
-    public async Task<IActionResult> GetCategory(Guid id)
-    {
-        return RestResult(await _service.GetByIdAsync(id));
-    }
+    public async Task<IActionResult> GetCategory(Guid id) => RestResult(await _service.GetByIdAsync(id));
 
     [HttpPost]
     public async Task<IActionResult> CreateOrder(
