@@ -4,8 +4,14 @@ namespace Amazon.Orders.Domain.Orders.Events
 {
     public class OrderCreatedEvent : DomainEventBase
     {
-        internal OrderCreatedEvent(DateTime occurredOn, Guid OrderId) : base(occurredOn)
+        public Guid OrderId { get; }
+        public List<KeyValuePair<Guid, int>> OrderItems { get; }
+
+        internal OrderCreatedEvent(DateTime occurredOn, Guid orderId, List<KeyValuePair<Guid, int>> orderItems) : base(occurredOn)
         {
+            OrderId = orderId;
+            OrderItems = orderItems;
         }
+
     }
 }

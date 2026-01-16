@@ -1,6 +1,7 @@
 using Amazon.ProductCatalog.Api.Jobs;
 using Amazon.ProductCatalog.Application;
 using Amazon.ProductCatalog.Infrastructure;
+using Amazon.SharedKernel.Jobs;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

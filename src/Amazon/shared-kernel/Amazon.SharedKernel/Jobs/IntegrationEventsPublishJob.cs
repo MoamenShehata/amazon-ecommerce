@@ -1,13 +1,14 @@
-﻿using System.Reflection;
-using System.Text.Json;
-using Amazon.ProductCatalog.Application.Categories;
+﻿using System.Text.Json;
+using Amazon.SharedKernel.IntegrationEvents.Orders;
 using Amazon.SharedKernel.IntegrationEvents.Products;
 using MassTransit;
-using MassTransit.Transports;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 
-namespace Amazon.ProductCatalog.Api.Jobs;
+namespace Amazon.SharedKernel.Jobs;
 
 public class IntegrationEventsPublishJob(
         ILogger<IntegrationEventsPublishJob> _logger,
@@ -16,7 +17,8 @@ public class IntegrationEventsPublishJob(
 {
     private Dictionary<string, Type> _mappers = new()
     {
-        {"Amazon.ProductCatalog.Domain.Products.Events.ProductCreatedEvent, Amazon.ProductCatalog.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(ProductCreatedIntegrationEvent) }
+        {"Amazon.ProductCatalog.Domain.Products.Events.ProductCreatedEvent, Amazon.ProductCatalog.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(ProductCreatedIntegrationEvent) },
+        {"Amazon.Orders.Domain.Orders.Events.OrderCreatedEvent, Amazon.Orders.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(OrderCreatedIntegrationEvent) }
     };
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

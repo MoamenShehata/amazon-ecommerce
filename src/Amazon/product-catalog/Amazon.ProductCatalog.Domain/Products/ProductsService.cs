@@ -1,4 +1,6 @@
-﻿using Amazon.ProductCatalog.Domain.Categories;
+﻿using System.Xml.Linq;
+using Amazon.ProductCatalog.Domain.Categories;
+using Amazon.ProductCatalog.Domain.Products.Events;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
 using MediatR;
@@ -11,13 +13,15 @@ public class ProductsService(
     IEfCoreRepository<Product, Guid> _productsRepository
     )
 {
-    public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, ProductPrice price, List<ProductProperty> properties)
+    public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, int inStockCount, ProductPrice price, List<ProductProperty> properties)
     {
         var category = await _categoriesRepository.GetInstanceAsync(categoryId);
         if (category is null)
             return RestResponse<(Product, Category)>.NotFound($"Category with id {categoryId} not found");
 
         var product = category.NewProduct(name, price, properties);
+        product.RaiseEvent(new ProductCreatedEvent(categoryId, product.Id, product.Name, inStockCount, product.Price.Amount));
+
         _productsRepository.Add(product);
 
         return RestResponse<(Product, Category)>.Created((product, category), product.Id.ToString());

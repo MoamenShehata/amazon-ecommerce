@@ -23,6 +23,7 @@ public class ProductsAppService(
         var createdProductResult = await _productsService.CreateAsync(
             createProductDto.CategoryId,
             createProductDto.Name,
+            createProductDto.InStockCount,
             productPrice,
             createProductDto.Properties
         );

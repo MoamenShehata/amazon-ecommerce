@@ -1,22 +1,21 @@
-﻿using Amazon.Orders.Infrastructure.Data;
+﻿using Amazon.Inventory.Infrastructure.Data;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moamen.SDKs.Repository.Extensions;
 
-namespace Amazon.Orders.Infrastructure
+namespace Amazon.Inventory.Infrastructure
 {
-    public static class ApplicationDependencyRegistrar
+    public static class InfrastructureDependencyRegistrar
     {
         public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services,
             IConfiguration configuration)
         {
             services
-                .AddDbContext<OrdersContext>(op => op.UseSqlServer(configuration.GetConnectionString("Orders")))
+                .AddDbContext<InventoryContext>(op => op.UseSqlServer(configuration.GetConnectionString("Inventory")))
                 .AddGenericRepos()
-                .AddOutboxServices()
-                .AddBaseContext<OrdersContext>()
+                .AddBaseContext<InventoryContext>()
                 ;
 
             return services;

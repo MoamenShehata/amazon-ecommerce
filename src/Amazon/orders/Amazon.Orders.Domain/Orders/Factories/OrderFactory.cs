@@ -13,16 +13,14 @@ namespace Amazon.Orders.Domain.Orders.Factories
         {
             var products = await _productsRepo.GetAllAsync(p => cartItems.Select(x => x.Key).Distinct().Contains(p.Id));
 
-            //Func<Product, ProductInfo> productInstanceCacheFactory = p => _productInstanceFactory.CreateAsync(p.Id, p.CurrentPrice);
-            //var orderItems = products.Select(p => productInstanceCacheFactory(p).CreateOrderItem(cartItems.Where(x => x.Key == p.Id).Sum(x => x.Value))).ToList();
-
             var orderId = Guid.NewGuid();
 
             Func<Product, OrderItem> orderItemFactory = p => p.CreateOrderItem(orderId, cartItems.Where(x => x.Key == p.Id).Sum(x => x.Value));
 
-            var order = new Order(orderId, customerInfo, products.Select(orderItemFactory).ToList());
+            var orderItems = products.Select(orderItemFactory).ToList();
+            var order = new Order(orderId, customerInfo, orderItems);
 
-            order.RaiseEvent(new OrderCreatedEvent(DateTime.UtcNow, order.Id));
+            order.RaiseEvent(new OrderCreatedEvent(DateTime.UtcNow, order.Id, orderItems.Select(i => new KeyValuePair<Guid, int>(i.ProductInfo.ProductId, i.Quantity)).ToList()));
 
             return order;
         }
