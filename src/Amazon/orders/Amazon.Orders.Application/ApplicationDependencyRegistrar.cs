@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Amazon.Orders.Domain.Products;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,8 +27,17 @@ namespace Amazon.Orders.Application
                 });
             });
 
+            services
+                .AddDomainServices();
+
             return services;
         }
 
+        private static IServiceCollection AddDomainServices(this IServiceCollection services)
+        {
+            services.AddScoped<ProductsService>();
+
+            return services;
+        }
     }
 }

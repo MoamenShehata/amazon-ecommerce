@@ -7,6 +7,12 @@ namespace Amazon.Orders.Infrastructure
     {
         public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
         {
+            //services
+            //    .AddGenericRepos()
+            //    .AddScoped<DbContext>(sp => sp.GetRequiredService<CatalogDbContext>())
+            //    .AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CatalogDbContext>())
+            //    ;
+
             //services.AddMassTransit(config =>
             //{
             //    config.SetKebabCaseEndpointNameFormatter();

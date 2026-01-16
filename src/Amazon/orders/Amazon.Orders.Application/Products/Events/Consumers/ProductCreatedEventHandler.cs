@@ -1,13 +1,20 @@
-﻿using Amazon.SharedKernel.IntegrationEvents.Products;
+﻿using Amazon.Orders.Domain.Products;
+using Amazon.SharedKernel.IntegrationEvents.Products;
 using MassTransit;
+using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.Orders.Application.Products.Events.Consumers
 {
-    public class ProductCreatedEventHandler : IConsumer<ProductCreatedIntegrationEvent>
+    public class ProductCreatedEventHandler(
+        ProductsService _productsService,
+        IUnitOfWork _unitOfWork) : IConsumer<ProductCreatedIntegrationEvent>
     {
-        public Task Consume(ConsumeContext<ProductCreatedIntegrationEvent> context)
+        public async Task Consume(ConsumeContext<ProductCreatedIntegrationEvent> context)
         {
-            throw new NotImplementedException();
+            var message = context.Message;
+
+            _productsService.Create(message.ProductId, message.Name, 50, message.UnitPrice);
+            await _unitOfWork.CommitAsync();
         }
     }
 }

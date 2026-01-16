@@ -16,5 +16,11 @@ namespace Amazon.Orders.Domain.Products
 
             return RestResponse<bool>.Success(true);
         }
+
+        public void Create(Guid id, string name, int inStockCount, decimal currentPrice)
+        {
+            var product = new Product(id, name, inStockCount, currentPrice);
+            _productsRepo.Add(product);
+        }
     }
 }

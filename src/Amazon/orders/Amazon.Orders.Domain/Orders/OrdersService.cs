@@ -18,6 +18,8 @@ public class OrdersService(
         if (!productsValidationResult.IsSuccess)
             return RestResponse<Order>.Failure(productsValidationResult.Error.ToString());
 
+        //validate customer data
+
         var order = await _orderFactory.CreateAsync(customerInfo, cartItems);
         _ordersRepo.Add(order);
 
