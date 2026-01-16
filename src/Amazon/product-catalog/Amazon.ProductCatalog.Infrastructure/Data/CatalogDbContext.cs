@@ -4,7 +4,6 @@ using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
-using Moamen.SDKs.SharedKernel.DDD.Definitions;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.ProductCatalog.Infrastructure.Data;
@@ -25,6 +24,8 @@ public class CatalogDbContext : DbContextBase
     {
         modelBuilder.Entity<Category>(entity =>
         {
+            entity.ToTable("Categories", "catalog");
+
             entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Name).IsRequired().HasMaxLength(150);
@@ -34,11 +35,18 @@ public class CatalogDbContext : DbContextBase
                   .HasForeignKey(e => e.ParentCategoryId)
                   .IsRequired(false);
 
+            entity
+            .HasMany<Product>()
+            .WithOne()
+            .HasForeignKey(x => x.CategoryId);
+
             entity.HasQueryFilter(p => !p.IsDeleted);
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
+            entity.ToTable("Products", "catalog");
+
             entity.HasKey(e => e.Id);
 
             entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
@@ -56,6 +64,11 @@ public class CatalogDbContext : DbContextBase
             json => JsonSerializer.Deserialize<List<ProductProperty>>(json, (JsonSerializerOptions)null));
 
             entity.HasQueryFilter(p => !p.IsDeleted);
+        });
+
+        modelBuilder.Entity<OutboxMessage>(entity =>
+        {
+            entity.ToTable("EventStore", "catalog");
         });
 
         base.OnModelCreating(modelBuilder);
