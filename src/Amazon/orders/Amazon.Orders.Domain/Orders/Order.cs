@@ -9,7 +9,7 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
     public CustomerInfo Customer { get; private set; }
 
     private readonly List<OrderItem> _orderItems = new();
-    public IReadOnlyCollection<OrderItem> Items => _orderItems.ToList();
+    public IReadOnlyCollection<OrderItem> Items => _orderItems.AsReadOnly();
 
     public Order(Guid orderId, CustomerInfo customer, List<OrderItem> orderItems) : base(orderId)
     {

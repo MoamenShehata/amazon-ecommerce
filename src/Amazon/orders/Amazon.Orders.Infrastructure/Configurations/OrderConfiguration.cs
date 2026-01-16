@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Amazon.Orders.Domain.Orders;
+using MassTransit.Transports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,6 +33,9 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
                 b.Property(d => d.Name);
             });
         });
+
+        builder.Navigation(o => o.Items).HasField("_orderItems")
+             .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }
 
