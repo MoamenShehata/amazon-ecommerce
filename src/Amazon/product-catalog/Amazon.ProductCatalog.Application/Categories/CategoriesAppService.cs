@@ -3,9 +3,9 @@ using Amazon.ProductCatalog.Application.Categories.Dtos;
 using Amazon.ProductCatalog.Application.Categories.Mappers;
 using Amazon.ProductCatalog.Application.Common.Dtos;
 using Amazon.ProductCatalog.Domain.Categories;
-using Amazon.ProductCatalog.Domain.Categories.Events;
 using Amazon.ProductCatalog.Domain.Products;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Categories.Events;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.Repository.Pagination;
@@ -18,7 +18,7 @@ public class CategoriesAppService(
     CategoriesService _categoriesService,
     IEfCoreRepository<Category, Guid> _categoriesRepository,
     ProductsService _productsService,
-    IEfCoreRepository<OutboxMessage, int> _eventStore,
+    EventStoreService _eventStoreService,
     IUnitOfWork _unitOfWork
     )
 {
@@ -71,8 +71,7 @@ public class CategoriesAppService(
 
     public async Task SoftDeleteCategories()
     {
-        var softDeleteEvents = await _eventStore
-            .GetAllAsync(e => e.Type == typeof(CategorySoftDeletedEvent).AssemblyQualifiedName && !e.HandledAt.HasValue);
+        var softDeleteEvents = await _eventStoreService.GetAllPendingAsync(typeof(CategorySoftDeletedEvent));
 
         foreach (var message in softDeleteEvents)
             await HandleCategorySoftDelete(message);

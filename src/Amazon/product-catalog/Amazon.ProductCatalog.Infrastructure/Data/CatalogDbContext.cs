@@ -70,7 +70,7 @@ public class CatalogDbContext : DbContextBase
 
         modelBuilder.Entity<OutboxMessage>(entity =>
         {
-            entity.ToTable("EventStore", "catalog");
+            entity.ToTable("OutboxMessages", "catalog");
         });
 
         base.OnModelCreating(modelBuilder);

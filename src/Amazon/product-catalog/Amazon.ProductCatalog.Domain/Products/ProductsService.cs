@@ -1,7 +1,7 @@
 ﻿using Amazon.ProductCatalog.Domain.Categories;
-using Amazon.ProductCatalog.Domain.Products.Events;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Products.Events;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.ProductCatalog.Domain.Products;

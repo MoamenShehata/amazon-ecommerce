@@ -1,5 +1,5 @@
 ﻿using Amazon.Inventory.Domain.Orders;
-using Amazon.SharedKernel.IntegrationEvents.Orders;
+using Amazon.SharedKernel.Orders.Events;
 using MassTransit;
 using Moamen.SDKs.SharedKernel;
 
@@ -7,9 +7,9 @@ namespace Amazon.Inventory.Application.Products.EventConsumers
 {
     public class OrderCreatedEventHandler(
         OrdersService _ordersService,
-        IUnitOfWork _unitOfWork) : IConsumer<OrderCreatedIntegrationEvent>
+        IUnitOfWork _unitOfWork) : IConsumer<OrderCreatedEvent>
     {
-        public async Task Consume(ConsumeContext<OrderCreatedIntegrationEvent> context)
+        public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
         {
             var orderEvent = context.Message;
 

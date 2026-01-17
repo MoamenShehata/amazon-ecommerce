@@ -26,7 +26,7 @@ public class OrdersContext : DbContextBase
 
         modelBuilder.Entity<OutboxMessage>(entity =>
         {
-            entity.ToTable("EventStore", "orders");
+            entity.ToTable("OutboxMessages", "orders");
         });
 
         base.OnModelCreating(modelBuilder);

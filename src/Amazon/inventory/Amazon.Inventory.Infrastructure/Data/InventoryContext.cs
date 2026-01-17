@@ -37,7 +37,7 @@ namespace Amazon.Inventory.Infrastructure.Data
 
             modelBuilder.Entity<OutboxMessage>(entity =>
             {
-                entity.ToTable("EventStore", "inventory");
+                entity.ToTable("OutboxMessages", "inventory");
             });
 
             base.OnModelCreating(modelBuilder);

@@ -1,6 +1,6 @@
-﻿using Amazon.Orders.Domain.Orders.Events;
-using Amazon.Orders.Domain.Orders.ValueObjects;
+﻿using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Products;
+using Amazon.SharedKernel.Orders.Events;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.Orders.Domain.Orders.Factories
@@ -20,7 +20,7 @@ namespace Amazon.Orders.Domain.Orders.Factories
             var orderItems = products.Select(orderItemFactory).ToList();
             var order = new Order(orderId, customerInfo, orderItems);
 
-            order.RaiseEvent(new OrderCreatedEvent(DateTime.UtcNow, order.Id, orderItems.Select(i => new KeyValuePair<Guid, int>(i.ProductInfo.ProductId, i.Quantity)).ToList()));
+            order.RaiseEvent(new OrderCreatedEvent(order.Id, orderItems.Select(i => new KeyValuePair<Guid, int>(i.ProductInfo.ProductId, i.Quantity)).ToList()));
 
             return order;
         }

@@ -1,6 +1,5 @@
-﻿using System.Text.Json;
-using Amazon.SharedKernel.IntegrationEvents.Orders;
-using Amazon.SharedKernel.IntegrationEvents.Products;
+﻿using System.Reflection;
+using System.Text.Json;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,13 +14,6 @@ public class IntegrationEventsPublishJob(
         IServiceScopeFactory _serviceScopeFactory
         ) : BackgroundService
 {
-    private Dictionary<string, Type> _mappers = new()
-    {
-        {"Amazon.ProductCatalog.Domain.Products.Events.ProductCreatedEvent, Amazon.ProductCatalog.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(ProductCreatedIntegrationEvent) },
-        {"Amazon.Orders.Domain.Orders.Events.OrderCreatedEvent, Amazon.Orders.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(OrderCreatedIntegrationEvent) },
-        {"Amazon.Inventory.Domain.Products.Events.ProductInventoryUpdatedEvent, Amazon.Inventory.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(ProductInventoryUpdatedIntegrationEvent) }
-    };
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("ProductIntegrationEventsPublishJob started");
@@ -39,10 +31,9 @@ public class IntegrationEventsPublishJob(
             {
                 try
                 {
-                    var success = _mappers.TryGetValue(item.Type, out Type eventType);
-                    if (!success) continue;
-
-                    var integrationEvent = JsonSerializer.Deserialize(item.Body, eventType);
+                    var ass = Assembly.GetExecutingAssembly();
+                    var t = ass.GetType(item.Type);
+                    var integrationEvent = JsonSerializer.Deserialize(item.Body, t);
 
                     await publishEndpoint.Publish(integrationEvent);
                     item.MarkAsSent();

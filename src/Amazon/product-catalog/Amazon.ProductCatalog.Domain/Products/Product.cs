@@ -1,5 +1,4 @@
-﻿using Amazon.ProductCatalog.Domain.Products.Events;
-using Amazon.ProductCatalog.Domain.Products.ValueObjects;
+﻿using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.Common;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;

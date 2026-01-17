@@ -1,6 +1,6 @@
-﻿using Amazon.Inventory.Domain.Products.Events;
-using Amazon.Inventory.Domain.Products.ValueObjects;
+﻿using Amazon.Inventory.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Products.Events;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
