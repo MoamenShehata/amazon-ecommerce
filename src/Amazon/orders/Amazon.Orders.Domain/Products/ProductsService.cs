@@ -5,14 +5,14 @@ namespace Amazon.Orders.Domain.Products
 {
     public class ProductsService(IRepository<Product, Guid> _productsRepo)
     {
-        public async Task<RestResponse<bool>> ValidateProducts(List<Guid> productIds)
+        public async Task<RestResponse<bool>> ValidateProducts(List<KeyValuePair<Guid, int>> orderItems)
         {
-            var products = (await _productsRepo.GetAllAsync(p => productIds.Contains(p.Id), x => new { x.Id, x.InStockCount })).ToList();
-            if (products.Count == 0)
+            var products = (await _productsRepo.GetAllAsync(p => orderItems.Select(x => x.Key).Contains(p.Id), x => new { x.Id, x.InStockCount })).ToList();
+            if (products.Count != orderItems.Count)
                 return RestResponse<bool>.NotFound("Some of the products were not found!");
 
-            if (products.Count(p => p.InStockCount == 0) > 0)
-                return RestResponse<bool>.BadRequest(new BadRequestModel("Cannot full fill this whole order request due to lack of some products in inventory"));
+            if (products.Any(p => p.InStockCount < orderItems.FirstOrDefault(x => x.Key == p.Id).Value))
+                return RestResponse<bool>.BadRequest("Cannot full fill this whole order request due to lack of some products in inventory");
 
             return RestResponse<bool>.Success(true);
         }

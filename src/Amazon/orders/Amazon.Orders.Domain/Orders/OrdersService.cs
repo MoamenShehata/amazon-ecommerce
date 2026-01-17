@@ -2,6 +2,7 @@
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Products;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.Orders.Domain.Orders;
@@ -14,9 +15,9 @@ public class OrdersService(
 {
     public async Task<RestResponse<Order>> PlaceOrderAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems)
     {
-        var productsValidationResult = await _productsService.ValidateProducts(cartItems.Select(x => x.Key).ToList());
+        var productsValidationResult = await _productsService.ValidateProducts(cartItems);
         if (!productsValidationResult.IsSuccess)
-            return RestResponse<Order>.Failure(productsValidationResult.Error.ToString());
+            return productsValidationResult.MapTo((Order)null);
 
         //validate customer data
 
