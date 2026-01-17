@@ -18,7 +18,8 @@ public class IntegrationEventsPublishJob(
     private Dictionary<string, Type> _mappers = new()
     {
         {"Amazon.ProductCatalog.Domain.Products.Events.ProductCreatedEvent, Amazon.ProductCatalog.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(ProductCreatedIntegrationEvent) },
-        {"Amazon.Orders.Domain.Orders.Events.OrderCreatedEvent, Amazon.Orders.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(OrderCreatedIntegrationEvent) }
+        {"Amazon.Orders.Domain.Orders.Events.OrderCreatedEvent, Amazon.Orders.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(OrderCreatedIntegrationEvent) },
+        {"Amazon.Inventory.Domain.Products.Events.ProductInventoryUpdatedEvent, Amazon.Inventory.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",typeof(ProductInventoryUpdatedIntegrationEvent) }
     };
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

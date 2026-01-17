@@ -5,15 +5,15 @@ using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.Orders.Application.Products.Events.Consumers;
 
-public class ProductCreatedEventHandler(
+public class ProductInventoryUpdatedIntegrationEventHandler(
     ProductsService _productsService,
-    IUnitOfWork _unitOfWork) : IConsumer<ProductCreatedIntegrationEvent>
+    IUnitOfWork _unitOfWork) : IConsumer<ProductInventoryUpdatedIntegrationEvent>
 {
-    public async Task Consume(ConsumeContext<ProductCreatedIntegrationEvent> context)
+    public async Task Consume(ConsumeContext<ProductInventoryUpdatedIntegrationEvent> context)
     {
         var message = context.Message;
 
-        _productsService.Create(message.ProductId, message.Name, 50, message.UnitPrice);
+        await _productsService.UpdateInventoryAsync(message.ProductId, message.CurrentInventory);
         await _unitOfWork.CommitAsync();
     }
 }

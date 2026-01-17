@@ -1,6 +1,7 @@
 using Amazon.Inventory.Application;
 using Amazon.Inventory.Grpc.Services;
 using Amazon.Inventory.Infrastructure;
+using Amazon.SharedKernel.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddGrpc();
 builder.Services
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration);
+
+builder.Services.AddHostedService<IntegrationEventsPublishJob>();
 
 var app = builder.Build();
 

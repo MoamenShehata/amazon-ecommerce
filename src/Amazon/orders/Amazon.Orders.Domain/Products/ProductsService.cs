@@ -22,5 +22,13 @@ namespace Amazon.Orders.Domain.Products
             var product = new Product(id, name, inStockCount, currentPrice);
             _productsRepo.Add(product);
         }
+
+        public async Task UpdateInventoryAsync(Guid id, int newInventory)
+        {
+            var product = await _productsRepo.GetInstanceAsync(id);
+            if (product == null) return;
+
+            product.UpdateInStockCount(newInventory);
+        }
     }
 }

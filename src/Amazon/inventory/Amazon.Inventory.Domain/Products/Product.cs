@@ -1,4 +1,5 @@
-﻿using Amazon.Inventory.Domain.Products.ValueObjects;
+﻿using Amazon.Inventory.Domain.Products.Events;
+using Amazon.Inventory.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
@@ -32,6 +33,8 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
     {
         _inventoryChanges.Add(new(Id, Inventory.InStockCount, newInventory.InStockCount));
         Inventory = new(newInventory);
+
+        RaiseEvent(new ProductInventoryUpdatedEvent(Id, Inventory.InStockCount));
     }
 
     #region Infra

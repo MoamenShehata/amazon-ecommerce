@@ -22,6 +22,7 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         return new OrderItem(orderId, new ProductInfo(Id, CurrentPrice, Name), quantity);
     }
 
+    public void UpdateInStockCount(int inStockCount) => InStockCount = inStockCount;
     #region Infra
     private Product() : base(Guid.Empty) { }
     #endregion

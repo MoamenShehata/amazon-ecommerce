@@ -2,6 +2,7 @@
 using Amazon.Inventory.Domain.Products.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.Inventory.Infrastructure.Data
 {
@@ -10,6 +11,9 @@ namespace Amazon.Inventory.Infrastructure.Data
         public InventoryContext(DbContextOptions<InventoryContext> options) : base(options) { }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<OutboxMessage> EventStore { get; private set; }
+
+        public override bool AutoSaveDomainEvents => true;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +32,12 @@ namespace Amazon.Inventory.Infrastructure.Data
 
                     b.WithOwner().HasForeignKey(x => x.ProductId);
                 });
+            });
+
+
+            modelBuilder.Entity<OutboxMessage>(entity =>
+            {
+                entity.ToTable("EventStore", "inventory");
             });
 
             base.OnModelCreating(modelBuilder);
