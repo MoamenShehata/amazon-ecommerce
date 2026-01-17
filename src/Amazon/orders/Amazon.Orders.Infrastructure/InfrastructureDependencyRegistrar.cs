@@ -7,16 +7,15 @@ using Moamen.SDKs.Repository.Extensions;
 
 namespace Amazon.Orders.Infrastructure
 {
-    public static class ApplicationDependencyRegistrar
+    public static class InfrastructureDependencyRegistrar
     {
         public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services,
             IConfiguration configuration)
         {
             services
-                .AddDbContext<OrdersContext>(op => op.UseSqlServer(configuration.GetConnectionString("Orders")))
+                //.AddDbContext<OrdersContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")))
                 .AddGenericRepos()
-                .AddOutboxServices()
-                .AddBaseContext<OrdersContext>()
+                .AddBaseContext<OrdersContext>(op => op.UseSqlServer(configuration.GetConnectionString("Orders")))
                 ;
 
             return services;

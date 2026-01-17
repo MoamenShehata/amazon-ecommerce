@@ -3,6 +3,8 @@ using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Products;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 
@@ -14,6 +16,9 @@ public class OrdersContext : DbContextBase
 
     public DbSet<Order> Orders { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<OutboxMessage> EventStore { get; private set; }
+
+    public override bool AutoSaveDomainEvents => true;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

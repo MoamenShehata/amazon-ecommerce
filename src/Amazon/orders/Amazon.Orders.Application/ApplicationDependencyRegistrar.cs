@@ -13,6 +13,11 @@ namespace Amazon.Orders.Application
         public static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services,
             IConfiguration configuration)
         {
+            //services.AddMediatR(config =>
+            //{
+            //    config.RegisterServicesFromAssembly(typeof(ApplicationDependencyRegistrar).Assembly);
+            //});
+
             services.AddMassTransit(config =>
             {
                 config.SetKebabCaseEndpointNameFormatter();

@@ -1,12 +1,9 @@
 ﻿using Amazon.ProductCatalog.Infrastructure.Data;
-using Amazon.ProductCatalog.Infrastructure.Interceptors;
 using MassTransit;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moamen.SDKs.Repository.Extensions;
-using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.ProductCatalog.Infrastructure
 {
@@ -15,17 +12,12 @@ namespace Amazon.ProductCatalog.Infrastructure
         public static void RegisterInfrastructureDependencies(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddDbContext<CatalogDbContext>((sp, options) =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("CatalogDatabase"));
-                options.AddInterceptors(new DomainEventsPublisherInterceptor(sp.GetRequiredService<IMediator>()));
-            });
-
             services
+                //.AddDbContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")))
                 .AddGenericRepos()
-                .AddOutboxServices()
-                .AddBaseContext<CatalogDbContext>()
-                ;
+                //.AddOutboxServices()
+                .AddBaseContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")));
+            ;
 
             services.AddMassTransit(config =>
             {

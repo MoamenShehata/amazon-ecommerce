@@ -13,9 +13,8 @@ namespace Amazon.Inventory.Infrastructure
             IConfiguration configuration)
         {
             services
-                .AddDbContext<InventoryContext>(op => op.UseSqlServer(configuration.GetConnectionString("Inventory")))
                 .AddGenericRepos()
-                .AddBaseContext<InventoryContext>()
+                .AddBaseContext<InventoryContext>(op => op.UseSqlServer(configuration.GetConnectionString("Inventory")))
                 ;
 
             return services;

@@ -1,9 +1,7 @@
-﻿using System.Xml.Linq;
-using Amazon.ProductCatalog.Domain.Categories;
+﻿using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products.Events;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
-using MediatR;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.ProductCatalog.Domain.Products;

@@ -30,8 +30,8 @@ public class IntegrationEventsPublishJob(
             _logger.LogInformation("Background work running at {time}", DateTime.UtcNow);
 
             var scope = _serviceScopeFactory.CreateScope();
-            var eventStoreService = scope.ServiceProvider.GetRequiredService<EventStoreService>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var eventStoreService = scope.ServiceProvider.GetRequiredService<EventStoreService>();
             var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
 
             foreach (var item in await eventStoreService.GetAllPendingAsync())

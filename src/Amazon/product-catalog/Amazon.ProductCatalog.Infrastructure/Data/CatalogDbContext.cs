@@ -20,6 +20,8 @@ public class CatalogDbContext : DbContextBase
     public DbSet<Product> Products { get; private set; }
     public DbSet<OutboxMessage> EventStore { get; private set; }
 
+    public override bool AutoSaveDomainEvents => true;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Category>(entity =>

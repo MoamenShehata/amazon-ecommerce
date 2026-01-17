@@ -7,7 +7,7 @@ namespace Amazon.Orders.Domain.Orders.Events
         public Guid OrderId { get; }
         public List<KeyValuePair<Guid, int>> OrderItems { get; }
 
-        internal OrderCreatedEvent(DateTime occurredOn, Guid orderId, List<KeyValuePair<Guid, int>> orderItems) : base(occurredOn)
+        internal OrderCreatedEvent(DateTime occurredOn, Guid orderId, List<KeyValuePair<Guid, int>> orderItems) : base(occurredOn, true)
         {
             OrderId = orderId;
             OrderItems = orderItems;
