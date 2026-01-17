@@ -6,7 +6,7 @@ using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.Inventory.Application.Products.EventConsumers;
 
-public class ProductCreatedEventHandler(
+public class InventoryProductCreatedEventHandler(
 IRepository<Product, Guid> _productsRepo,
 IUnitOfWork _unitOfWork) : IConsumer<ProductCreatedIntegrationEvent>
 {
