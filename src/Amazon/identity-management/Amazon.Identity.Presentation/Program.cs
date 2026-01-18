@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Amazon.Identity.Presentation;
+using Amazon.Identity.Presentation.Data.Seed;
 using Duende.IdentityServer.Licensing;
 using Serilog;
 
@@ -42,6 +43,8 @@ try
             Console.ReadKey();
         });
     }
+
+    await UsersSeeder.SeedAsync(app.Services);
 
     app.Run();
 }
