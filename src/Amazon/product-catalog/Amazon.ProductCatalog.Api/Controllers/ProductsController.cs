@@ -12,7 +12,7 @@ public class ProductsController(ProductsAppService _productsAppService,
     ICatalogReadServices _catalogReadServices) : ApiControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetProductsPage(Guid id, [FromQuery] PageRequest pageRequest)
+    public async Task<IActionResult> GetProductsPage([FromQuery] PageRequest pageRequest)
     {
         return Ok(await _catalogReadServices.GetProductsPageAsync(pageRequest));
     }
