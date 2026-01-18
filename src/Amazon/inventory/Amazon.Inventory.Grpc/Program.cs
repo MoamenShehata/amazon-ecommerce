@@ -1,17 +1,8 @@
-using Amazon.Inventory.Application;
 using Amazon.Inventory.Grpc.Services;
-using Amazon.Inventory.Infrastructure;
-using Amazon.SharedKernel.Jobs;
+using Amazon.Inventory.Grpc;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddGrpc();
-builder.Services
-    .RegisterApplicationDependencies(builder.Configuration)
-    .RegisterInfrastructureDependencies(builder.Configuration);
-
-builder.Services.AddHostedService<IntegrationEventsPublishJob>();
+builder.AddServices();
 
 var app = builder.Build();
 

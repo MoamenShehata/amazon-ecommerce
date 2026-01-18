@@ -9,7 +9,7 @@ namespace Amazon.ProductCatalog.Infrastructure
 {
     public static class InfrastructureDependencyRegistrar
     {
-        public static void RegisterInfrastructureDependencies(this IServiceCollection services,
+        public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services,
             IConfiguration configuration)
         {
             services
@@ -36,6 +36,8 @@ namespace Amazon.ProductCatalog.Infrastructure
                     configurator.ConfigureEndpoints(ctxt);
                 });
             });
+
+            return services;
         }
     }
 }
