@@ -5,6 +5,7 @@ import { AuthenticatedUser } from '../models/authenticated-user.model';
 import { authConfig } from '../constants/oidc-config';
 import { UserClaimTypes } from '../constants/custom-claim.constants';
 import { StorageService } from '../../core/services/storage-service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class AuthService {
   constructor(
     private storageService: StorageService,
     private oauthService: OAuthService,
+    private router: Router,
   ) {
     this.setAuthenticatedUser();
   }
@@ -56,6 +58,7 @@ export class AuthService {
     this.oauthService.tryLoginCodeFlow().then(() => {
       if (this.oauthService.hasValidAccessToken()) {
         this.setAuthenticatedUser(true);
+        this.router.navigate(['/']);
       }
     });
   }
