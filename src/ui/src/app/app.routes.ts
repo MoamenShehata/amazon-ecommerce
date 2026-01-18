@@ -8,4 +8,11 @@ export const routes: Routes = [
         (m) => m.authRoutes,
       ),
   },
+  {
+    path: 'catalog',
+    loadChildren: () =>
+      import('./poduct-catalog/product-catalog.routes').then(
+        (m) => m.catalogRoutes,
+      ),
+  },
 ];

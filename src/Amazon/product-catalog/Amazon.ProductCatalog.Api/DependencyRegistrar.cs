@@ -18,6 +18,17 @@ public static class DependencyRegistrar
             .AddHostedService<SyncReadModelJob>()
             ;
 
+        builder.Services.AddCors(op =>
+        {
+            op.AddPolicy("CORS_Policy", policy =>
+            {
+                policy.WithOrigins("http://localhost:4200")
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+        });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
