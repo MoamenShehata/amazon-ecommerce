@@ -2,8 +2,8 @@
     - services
         - customers
         - product-catalog  => DONE
-        - orders
-        - inventory
+        - orders  => DONE
+        - inventory  => DONE
         - shipping
         - payment
         - notifications
