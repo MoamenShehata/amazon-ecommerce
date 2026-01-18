@@ -1,0 +1,323 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Create New Product</h2>
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Success Message -->
+          <div
+            *ngIf="successMessage"
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+          >
+            {{ successMessage }}
+          </div>
+
+          <!-- Error Message -->
+          <div
+            *ngIf="errorMessage"
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            {{ errorMessage }}
+          </div>
+
+          <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+            <!-- Category ID -->
+            <div class="mb-3">
+              <label for="categoryId" class="form-label">Category ID</label>
+              <input
+                type="text"
+                class="form-control"
+                id="categoryId"
+                formControlName="categoryId"
+                placeholder="Enter category ID (UUID)"
+                [class.is-invalid]="
+                  createForm.get('categoryId')?.invalid &&
+                  createForm.get('categoryId')?.touched
+                "
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  createForm.get('categoryId')?.invalid &&
+                  createForm.get('categoryId')?.touched
+                "
+              >
+                Category ID is required.
+              </div>
+            </div>
+
+            <!-- Product Name -->
+            <div class="mb-3">
+              <label for="name" class="form-label">Product Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                placeholder="Enter product name"
+                [class.is-invalid]="
+                  createForm.get('name')?.invalid &&
+                  createForm.get('name')?.touched
+                "
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  createForm.get('name')?.invalid &&
+                  createForm.get('name')?.touched
+                "
+              >
+                <span *ngIf="createForm.get('name')?.errors?.['required']"
+                  >Product name is required.</span
+                >
+                <span *ngIf="createForm.get('name')?.errors?.['minlength']">
+                  Product name must be at least 3 characters.
+                </span>
+              </div>
+            </div>
+
+            <!-- Stock Count -->
+            <div class="mb-3">
+              <label for="inStockCount" class="form-label"
+                >In Stock Count</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="inStockCount"
+                formControlName="inStockCount"
+                placeholder="0"
+                min="0"
+                [class.is-invalid]="
+                  createForm.get('inStockCount')?.invalid &&
+                  createForm.get('inStockCount')?.touched
+                "
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="
+                  createForm.get('inStockCount')?.invalid &&
+                  createForm.get('inStockCount')?.touched
+                "
+              >
+                In Stock Count must be a non-negative number.
+              </div>
+            </div>
+
+            <!-- Price -->
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="price" class="form-label">Unit Price</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="price"
+                    formControlName="price"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    [class.is-invalid]="
+                      createForm.get('price')?.invalid &&
+                      createForm.get('price')?.touched
+                    "
+                  />
+                </div>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    createForm.get('price')?.invalid &&
+                    createForm.get('price')?.touched
+                  "
+                >
+                  Price must be a non-negative number.
+                </div>
+              </div>
+
+              <!-- Minimum Price -->
+              <div class="col-md-4 mb-3">
+                <label for="minimumPrice" class="form-label"
+                  >Minimum Price</label
+                >
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="minimumPrice"
+                    formControlName="minimumPrice"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    [class.is-invalid]="
+                      createForm.get('minimumPrice')?.invalid &&
+                      createForm.get('minimumPrice')?.touched
+                    "
+                  />
+                </div>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    createForm.get('minimumPrice')?.invalid &&
+                    createForm.get('minimumPrice')?.touched
+                  "
+                >
+                  Minimum Price must be a non-negative number.
+                </div>
+              </div>
+
+              <!-- Maximum Price -->
+              <div class="col-md-4 mb-3">
+                <label for="maximumPrice" class="form-label"
+                  >Maximum Price</label
+                >
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="maximumPrice"
+                    formControlName="maximumPrice"
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    [class.is-invalid]="
+                      createForm.get('maximumPrice')?.invalid &&
+                      createForm.get('maximumPrice')?.touched
+                    "
+                  />
+                </div>
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    createForm.get('maximumPrice')?.invalid &&
+                    createForm.get('maximumPrice')?.touched
+                  "
+                >
+                  Maximum Price must be a non-negative number.
+                </div>
+              </div>
+            </div>
+
+            <!-- Properties Section -->
+            <div class="card mt-4 mb-4">
+              <div class="card-header bg-secondary">
+                <h5 class="mb-0 text-white">Product Properties</h5>
+              </div>
+              <div class="card-body">
+                <div *ngIf="propertiesArray.length === 0" class="text-muted">
+                  No properties added yet. Click "Add Property" to get started.
+                </div>
+
+                <div
+                  [formArrayName]="'properties'"
+                  *ngFor="
+                    let property of propertiesArray.controls;
+                    let i = index
+                  "
+                >
+                  <div [formGroupName]="i" class="row mb-3">
+                    <div class="col-md-5">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Property Name"
+                        formControlName="name"
+                        [class.is-invalid]="
+                          property.get('name')?.invalid &&
+                          property.get('name')?.touched
+                        "
+                      />
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          property.get('name')?.invalid &&
+                          property.get('name')?.touched
+                        "
+                      >
+                        Property name is required.
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Property Value"
+                        formControlName="value"
+                        [class.is-invalid]="
+                          property.get('value')?.invalid &&
+                          property.get('value')?.touched
+                        "
+                      />
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          property.get('value')?.invalid &&
+                          property.get('value')?.touched
+                        "
+                      >
+                        Property value is required.
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <button
+                        type="button"
+                        class="btn btn-danger w-100"
+                        (click)="removeProperty(i)"
+                        [disabled]="isSubmitting"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="addProperty()"
+                  [disabled]="isSubmitting"
+                >
+                  <i class="bi bi-plus"></i> Add Property
+                </button>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="d-flex gap-2 justify-content-end">
+              <button
+                type="button"
+                class="btn btn-light"
+                (click)="resetForm()"
+                [disabled]="isSubmitting"
+              >
+                Reset
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="createForm.invalid || isSubmitting"
+              >
+                <span *ngIf="!isSubmitting">Create Product</span>
+                <span *ngIf="isSubmitting">
+                  <span
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Creating...
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

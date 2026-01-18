@@ -1,6 +1,15 @@
-<div class="row p-5" *ngIf="productsPage">
-  <product-preview
-    *ngFor="let product of productsPage.items"
-    [product]="product"
-  ></product-preview>
+<div class="container p-2">
+  <a
+    routerLink="/catalog/products/create"
+    class="btn btn-success"
+    *ngIf="isAdminUser"
+    >Add New</a
+  >
+  <div class="row mt-4">
+    <ng-container *ngIf="productsPage">
+      <div class="col-3" *ngFor="let product of productsPage.items">
+        <product-preview [product]="product"></product-preview>
+      </div>
+    </ng-container>
+  </div>
 </div>
