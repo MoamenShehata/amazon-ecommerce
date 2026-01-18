@@ -1,6 +1,6 @@
-﻿//using Amazon.ProductCatalog.Domain.Categories;
+﻿//using Amazon.ProductCatalog.Domain.CategoryFullName;
 
-//namespace Amazon.ProductCatalog.Domain.Tests.Categories
+//namespace Amazon.ProductCatalog.Domain.Tests.CategoryFullName
 //{
 
 //    public class CategoriesServiceShould

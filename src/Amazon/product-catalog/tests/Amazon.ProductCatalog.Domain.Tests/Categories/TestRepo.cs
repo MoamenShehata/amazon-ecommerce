@@ -1,8 +1,8 @@
 ﻿//using System.Linq.Expressions;
-//using Amazon.ProductCatalog.Domain.Categories;
+//using Amazon.ProductCatalog.Domain.CategoryFullName;
 //using Moamen.SDKs.Repository;
 
-//namespace Amazon.ProductCatalog.Domain.Tests.Categories
+//namespace Amazon.ProductCatalog.Domain.Tests.CategoryFullName
 //{
 //    public class TestRepo : IRepository<Category, Guid>
 //    {

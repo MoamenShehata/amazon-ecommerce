@@ -1,6 +1,7 @@
 ﻿using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.Categories.Events;
+using MassTransit.Middleware;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
@@ -9,6 +10,7 @@ namespace Amazon.ProductCatalog.Domain.Categories;
 public class Category : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public string Name { get; private set; }
+    public string FullName { get; private set; }
 
     public Guid? ParentCategoryId { get; private set; }
     public Category? ParentCategory { get; private set; }
@@ -27,6 +29,9 @@ public class Category : AuditableAggregate<Guid>, IEntity<Guid>
 
     private void SetParentCategory(Category? newParentCategory)
     {
+        var parentsName = newParentCategory != null ? $",{newParentCategory.FullName}" : string.Empty;
+        FullName = $"{Name}{parentsName}";
+
         if (newParentCategory is null) return;
 
         if (newParentCategory.Id == Id || newParentCategory == this)
@@ -53,5 +58,8 @@ public class Category : AuditableAggregate<Guid>, IEntity<Guid>
         IsDeleted = true;
         RaiseEvent(new CategorySoftDeletedEvent(Id, orphanProductsNewCategoryId));
     }
+
+    #region Infra
     private Category() : base(Guid.Empty) { }
+    #endregion
 }

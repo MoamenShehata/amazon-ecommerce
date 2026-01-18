@@ -27,12 +27,7 @@ namespace Amazon.ProductCatalog.Api.Jobs
 
                 foreach (var productCreatedEvent in events)
                 {
-                    // needs refactoring
-                    var category = await categoryAppService.GetByIdAsync(productCreatedEvent.CategoryId);
-
-                    var categories = category.Value.Name + "," + string.Join(",", category.Value.Children);
-
-                    await service.InsertProductAsync(productCreatedEvent.ProductId, productCreatedEvent.Name, categories, productCreatedEvent.UnitPrice);
+                    await service.InsertProductAsync(productCreatedEvent.ProductId, productCreatedEvent.Name, productCreatedEvent.CategoryFullName, productCreatedEvent.UnitPrice);
                 }
 
 

@@ -8,21 +8,22 @@ namespace Amazon.ProductCatalog.Domain.Products;
 
 public class ProductsService(
     IEfCoreRepository<Category, Guid> _categoriesRepository,
+    CategoriesService _categoriesService,
     IEfCoreRepository<Product, Guid> _productsRepository
     )
 {
     public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, int inStockCount, ProductPrice price, List<ProductProperty> properties)
     {
-        var category = await _categoriesRepository.GetInstanceAsync(categoryId);
-        if (category is null)
+        var categoryResult = await _categoriesService.GetByIdAsync(categoryId, true);
+        if (categoryResult is null)
             return RestResponse<(Product, Category)>.NotFound($"Category with id {categoryId} not found");
 
-        var product = category.NewProduct(name, price, properties);
-        product.RaiseEvent(new ProductCreatedEvent(categoryId, product.Id, product.Name, inStockCount, product.Price.Amount));
+        var product = categoryResult.Value.NewProduct(name, price, properties);
+        product.RaiseEvent(new ProductCreatedEvent(categoryId, product.Id, product.Name, inStockCount, product.Price.Amount, categoryResult.Value.FullName));
 
         _productsRepository.Add(product);
 
-        return RestResponse<(Product, Category)>.Created((product, category), product.Id.ToString());
+        return RestResponse<(Product, Category)>.Created((product, categoryResult), product.Id.ToString());
     }
 
     public async Task<RestResponse<(Product, Category)>> GetWithCategoryByIdAsync(Guid productId)
