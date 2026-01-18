@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: '/catalog/products',
+  },
+  {
     path: 'auth',
     loadChildren: () =>
       import('./authentication/authentication.routes').then(

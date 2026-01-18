@@ -1,0 +1,16 @@
+<div class="card col-3">
+  <img
+    src="assets/images/cubes.png"
+    class="card-img-top"
+    alt="..."
+    style="padding: 40px"
+  />
+  <h5 class="card-header">{{ product.name }}</h5>
+  <div class="card-body">
+    <span
+      class="btn btn-primary mx-2"
+      *ngFor="let cat of product.categories.split(',')"
+      >{{ cat }}</span
+    >
+  </div>
+</div>
