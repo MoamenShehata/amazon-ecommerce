@@ -21,7 +21,7 @@ public class CatalogReadServices : ICatalogReadServices
     {
         var page = pageRequest.PageNumber == 1
             ? await _productsRepository.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn)
-            : await _productsRepository.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, (DateTime)pageRequest.LastSeenValue);
+            : await _productsRepository.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue));
 
         return new PagedResult<ProductForListModel, DateTime>(page.Items, page.TotalCount, page.LastSeenValue);
     }

@@ -26,7 +26,7 @@ public class CategoriesAppService(
     {
         var page = pageRequest.PageNumber == 1
             ? await _categoriesRepository.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn)
-            : await _categoriesRepository.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, (DateTime)pageRequest.LastSeenValue);
+            : await _categoriesRepository.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue));
 
         return new PagedResult<CategoryForListDto, DateTime>(page.Items.Select(x => x.ToDtoForList()), page.TotalCount, page.LastSeenValue);
     }
