@@ -16,15 +16,6 @@ export class LoginComponent extends AppServicesProvider {
   }
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      let returnUrlFromState = params['state'].split(';')[1];
-      if (returnUrlFromState)
-        this.storageService.save(
-          StorageKeys.returnUrl,
-          decodeURIComponent(returnUrlFromState),
-        );
-    });
-
     this.authService.processCodeFlowCallback();
   }
 }

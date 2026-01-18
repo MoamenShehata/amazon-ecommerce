@@ -32,7 +32,6 @@ export class AuthService {
   }
 
   setAuthenticatedUser(triggerLoginEvent = false) {
-    debugger;
     let userClaims = this.oauthService.getIdentityClaims();
 
     if (!userClaims) return;

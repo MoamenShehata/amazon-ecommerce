@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Duende.IdentityServer.Models;
 
 namespace Amazon.Identity.Presentation
@@ -9,6 +10,8 @@ namespace Amazon.Identity.Presentation
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResource(ClaimTypes.Role,[ClaimTypes.Role]),
+                new IdentityResources.Email(),
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -16,7 +19,6 @@ namespace Amazon.Identity.Presentation
             {
                 new ApiScope("scope1"),
                 new ApiScope("scope2"),
-                new ApiScope("email"),
             };
 
         public static IEnumerable<Client> Clients =>
@@ -36,7 +38,8 @@ namespace Amazon.Identity.Presentation
                     PostLogoutRedirectUris = { "http://localhost:4200" },
 
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "email" }
+                    AllowedScopes = { "openid", "profile", "email" },
+                    AlwaysIncludeUserClaimsInIdToken = true
                 },
             ];
     }

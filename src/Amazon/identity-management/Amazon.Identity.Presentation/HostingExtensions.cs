@@ -1,5 +1,6 @@
 using Amazon.Identity.Presentation.Data;
 using Amazon.Identity.Presentation.Models;
+using Amazon.Identity.Presentation.Profiles;
 using Duende.IdentityServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace Amazon.Identity.Presentation
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<CustomProfileService>()
                 .AddLicenseSummary();
 
             builder.Services.AddCors(op =>
