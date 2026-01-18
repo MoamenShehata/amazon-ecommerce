@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+.flx-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.flx-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.jc-sb {
+  justify-content: space-between;
+}
+
+.flx-row > * {
+  flex: 1;
+}

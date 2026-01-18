@@ -34,6 +34,17 @@ namespace Amazon.Identity.Presentation
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddLicenseSummary();
 
+            builder.Services.AddCors(op =>
+            {
+                op.AddPolicy("CORS_Policy", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                    .AllowCredentials()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                });
+            });
+
             builder.Services.AddAuthentication()
                 .AddGoogle(options =>
                 {
@@ -57,6 +68,8 @@ namespace Amazon.Identity.Presentation
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CORS_Policy");
 
             app.UseStaticFiles();
             app.UseRouting();

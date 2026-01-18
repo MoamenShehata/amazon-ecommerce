@@ -16,38 +16,28 @@ namespace Amazon.Identity.Presentation
             {
                 new ApiScope("scope1"),
                 new ApiScope("scope2"),
+                new ApiScope("email"),
             };
 
         public static IEnumerable<Client> Clients =>
-            new Client[]
-            {
-                // m2m client credentials flow client
+            [
                 new Client
                 {
-                    ClientId = "m2m.client",
-                    ClientName = "Client Credentials Client",
-
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
-
-                    AllowedScopes = { "scope1" }
-                },
-
-                // interactive client using code flow + pkce
-                new Client
-                {
-                    ClientId = "interactive",
-                    ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
-
                     AllowedGrantTypes = GrantTypes.Code,
 
-                    RedirectUris = { "https://localhost:44300/signin-oidc" },
-                    FrontChannelLogoutUri = "https://localhost:44300/signout-oidc",
-                    PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
+                    ClientId = "amazon.angular",
+                    ClientSecrets = { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
+
+                    RequireClientSecret = false,
+                    RequirePkce = true,
+
+                    RedirectUris = { "http://localhost:4200/auth/login","http://localhost:4200/silent-refresh.html" },
+                    FrontChannelLogoutUri = "http://localhost:4200/signout-oidc",
+                    PostLogoutRedirectUris = { "http://localhost:4200" },
 
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "scope2" }
+                    AllowedScopes = { "openid", "profile", "email" }
                 },
-            };
+            ];
     }
 }
