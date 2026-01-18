@@ -1,4 +1,3 @@
-using Amazon.ProductCatalog.Application.Categories.Dtos;
 using Amazon.ProductCatalog.Application.Products.Dtos;
 using Amazon.ProductCatalog.Application.Products.Mappers;
 using Amazon.ProductCatalog.Domain.Products;
@@ -14,7 +13,7 @@ public class ProductsAppService(
     ProductsService _productsService,
     IEfCoreRepository<Product, Guid> _productsRepository,
     IUnitOfWork _unitOfWork
-)
+    )
 {
     public async Task<RestResponse<ProductDto>> CreateAsync(CreateProductDto createProductDto)
     {

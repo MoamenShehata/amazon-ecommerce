@@ -1,6 +1,6 @@
 using Amazon.ProductCatalog.Application.Categories;
 using Amazon.ProductCatalog.Application.Categories.Dtos;
-using Amazon.ProductCatalog.Application.Common.Dtos;
+using Amazon.SharedKernel.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.ProductCatalog.Api.Controllers;

@@ -14,20 +14,4 @@ namespace Amazon.ProductCatalog.Application.Products.Dtos
     );
 
     public record ProductPropertyDto(string Name, string Value);
-
-    public record CreateProductDto(
-        Guid CategoryId,
-        string Name,
-        int InStockCount,
-        decimal Price,
-        decimal MinimumPrice,
-        decimal MaximumPrice,
-        List<ProductProperty> Properties
-    );
-
-    public record UpdateProductDto(
-        string Name,
-        decimal Price,
-        List<ProductProperty> Properties
-    );
 }

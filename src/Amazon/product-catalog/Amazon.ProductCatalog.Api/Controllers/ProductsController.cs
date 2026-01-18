@@ -1,13 +1,22 @@
 using Amazon.ProductCatalog.Application.Products;
 using Amazon.ProductCatalog.Application.Products.Dtos;
+using Amazon.ProductCatalog.Read.Services;
+using Amazon.SharedKernel.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.ProductCatalog.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController(ProductsAppService _productsAppService) : ApiControllerBase
+public class ProductsController(ProductsAppService _productsAppService,
+    ICatalogReadServices _catalogReadServices) : ApiControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> GetProductsPage(Guid id, [FromQuery] PageRequest pageRequest)
+    {
+        return Ok(await _catalogReadServices.GetProductsPageAsync(pageRequest));
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateProduct(
         [FromBody] CreateProductDto request)

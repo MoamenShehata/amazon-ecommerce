@@ -1,4 +1,7 @@
 ﻿using Amazon.ProductCatalog.Infrastructure.Data;
+using Amazon.ProductCatalog.Infrastructure.ReadModel;
+using Amazon.ProductCatalog.Infrastructure.ReadModel.Services;
+using Amazon.ProductCatalog.Read.Services;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +16,7 @@ namespace Amazon.ProductCatalog.Infrastructure
             IConfiguration configuration)
         {
             services
-                //.AddDbContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")))
                 .AddGenericRepos()
-                //.AddOutboxServices()
                 .AddBaseContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")));
             ;
 
@@ -36,6 +37,10 @@ namespace Amazon.ProductCatalog.Infrastructure
                     configurator.ConfigureEndpoints(ctxt);
                 });
             });
+
+            services
+                .AddScoped<ICatalogReadServices, CatalogReadServices>()
+                .AddDbContext<CatalogReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("CatalogRead")));
 
             return services;
         }

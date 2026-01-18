@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using Amazon.ProductCatalog.Application.Categories.Dtos;
 using Amazon.ProductCatalog.Application.Categories.Mappers;
-using Amazon.ProductCatalog.Application.Common.Dtos;
 using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Categories.Events;
+using Amazon.SharedKernel.Common;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.Repository.Pagination;

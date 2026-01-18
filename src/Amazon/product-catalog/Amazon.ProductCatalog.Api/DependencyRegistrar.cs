@@ -14,7 +14,9 @@ public static class DependencyRegistrar
 
         builder.Services
             .AddSharedJobs()
-            .AddHostedService<CategoriesSoftDeleteJob>();
+            .AddHostedService<CategoriesSoftDeleteJob>()
+            .AddHostedService<SyncReadModelJob>()
+            ;
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
