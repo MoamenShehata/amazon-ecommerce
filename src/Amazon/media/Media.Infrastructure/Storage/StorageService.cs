@@ -16,9 +16,9 @@ public class StorageService(IHostEnvironment _hostEnvironment) : IStorageService
         //var mimeType = result.ByMimeType().FirstOrDefault().MimeType;
 
         using (var stream = new MemoryStream(content))
-        using (var sw = new StreamWriter(stream))
+        using (var sw = File.OpenWrite(filePath))
         {
-            await sw.WriteAsync(filePath);
+            await stream.CopyToAsync(sw);
             return new MediaFile(filePath, "mimeType", Path.GetFileName(filePath), content.Length);
         }
     }
@@ -26,6 +26,10 @@ public class StorageService(IHostEnvironment _hostEnvironment) : IStorageService
     private string GenerateRandomFilePath(bool isPublic)
     {
         var filesDirectoryPath = isPublic ? "shared-files" : "private-files";
+        var directoryPath = Path.Combine(_hostEnvironment.ContentRootPath, filesDirectoryPath);
+
+        if (!Directory.Exists(directoryPath))
+            Directory.CreateDirectory(directoryPath);
 
         return Path.Combine(_hostEnvironment.ContentRootPath, filesDirectoryPath, Guid.NewGuid().ToString());
     }

@@ -1,4 +1,5 @@
-﻿using Media.Application.Storage;
+﻿using Amazon.SharedKernel.Media.Events;
+using Media.Application.Storage;
 using Media.Domain.Factories;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
@@ -11,11 +12,21 @@ namespace Media.Application
         IRepository<Domain.Media, Guid> _repository,
         IUnitOfWork _unitOfWork)
     {
+        public async Task<byte[]> GetMedia(Guid id)
+        {
+            var media = await _repository.GetInstanceAsync(id);
+            if (media is null) throw new Exception();
+
+            return File.ReadAllBytes(media.Path);
+        }
+
         public async Task CreateAsync(Guid mediaId, Guid ownerId, byte[] stream, bool isPublic)
         {
             var uploadedFile = await _storageService.UploadAsync(stream, isPublic);
 
             var media = Create(mediaId, ownerId, uploadedFile, isPublic);
+
+            media.RaiseEvent(new MediaCreatedEvent(media.Id, media.OwnerId, $"https://localhost:7255/files/{media.Id}"));
 
             _repository.Add(media);
 

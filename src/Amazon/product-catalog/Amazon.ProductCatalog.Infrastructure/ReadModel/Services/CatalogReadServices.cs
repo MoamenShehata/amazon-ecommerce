@@ -40,7 +40,7 @@ public class CatalogReadServices : ICatalogReadServices
         var product = await _productsRepository.GetInstanceAsync(productId);
         if (product == null) return;
 
-        product.ImagePath = imagePath;
+        product.ImageUrl = imagePath;
         await _readContext.SaveChangesAsync();
     }
 }

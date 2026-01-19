@@ -23,8 +23,6 @@ namespace Media.Domain
             Path = path;
             MimeType = mimeType;
             Accessibility = accessibility;
-
-            RaiseEvent(new MediaCreatedEvent(Id, OwnerId, Path));
         }
 
 

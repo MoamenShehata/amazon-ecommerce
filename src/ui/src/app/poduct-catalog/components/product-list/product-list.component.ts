@@ -59,7 +59,6 @@ export class ProductListComponent extends AppServicesProvider {
 
     this.catalogService.getProductsPage(this.pageRequest).subscribe({
       next: (page) => {
-        debugger;
         this.productsPage = page;
         this.pageRequest.lastSeenValue = page.lastSeenValue;
         this.isLoading = false;
