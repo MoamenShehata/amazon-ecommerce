@@ -11,15 +11,6 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
 
     private HashSet<ProductProperty> _properties { get; set; } = new(new ProductPropertyComparer());
     public List<ProductProperty> Properties { get; private set; }
-    //public ApiResult<bool> TryAddProperty(string name, string value)
-    //{
-    //    var result = _properties.Add(new ProductProperty(name, value));
-    //    if (!result) return ApiResponseExtentions.Error<bool>($"Property with the name {name} already added on Product {Name}");
-
-    //    return ApiResponseExtentions.Success(result);
-    //}
-    //public void RemoveProperty(string name) => _properties.RemoveWhere(x => x.Name.ToLower() == name.ToLower());
-
     public ProductPrice Price { get; private set; }
     private ICollection<ProductPriceChange> _priceChanges { get; } = new List<ProductPriceChange>();
     public void UpdatePrice(decimal newPrice)
