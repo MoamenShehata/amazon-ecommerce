@@ -29,8 +29,7 @@
             <!-- Category ID -->
             <div class="mb-3">
               <label for="categoryId" class="form-label">Category ID</label>
-              <input
-                type="text"
+              <select
                 class="form-control"
                 id="categoryId"
                 formControlName="categoryId"
@@ -39,7 +38,12 @@
                   createForm.get('categoryId')?.invalid &&
                   createForm.get('categoryId')?.touched
                 "
-              />
+              >
+                <option *ngFor="let cat of categories" [value]="cat.id">
+                  {{ cat.name }}
+                </option>
+              </select>
+
               <div
                 class="invalid-feedback"
                 *ngIf="

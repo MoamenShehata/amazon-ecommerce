@@ -24,7 +24,7 @@ export class ProductListComponent extends AppServicesProvider {
 
   pageRequest: PageRequest = {
     pageNumber: 1,
-    pageSize: 1,
+    pageSize: 100,
     lastSeenValue: null,
   };
 

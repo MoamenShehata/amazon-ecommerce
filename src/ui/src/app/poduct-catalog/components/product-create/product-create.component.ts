@@ -13,6 +13,8 @@ import {
   ProductCreateRequest,
   ProductProperty,
 } from '../../models/product-create.model';
+import { PageRequest } from '../../../core/models/page-request.models';
+import { CategoryForListModel } from '../../models/category-for-list.models';
 
 @Component({
   selector: 'product-create',
@@ -27,6 +29,14 @@ export class ProductCreateComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  pageRequest: PageRequest = {
+    pageNumber: 1,
+    pageSize: 100,
+    lastSeenValue: null,
+  };
+
+  categories: CategoryForListModel[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
     private catalogService: CatalogService,
@@ -35,6 +45,12 @@ export class ProductCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+
+    this.catalogService
+      .getCategoriesPage(this.pageRequest)
+      .subscribe((page) => {
+        this.categories = page.items;
+      });
   }
 
   private initializeForm(): void {

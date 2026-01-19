@@ -6,15 +6,22 @@ import { ProductForListModel } from '../models/product-for-list-model';
 import { map } from 'rxjs';
 import { PagedResult } from '../../core/models/paged-result.models';
 import { ProductCreateRequest } from '../models/product-create.model';
+import { CategoryForListModel } from '../models/category-for-list.models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CatalogService {
-  categoriesBaseUrl = `${environment.catalogBaseUrl}/categories`;
-  productsBaseUrl = `${environment.catalogBaseUrl}/products`;
+  private categoriesBaseUrl = `${environment.catalogBaseUrl}/categories`;
+  private productsBaseUrl = `${environment.catalogBaseUrl}/products`;
 
   constructor(private http: HttpClient) {}
+
+  getCategoriesPage(pageRequest: PageRequest) {
+    return this.http.get<PagedResult<CategoryForListModel>>(
+      `${this.categoriesBaseUrl}?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}&lastSeenValue=${pageRequest.lastSeenValue}`,
+    );
+  }
 
   getProductsPage(pageRequest: PageRequest) {
     return this.http.get<PagedResult<ProductForListModel>>(
