@@ -29,7 +29,26 @@ export class CatalogService {
     );
   }
 
-  createProduct(productRequest: ProductCreateRequest) {
-    return this.http.post<{ id: string }>(this.productsBaseUrl, productRequest);
+  createProduct(productRequest: ProductCreateRequest, image?: File) {
+    const formData = new FormData();
+    formData.append('categoryId', productRequest.categoryId);
+    formData.append('name', productRequest.name);
+    formData.append('inStockCount', productRequest.inStockCount.toString());
+    formData.append('price', productRequest.price.toString());
+    formData.append('minimumPrice', productRequest.minimumPrice.toString());
+    formData.append('maximumPrice', productRequest.maximumPrice.toString());
+
+    // Append properties with proper indexing for ASP.NET Core model binding
+    productRequest.properties.forEach((prop, index) => {
+      formData.append(`properties[${index}].key`, prop.name);
+      formData.append(`properties[${index}].value`, prop.value);
+    });
+
+    // Append image if provided
+    if (image) {
+      formData.append('image', image, image.name);
+    }
+
+    return this.http.post<{ id: string }>(this.productsBaseUrl, formData);
   }
 }

@@ -28,6 +28,8 @@ export class ProductCreateComponent implements OnInit {
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
+  selectedImage: File | null = null;
+  imagePreviewUrl: string | null = null;
 
   pageRequest: PageRequest = {
     pageNumber: 1,
@@ -113,26 +115,70 @@ export class ProductCreateComponent implements OnInit {
       properties: formValue.properties,
     };
 
-    this.catalogService.createProduct(productRequest).subscribe({
-      next: () => {
-        this.successMessage = 'Product created successfully!';
-        this.isSubmitting = false;
-        setTimeout(() => {
-          this.router.navigate(['/catalog/products']);
-        }, 1500);
-      },
-      error: (err) => {
-        this.errorMessage =
-          err.error?.message || 'Failed to create product. Please try again.';
-        this.isSubmitting = false;
-      },
-    });
+    this.catalogService
+      .createProduct(productRequest, this.selectedImage!)
+      .subscribe({
+        next: () => {
+          this.successMessage = 'Product created successfully!';
+          this.isSubmitting = false;
+          setTimeout(() => {
+            this.router.navigate(['/catalog/products']);
+          }, 1500);
+        },
+        error: (err) => {
+          this.errorMessage =
+            err.error?.message || 'Failed to create product. Please try again.';
+          this.isSubmitting = false;
+        },
+      });
   }
 
   resetForm(): void {
     this.createForm.reset();
     this.propertiesArray.clear();
+    this.selectedImage = null;
+    this.imagePreviewUrl = null;
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  onImageSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      // Validate file type
+      const validImageTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+      ];
+      if (!validImageTypes.includes(file.type)) {
+        this.errorMessage =
+          'Please select a valid image file (JPEG, PNG, GIF, or WebP)';
+        return;
+      }
+
+      // Validate file size (5MB max)
+      const maxSizeInBytes = 5 * 1024 * 1024;
+      if (file.size > maxSizeInBytes) {
+        this.errorMessage = 'Image file size must not exceed 5MB';
+        return;
+      }
+
+      this.selectedImage = file;
+      this.errorMessage = '';
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreviewUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage(): void {
+    this.selectedImage = null;
+    this.imagePreviewUrl = null;
   }
 }

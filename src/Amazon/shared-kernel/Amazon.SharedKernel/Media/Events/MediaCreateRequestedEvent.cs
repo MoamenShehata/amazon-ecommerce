@@ -2,5 +2,5 @@
 
 namespace Amazon.SharedKernel.Media.Events
 {
-    public record MediaCreateRequestedEvent(Guid MediaId, Guid OwnerId, Stream Stream, DateTime OccurredOn, bool IsPublic) : DomainEvent(OccurredOn, true);
+    public record MediaCreateRequestedEvent(Guid MediaId, Guid OwnerId, byte[] Content, bool IsPublic) : IntegrationEvent(DateTime.UtcNow);
 }

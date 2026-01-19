@@ -15,7 +15,8 @@ public class ProductsAppService(
     IUnitOfWork _unitOfWork
     )
 {
-    public async Task<RestResponse<ProductDto>> CreateAsync(CreateProductDto createProductDto)
+    public async Task<RestResponse<ProductDto>> CreateAsync(CreateProductDto createProductDto,
+        byte[] imageContent)
     {
         var productPrice = new ProductPrice(createProductDto.Price, createProductDto.MinimumPrice, createProductDto.MaximumPrice);
 
@@ -24,7 +25,8 @@ public class ProductsAppService(
             createProductDto.Name,
             createProductDto.InStockCount,
             productPrice,
-            createProductDto.Properties
+            createProductDto.Properties.Select(p=>new ProductProperty(p.Key,p.Value)).ToList(),
+            imageContent
         );
         if (!createdProductResult.IsSuccess)
             return createdProductResult.MapTo((ProductDto)null!);

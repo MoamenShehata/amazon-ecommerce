@@ -11,7 +11,7 @@ namespace Media.Application
         IRepository<Domain.Media, Guid> _repository,
         IUnitOfWork _unitOfWork)
     {
-        public async Task CreateAsync(Guid mediaId, Guid ownerId, Stream stream, bool isPublic)
+        public async Task CreateAsync(Guid mediaId, Guid ownerId, byte[] stream, bool isPublic)
         {
             var uploadedFile = await _storageService.UploadAsync(stream, isPublic);
 

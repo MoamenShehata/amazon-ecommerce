@@ -1,11 +1,12 @@
 using Media.Application;
 using Media.Application.Storage;
 using Media.Infrastructure;
-
+using Amazon.SharedKernel.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSharedJobs();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

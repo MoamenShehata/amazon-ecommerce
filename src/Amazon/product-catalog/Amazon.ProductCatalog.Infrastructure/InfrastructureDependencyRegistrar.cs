@@ -20,24 +20,6 @@ namespace Amazon.ProductCatalog.Infrastructure
                 .AddBaseContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")));
             ;
 
-            services.AddMassTransit(config =>
-            {
-                config.SetKebabCaseEndpointNameFormatter();
-
-                //if (subscribersAssembly != null)
-                //    config.AddConsumers(subscribersAssembly);
-
-                config.UsingRabbitMq((ctxt, configurator) =>
-                {
-                    configurator.Host(new Uri(configuration["MessageBroker:Host"]), host =>
-                    {
-                        host.Username(configuration["MessageBroker:User"]);
-                        host.Password(configuration["MessageBroker:Password"]);
-                    });
-                    configurator.ConfigureEndpoints(ctxt);
-                });
-            });
-
             services
                 .AddScoped<ICatalogReadServices, CatalogReadServices>()
                 .AddDbContext<CatalogReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("CatalogRead")));

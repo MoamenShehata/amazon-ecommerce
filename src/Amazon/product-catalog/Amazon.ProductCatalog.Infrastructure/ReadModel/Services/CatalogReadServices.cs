@@ -34,4 +34,13 @@ public class CatalogReadServices : ICatalogReadServices
         _productsRepository.Add(new ProductForListModel(id, name, categories, unitPrice));
         await _readContext.SaveChangesAsync();
     }
+
+    public async Task UpdateImagePathAsync(Guid productId, string imagePath)
+    {
+        var product = await _productsRepository.GetInstanceAsync(productId);
+        if (product == null) return;
+
+        product.ImagePath = imagePath;
+        await _readContext.SaveChangesAsync();
+    }
 }

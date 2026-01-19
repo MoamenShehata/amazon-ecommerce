@@ -2,6 +2,6 @@
 {
     public interface IStorageService
     {
-        Task<MediaFile> UploadAsync(Stream stream, bool isPublic);
+        Task<MediaFile> UploadAsync(byte[] stream, bool isPublic);
     }
 }

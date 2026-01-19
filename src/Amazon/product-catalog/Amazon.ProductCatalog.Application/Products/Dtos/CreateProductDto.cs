@@ -9,6 +9,6 @@ namespace Amazon.ProductCatalog.Application.Products.Dtos
         decimal Price,
         decimal MinimumPrice,
         decimal MaximumPrice,
-        List<ProductProperty> Properties
+        List<KeyValuePair<string, string>> Properties
     );
 }

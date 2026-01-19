@@ -1,6 +1,7 @@
 ﻿using Media.Domain.ValueObjects;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
+using Amazon.SharedKernel.Media.Events;
 
 namespace Media.Domain
 {
@@ -22,6 +23,8 @@ namespace Media.Domain
             Path = path;
             MimeType = mimeType;
             Accessibility = accessibility;
+
+            RaiseEvent(new MediaCreatedEvent(Id, OwnerId, Path));
         }
 
 

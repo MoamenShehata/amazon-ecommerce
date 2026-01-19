@@ -19,9 +19,13 @@ public class ProductsController(ProductsAppService _productsAppService,
 
     [HttpPost]
     public async Task<IActionResult> CreateProduct(
-        [FromBody] CreateProductDto request)
+        [FromForm] CreateProductDto request)
     {
-        var productCreateResult = await _productsAppService.CreateAsync(request);
+        var image = Request.Form.Files[0];
+        var memoryStream = new MemoryStream();
+        image.CopyTo(memoryStream);
+
+        var productCreateResult = await _productsAppService.CreateAsync(request, memoryStream.ToArray());
 
         if (productCreateResult.IsSuccess)
             return CreatedAtRoute("GetProductById", new { id = productCreateResult.Value.Id }, productCreateResult.Value);

@@ -54,3 +54,45 @@ button:disabled {
 .alert-danger {
   border-left-color: #dc3545;
 }
+
+/* Image Upload Styles */
+.img-thumbnail {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+.form-control[type="file"]::file-selector-button {
+  padding: 0.375rem 0.75rem;
+  margin: -0.375rem -0.75rem;
+  margin-inline-end: 0.75rem;
+  color: #212529;
+  background-color: #e9ecef;
+  pointer-events: none;
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0;
+  border-inline-end-width: 1px;
+  border-radius: 0;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.form-control[type="file"]:hover::file-selector-button {
+  background-color: #dfe1e5;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+.text-success {
+  color: #198754;
+}
+
+.bi-check-circle {
+  margin-right: 0.25rem;
+}

@@ -8,6 +8,7 @@ public class ProductForListModel : AuditableEntity<Guid>, IEntity<Guid>
     public string Name { get; private set; }
     public string Categories { get; private set; }
     public decimal UnitPrice { get; private set; }
+    public string? ImagePath { get; set; }
 
     public ProductForListModel(Guid id, string Name, string Categories, decimal UnitPrice) : base(id)
     {

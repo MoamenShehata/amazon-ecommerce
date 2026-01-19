@@ -8,5 +8,6 @@ namespace Amazon.ProductCatalog.Read.Services
     {
         Task InsertProductAsync(Guid id, string Name, string Categories, decimal UnitPrice);
         Task<PagedResult<ProductForListModel, DateTime>> GetProductsPageAsync(PageRequest pageRequest);
+        Task UpdateImagePathAsync(Guid productId, string imagePath);
     }
 }

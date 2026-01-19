@@ -41,7 +41,7 @@ public static class DependencyRegistrar
         });
 
         builder.Services
-            .RegisterApplicationDependencies()
+            .RegisterApplicationDependencies(builder.Configuration)
             .RegisterInfrastructureDependencies(builder.Configuration)
             .AddSharedJobs();
 
