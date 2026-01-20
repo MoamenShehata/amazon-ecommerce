@@ -22,8 +22,6 @@ namespace Amazon.Cart.Infrastructure.Data
                     b.Property(p => p.ExpiresAt).HasColumnName(nameof(ShoppingCart.Expiration.ExpiresAt));
                 });
 
-                //e.HasMany<CartItem>(x=>x.Items).WithOne().HasForeignKey(x => x.ShoppingCartId);
-
                 e.OwnsMany(x => x.Items, b =>
                 {
                     b.WithOwner().HasForeignKey(x => x.ShoppingCartId);
