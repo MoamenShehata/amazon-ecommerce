@@ -16,9 +16,12 @@
   <h5 class="card-header">{{ product.name }}</h5>
   <div class="card-body">
     <span
-      class="btn btn-primary mx-2"
+      class="btn btn-primary mx-1"
       *ngFor="let cat of product.categories.split(',')"
       >{{ cat }}</span
     >
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-success" (click)="addToCart()">Add to cart</button>
   </div>
 </div>

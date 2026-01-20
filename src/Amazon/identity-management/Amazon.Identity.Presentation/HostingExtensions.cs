@@ -40,7 +40,7 @@ namespace Amazon.Identity.Presentation
             {
                 op.AddPolicy("CORS_Policy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200")
+                    policy.WithOrigins("http://localhost:4200", "http://localhost:62832")
                     .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader();

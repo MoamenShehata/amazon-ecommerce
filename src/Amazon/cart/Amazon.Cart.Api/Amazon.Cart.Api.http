@@ -1,0 +1,6 @@
+@Amazon.Cart.Api_HostAddress = http://localhost:5162
+
+GET {{Amazon.Cart.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

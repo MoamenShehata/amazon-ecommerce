@@ -30,7 +30,7 @@ public class ProductsAppService(
         var categories = await _categroiesRepository.GetAllAsync(x => page.Items.Select(p => p.CategoryId).Contains(x.Id));
 
         foreach (var product in page.Items)
-            dto.Add(new ProductForListDto(product.Name, categories.FirstOrDefault(c => c.Id == product.CategoryId).FullName, product.Price.Amount, product.ImageUrl));
+            dto.Add(new ProductForListDto(product.Id, product.Name, categories.FirstOrDefault(c => c.Id == product.CategoryId).FullName, product.Price.Amount, product.ImageUrl));
 
         return new PagedResult<ProductForListDto, DateTime>(dto, page.TotalCount, page.LastSeenValue);
     }
