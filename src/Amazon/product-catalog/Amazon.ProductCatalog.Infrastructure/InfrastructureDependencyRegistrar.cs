@@ -1,8 +1,5 @@
 ﻿using Amazon.ProductCatalog.Infrastructure.Data;
-using Amazon.ProductCatalog.Infrastructure.ReadModel;
-using Amazon.ProductCatalog.Infrastructure.ReadModel.Services;
 using Amazon.ProductCatalog.Read.Services;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +16,6 @@ namespace Amazon.ProductCatalog.Infrastructure
                 .AddGenericRepos()
                 .AddBaseContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")));
             ;
-
-            services
-                .AddScoped<ICatalogReadServices, CatalogReadServices>()
-                .AddDbContext<CatalogReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("CatalogRead")));
 
             return services;
         }

@@ -1,11 +1,14 @@
 using Amazon.ProductCatalog.Application.Products.Dtos;
 using Amazon.ProductCatalog.Application.Products.Mappers;
+using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Common;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.Media;
 using Moamen.SDKs.Repository;
+using Moamen.SDKs.Repository.Pagination;
 using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.ProductCatalog.Application.Products;
@@ -13,9 +16,25 @@ namespace Amazon.ProductCatalog.Application.Products;
 public class ProductsAppService(
     ProductsService _productsService,
     IEfCoreRepository<Product, Guid> _productsRepository,
+    IEfCoreRepository<Category, Guid> _categroiesRepository,
     IUnitOfWork _unitOfWork
     )
 {
+    public async Task<PagedResult<ProductForListDto, DateTime>> GetProductsPageAsync(PageRequest pageRequest)
+    {
+        var page = pageRequest.PageNumber == 1
+            ? await _productsRepository.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn)
+            : await _productsRepository.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue));
+
+        List<ProductForListDto> dto = new();
+        var categories = await _categroiesRepository.GetAllAsync(x => page.Items.Select(p => p.CategoryId).Contains(x.Id));
+
+        foreach (var product in page.Items)
+            dto.Add(new ProductForListDto(product.Name, categories.FirstOrDefault(c => c.Id == product.CategoryId).FullName, product.Price.Amount, product.ImageUrl));
+
+        return new PagedResult<ProductForListDto, DateTime>(dto, page.TotalCount, page.LastSeenValue);
+    }
+
     public async Task<RestResponse<ProductDto>> CreateAsync(CreateProductDto createProductDto,
         MediaContent mediaUploadRequest)
     {
@@ -26,7 +45,7 @@ public class ProductsAppService(
             createProductDto.Name,
             createProductDto.InStockCount,
             productPrice,
-            createProductDto.Properties.Select(p=>new ProductProperty(p.Key,p.Value)).ToList(),
+            createProductDto.Properties.Select(p => new ProductProperty(p.Key, p.Value)).ToList(),
             mediaUploadRequest
         );
         if (!createdProductResult.IsSuccess)
@@ -56,6 +75,16 @@ public class ProductsAppService(
         await _unitOfWork.CommitAsync();
 
         return RestResponse<bool>.Success(true);
+    }
+
+    public async Task UpdateImagePathAsync(Guid ownerId, string url)
+    {
+        var productResult = await _productsService.GetByIdAsync(ownerId);
+        if (!productResult.IsSuccess)
+            return;
+
+        productResult.Value.UpdateImageUrl(url);
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task<RestResponse<bool>> DeleteAsync(Guid productId, bool isSoftDelete = true)

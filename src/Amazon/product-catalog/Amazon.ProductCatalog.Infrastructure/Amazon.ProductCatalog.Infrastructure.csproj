@@ -20,7 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared-kernel\Amazon.SharedKernel\Amazon.SharedKernel.csproj" />
     <ProjectReference Include="..\Amazon.ProductCatalog.Domain\Amazon.ProductCatalog.Domain.csproj" />
-    <ProjectReference Include="..\Amazon.ProductCatalog.Read\Amazon.ProductCatalog.Read.csproj" />
   </ItemGroup>
 
   <ItemGroup>

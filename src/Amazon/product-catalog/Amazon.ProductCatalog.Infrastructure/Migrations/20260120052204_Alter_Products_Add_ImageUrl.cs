@@ -2,18 +2,18 @@
 
 #nullable disable
 
-namespace Amazon.ProductCatalog.Infrastructure.ReadModel.Migrations
+namespace Amazon.ProductCatalog.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Alter_Read_AddImagePath : Migration
+    public partial class Alter_Products_Add_ImageUrl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ImagePath",
-                schema: "catalog.read",
-                table: "products",
+                name: "ImageUrl",
+                schema: "catalog",
+                table: "Products",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -22,9 +22,9 @@ namespace Amazon.ProductCatalog.Infrastructure.ReadModel.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ImagePath",
-                schema: "catalog.read",
-                table: "products");
+                name: "ImageUrl",
+                schema: "catalog",
+                table: "Products");
         }
     }
 }

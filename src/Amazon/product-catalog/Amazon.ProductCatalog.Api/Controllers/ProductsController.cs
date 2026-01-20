@@ -9,13 +9,12 @@ namespace Amazon.ProductCatalog.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductsController(ProductsAppService _productsAppService,
-    ICatalogReadServices _catalogReadServices) : ApiControllerBase
+public class ProductsController(ProductsAppService _productsAppService) : ApiControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetProductsPage([FromQuery] PageRequest pageRequest)
     {
-        return Ok(await _catalogReadServices.GetProductsPageAsync(pageRequest));
+        return Ok(await _productsAppService.GetProductsPageAsync(pageRequest));
     }
 
     [HttpPost]

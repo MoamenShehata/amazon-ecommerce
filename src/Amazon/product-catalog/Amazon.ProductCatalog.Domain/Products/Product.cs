@@ -39,7 +39,8 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
 
     public Guid CategoryId { get; private set; }
     public Guid ImageId { get; private set; }
-
+    public string? ImageUrl { get; private set; }
+    public void UpdateImageUrl(string imageUrl) => ImageUrl = imageUrl;
 
     internal Product(Guid categoryId, string name, ProductPrice price, List<ProductProperty> properties) : base(Guid.NewGuid())
     {

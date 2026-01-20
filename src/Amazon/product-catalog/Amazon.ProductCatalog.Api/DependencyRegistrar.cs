@@ -15,7 +15,6 @@ public static class DependencyRegistrar
         builder.Services
             .AddSharedJobs()
             .AddHostedService<CategoriesSoftDeleteJob>()
-            .AddHostedService<SyncReadModelJob>()
             ;
 
         builder.Services.AddCors(op =>

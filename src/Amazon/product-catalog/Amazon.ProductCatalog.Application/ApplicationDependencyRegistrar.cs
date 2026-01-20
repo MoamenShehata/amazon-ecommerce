@@ -2,7 +2,6 @@
 using Amazon.ProductCatalog.Application.Products;
 using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products;
-using Amazon.ProductCatalog.Read.Models;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +20,7 @@ namespace Amazon.ProductCatalog.Application
             {
                 config.SetKebabCaseEndpointNameFormatter();
 
-                config.AddConsumers(typeof(ProductForListModel).Assembly);
+                config.AddConsumers(typeof(ApplicationDependencyRegistrar).Assembly);
 
                 config.UsingRabbitMq((ctxt, configurator) =>
                 {
