@@ -20,4 +20,11 @@ export const routes: Routes = [
         (m) => m.catalogRoutes,
       ),
   },
+  {
+    path: 'cart',
+    loadChildren: () =>
+      import('./shopping-cart/shopping-cart.routes').then(
+        (m) => m.shoppingCartRoutes,
+      ),
+  },
 ];

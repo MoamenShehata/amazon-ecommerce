@@ -1,20 +1,33 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from './authentication/services/authentication.service';
 import { AppServicesProvider } from './core/services/app-services.provider';
 import { IdentityControlsComponent } from './authentication/components/authentication-landing/identity-controls/identity-controls.component';
+import { ShoppingCartService } from './shopping-cart/shopping-cart.services';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, IdentityControlsComponent],
+  imports: [RouterOutlet, IdentityControlsComponent, RouterLink],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
 export class AppComponent extends AppServicesProvider {
-  constructor(authService: AuthService) {
+  constructor(
+    authService: AuthService,
+    private shoppingCartService: ShoppingCartService,
+  ) {
     super();
 
     authService.configure();
+  }
+
+  itemsCount = 0;
+  ngOnInit() {
+    this.shoppingCartService.cartItemsSource.subscribe((items) => {
+      this.itemsCount = items.length;
+    });
+
+    this.shoppingCartService.loadCart().subscribe();
   }
 }

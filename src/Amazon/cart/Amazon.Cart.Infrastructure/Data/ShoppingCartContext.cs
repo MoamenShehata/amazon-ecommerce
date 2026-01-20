@@ -35,11 +35,6 @@ namespace Amazon.Cart.Infrastructure.Data
              .UsePropertyAccessMode(PropertyAccessMode.Field);
             });
 
-            //modelBuilder.Entity<CartItem>(e =>
-            //{
-            //    e.HasKey(x => new { x.ShoppingCartId, x.Id });
-            //});
-
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,15 +1,22 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { CartItemCreateModel } from './models/cart-item-create.models';
 import { AuthService } from '../authentication/services/authentication.service';
 import { StorageService } from '../core/services/storage-service';
-import { tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { CartItemModel } from './models/cart-item-model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShoppingCartService {
+  private cartItems: BehaviorSubject<CartItemModel[]> = new BehaviorSubject<
+    CartItemModel[]
+  >([]);
+
+  public cartItemsSource = this.cartItems.asObservable();
+
   private cartsBaseUrl = `${environment.cartBaseUrl}/carts`;
   private get cartItemsBaseUrl() {
     return `${environment.cartBaseUrl}/carts/${this.activeCartId}/items`;
@@ -21,17 +28,38 @@ export class ShoppingCartService {
     private storageService: StorageService,
   ) {}
 
-  addCartItem(cartItem: CartItemCreateModel) {
-    if (!this.activeCartId) {
-      return this.initCart(cartItem);
-    }
+  loadCart() {
+    return this.http
+      .get<CartItemModel[]>(`${this.cartsBaseUrl}/${this.activeCartId}`)
+      .pipe(
+        tap((items) => {
+          this.pushCartItems(items);
+        }),
+      );
+  }
 
+  addCartItem(cartItem: CartItemCreateModel) {
+    const action: (cartItem: CartItemCreateModel) => Observable<CartItemModel> =
+      !this.activeCartId ? this.initCart.bind(this) : this.addItem.bind(this);
+
+    return action(cartItem).pipe(
+      tap((cartItem) => {
+        this.pushCartItems([cartItem]);
+      }),
+    );
+  }
+
+  private pushCartItems(items: CartItemModel[]) {
+    this.cartItems.next([...this.cartItems.value, ...items]);
+  }
+
+  private addItem(cartItem: CartItemCreateModel) {
     return this.http.post<any>(this.cartItemsBaseUrl, cartItem);
   }
 
   private initCart(cartItem: CartItemCreateModel) {
     return this.http
-      .post<any>(this.cartsBaseUrl, {
+      .post<CartItemModel>(this.cartsBaseUrl, {
         customerId: this.customerId,
         cartItem: cartItem,
       })

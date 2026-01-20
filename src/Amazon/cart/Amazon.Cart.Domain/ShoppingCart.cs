@@ -20,9 +20,9 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
     public IReadOnlyCollection<CartItem> Items => _cartItems;
 
 
-    public Guid AddItem(Guid productId, int quantity)
+    public Guid AddItem(Guid productId, int quantity, string productName, string productImageUrl)
     {
-        var item = new CartItem(Id, productId, quantity);
+        var item = new CartItem(Id, productId, quantity, productName, productImageUrl);
         _cartItems.Add(item);
 
         return item.Id;

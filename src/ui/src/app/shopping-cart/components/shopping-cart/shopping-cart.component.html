@@ -1,0 +1,15 @@
+<div class="row">
+  <div *ngFor="let item of cartItems" class="col-3">
+    <div class="card">
+      <img
+        src="{{ item.productImageUrl }}"
+        class="card-img-top"
+        alt="..."
+        style="padding: 40px"
+      />
+
+      <h5 class="card-header">{{ item.productName }}</h5>
+      <div class="card-footer">{{ item.quantity }}</div>
+    </div>
+  </div>
+</div>

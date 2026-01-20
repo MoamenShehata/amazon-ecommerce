@@ -23,9 +23,9 @@ export class ProductPreviewComponent {
       .addCartItem({
         productId: this.product.id,
         quantity: 3,
+        productName: this.product.name,
+        productImageUrl: this.product.imageUrl!,
       })
-      ?.subscribe((res) => {
-        alert(res.cartId);
-      });
+      ?.subscribe((res) => {});
   }
 }
