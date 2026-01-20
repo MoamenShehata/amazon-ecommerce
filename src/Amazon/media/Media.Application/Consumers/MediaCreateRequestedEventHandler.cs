@@ -9,7 +9,7 @@ namespace Media.Application.Consumers
         {
             var @event = context.Message;
 
-            await _mediaService.CreateAsync(@event.MediaId, @event.OwnerId, @event.Content, @event.IsPublic);
+            await _mediaService.CreateAsync(@event.MediaId, @event.OwnerId, @event.Media, @event.IsPublic);
         }
     }
 }

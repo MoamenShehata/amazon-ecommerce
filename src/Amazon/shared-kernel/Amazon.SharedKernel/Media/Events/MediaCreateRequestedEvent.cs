@@ -2,5 +2,10 @@
 
 namespace Amazon.SharedKernel.Media.Events
 {
-    public record MediaCreateRequestedEvent(Guid MediaId, Guid OwnerId, byte[] Content, bool IsPublic) : IntegrationEvent(DateTime.UtcNow);
+    public record MediaCreateRequestedEvent(
+        Guid MediaId,
+        Guid OwnerId,
+        MediaContent Media,
+        bool IsPublic)
+        : IntegrationEvent(DateTime.UtcNow);
 }

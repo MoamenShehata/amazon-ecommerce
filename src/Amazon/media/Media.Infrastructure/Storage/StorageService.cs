@@ -1,29 +1,31 @@
-﻿using Media.Application.Storage;
+﻿using Amazon.SharedKernel.Media;
+using Media.Application.Storage;
 using Microsoft.Extensions.Hosting;
-using MimeDetective;
 
 namespace Media.Infrastructure.Storage;
 
 public class StorageService(IHostEnvironment _hostEnvironment) : IStorageService
 {
-    public async Task<MediaFile> UploadAsync(byte[] content, bool isPublic)
+    public async Task<MediaFile> UploadAsync(MediaContent mediaUploadRequest, bool isPublic)
     {
-        var filePath = GenerateRandomFilePath(isPublic);
+        var filePath = GenerateFilePath(mediaUploadRequest, isPublic);
 
-        var inspector = new ContentInspectorBuilder().Build();
-
-        //var result = inspector.Inspect(content);
-        //var mimeType = result.ByMimeType().FirstOrDefault().MimeType;
-
-        using (var stream = new MemoryStream(content))
+        using (var stream = new MemoryStream(mediaUploadRequest.Content))
         using (var sw = File.OpenWrite(filePath))
         {
             await stream.CopyToAsync(sw);
-            return new MediaFile(filePath, "mimeType", Path.GetFileName(filePath), content.Length);
+            return new MediaFile(filePath, mediaUploadRequest.MimeType, mediaUploadRequest.Name, mediaUploadRequest.Content.Length);
         }
     }
 
-    private string GenerateRandomFilePath(bool isPublic)
+    private string GenerateFilePath(MediaContent mediaUploadRequest, bool isPublic)
+    {
+        var directoryPath = EnsureDirectoryExists(isPublic);
+
+        return Path.Combine(directoryPath, mediaUploadRequest.Name);
+    }
+
+    private string EnsureDirectoryExists(bool isPublic)
     {
         var filesDirectoryPath = isPublic ? "shared-files" : "private-files";
         var directoryPath = Path.Combine(_hostEnvironment.ContentRootPath, filesDirectoryPath);
@@ -31,6 +33,6 @@ public class StorageService(IHostEnvironment _hostEnvironment) : IStorageService
         if (!Directory.Exists(directoryPath))
             Directory.CreateDirectory(directoryPath);
 
-        return Path.Combine(_hostEnvironment.ContentRootPath, filesDirectoryPath, Guid.NewGuid().ToString());
+        return directoryPath;
     }
 }

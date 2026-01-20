@@ -1,7 +1,9 @@
-﻿namespace Media.Application.Storage
+﻿using Amazon.SharedKernel.Media;
+
+namespace Media.Application.Storage
 {
     public interface IStorageService
     {
-        Task<MediaFile> UploadAsync(byte[] stream, bool isPublic);
+        Task<MediaFile> UploadAsync(MediaContent mediaUploadRequest, bool isPublic);
     }
 }

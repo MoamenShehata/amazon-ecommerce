@@ -2,6 +2,7 @@ using Amazon.ProductCatalog.Application.Products;
 using Amazon.ProductCatalog.Application.Products.Dtos;
 using Amazon.ProductCatalog.Read.Services;
 using Amazon.SharedKernel.Common;
+using Amazon.SharedKernel.Media;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.ProductCatalog.Api.Controllers;
@@ -25,7 +26,9 @@ public class ProductsController(ProductsAppService _productsAppService,
         var memoryStream = new MemoryStream();
         image.CopyTo(memoryStream);
 
-        var productCreateResult = await _productsAppService.CreateAsync(request, memoryStream.ToArray());
+        var mediaRequest = new MediaContent(memoryStream.ToArray(), image.ContentType, image.FileName);
+
+        var productCreateResult = await _productsAppService.CreateAsync(request, mediaRequest);
 
         if (productCreateResult.IsSuccess)
             return CreatedAtRoute("GetProductById", new { id = productCreateResult.Value.Id }, productCreateResult.Value);

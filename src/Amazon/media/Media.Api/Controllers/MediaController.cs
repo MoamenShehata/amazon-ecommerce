@@ -10,17 +10,8 @@ public class MediaController(MediaService _mediaService) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult> GetMedia(Guid id)
     {
-		try
-		{
-            var content = await _mediaService.GetMedia(id);
+        var media = await _mediaService.GetMedia(id);
 
-            return File(content, "image/png", "fileName");
-        }
-		catch (Exception ex)
-		{
-
-			throw;
-		}
-
+        return File(media.Content, media.MimeType, media.Name);
     }
 }

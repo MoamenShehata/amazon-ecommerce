@@ -4,6 +4,7 @@ using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using Amazon.SharedKernel.Media;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 
@@ -16,7 +17,7 @@ public class ProductsAppService(
     )
 {
     public async Task<RestResponse<ProductDto>> CreateAsync(CreateProductDto createProductDto,
-        byte[] imageContent)
+        MediaContent mediaUploadRequest)
     {
         var productPrice = new ProductPrice(createProductDto.Price, createProductDto.MinimumPrice, createProductDto.MaximumPrice);
 
@@ -26,7 +27,7 @@ public class ProductsAppService(
             createProductDto.InStockCount,
             productPrice,
             createProductDto.Properties.Select(p=>new ProductProperty(p.Key,p.Value)).ToList(),
-            imageContent
+            mediaUploadRequest
         );
         if (!createdProductResult.IsSuccess)
             return createdProductResult.MapTo((ProductDto)null!);

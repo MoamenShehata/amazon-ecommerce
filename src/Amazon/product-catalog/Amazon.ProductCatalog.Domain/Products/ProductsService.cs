@@ -1,6 +1,7 @@
 ﻿using Amazon.ProductCatalog.Domain.Categories;
 using Amazon.ProductCatalog.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Media;
 using Amazon.SharedKernel.Media.Events;
 using Amazon.SharedKernel.Products.Events;
 using Moamen.SDKs.Repository;
@@ -13,7 +14,7 @@ public class ProductsService(
     IEfCoreRepository<Product, Guid> _productsRepository
     )
 {
-    public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, int inStockCount, ProductPrice price, List<ProductProperty> properties, byte[] imageContent)
+    public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, int inStockCount, ProductPrice price, List<ProductProperty> properties, MediaContent mediaUploadRequest)
     {
         var categoryResult = await _categoriesService.GetByIdAsync(categoryId, true);
         if (categoryResult is null)
@@ -22,7 +23,7 @@ public class ProductsService(
         var product = categoryResult.Value.NewProduct(name, price, properties);
         
         product.RaiseEvent(new ProductCreatedEvent(categoryId, product.Id, product.Name, inStockCount, product.Price.Amount, categoryResult.Value.FullName));
-        product.RaiseEvent(new MediaCreateRequestedEvent(product.ImageId, product.Id, imageContent, true));
+        product.RaiseEvent(new MediaCreateRequestedEvent(product.ImageId, product.Id, mediaUploadRequest, true));
 
         _productsRepository.Add(product);
 
