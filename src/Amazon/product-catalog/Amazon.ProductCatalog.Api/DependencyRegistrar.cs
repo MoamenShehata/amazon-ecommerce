@@ -14,7 +14,7 @@ public static class DependencyRegistrar
 
         builder.Services
             .AddSharedJobs()
-            .AddHostedService<CategoriesSoftDeleteJob>()
+            .AddJob<CategoriesSoftDeleteJob>()
             ;
 
         builder.Services.AddCors(op =>

@@ -1,29 +1,20 @@
 ﻿using Amazon.ProductCatalog.Application.Categories;
-using Microsoft.Extensions.DependencyInjection;
+using Amazon.SharedKernel.Jobs;
 
 namespace Amazon.ProductCatalog.Api.Jobs
 {
     public class CategoriesSoftDeleteJob(
         ILogger<CategoriesSoftDeleteJob> _logger,
         IServiceScopeFactory _serviceScopeFactory
-        ) : BackgroundService
+        ) : BackgroundJobBase(_logger)
     {
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override TimeSpan Interval => TimeSpan.FromSeconds(5);
+
+        protected override async Task DoAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("CategoriesSoftDeleteJob started");
-
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Background work running at {time}", DateTime.UtcNow);
-
-                var scope = _serviceScopeFactory.CreateScope();
-                var service = scope.ServiceProvider.GetRequiredService<CategoriesAppService>();
-                await service.SoftDeleteCategories();
-
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
-            }
-
-            _logger.LogInformation("CategoriesSoftDeleteJob stopped");
+            var scope = _serviceScopeFactory.CreateScope();
+            var service = scope.ServiceProvider.GetRequiredService<CategoriesAppService>();
+            await service.SoftDeleteCategories();
         }
     }
 

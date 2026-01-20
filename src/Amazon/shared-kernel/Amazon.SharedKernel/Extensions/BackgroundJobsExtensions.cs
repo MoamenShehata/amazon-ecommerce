@@ -1,4 +1,5 @@
-﻿using Amazon.SharedKernel.Jobs.RabbitMq;
+﻿using Amazon.SharedKernel.Jobs;
+using Amazon.SharedKernel.Jobs.RabbitMq;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Amazon.SharedKernel.Extensions
@@ -9,9 +10,17 @@ namespace Amazon.SharedKernel.Extensions
         {
             services
                 .AddScoped<EventsPublishService>()
-                .AddHostedService<IntegrationEventsPublishJob>();
+                .AddJob<IntegrationEventsPublishJob>();
 
             return services;
         }
+
+        public static IServiceCollection AddJob<TJob>(this IServiceCollection services) where TJob : BackgroundJobBase
+        {
+            services.AddHostedService<TJob>();
+
+            return services;
+        }
+
     }
 }

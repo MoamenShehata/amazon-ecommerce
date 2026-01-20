@@ -1,5 +1,4 @@
 ﻿using Amazon.ProductCatalog.Infrastructure.Data;
-using Amazon.ProductCatalog.Read.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

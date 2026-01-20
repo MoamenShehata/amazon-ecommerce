@@ -1,6 +1,5 @@
 using Amazon.ProductCatalog.Application.Products;
 using Amazon.ProductCatalog.Application.Products.Dtos;
-using Amazon.ProductCatalog.Read.Services;
 using Amazon.SharedKernel.Common;
 using Amazon.SharedKernel.Media;
 using Microsoft.AspNetCore.Mvc;
