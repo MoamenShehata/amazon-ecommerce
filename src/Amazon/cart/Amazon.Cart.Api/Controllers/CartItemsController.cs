@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.Cart.Api.Controllers;
 
-public class CartsController(CartService _cartService) : ApiControllerBase
+[Route("api/carts/{cartId}/items")]
+public class CartItemsController(CartService _cartService) : ApiControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateShoppingCart([FromBody] CartCreateDto cartModel)
+    public async Task<IActionResult> AddItemCart(Guid cartId, [FromBody] CartItemCreateDto cartItem)
     {
-        var result = await _cartService.CreateCartAsync(cartModel);
+        var result = await _cartService.AddItemToCartAsync(cartId, cartItem);
         if (result.IsSuccess)
             return Ok(result.Value);
 

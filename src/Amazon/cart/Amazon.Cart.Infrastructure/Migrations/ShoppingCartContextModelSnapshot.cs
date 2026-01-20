@@ -58,7 +58,7 @@ namespace Amazon.Cart.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("Amazon.Cart.Domain.ShoppingCart", b =>
@@ -80,7 +80,7 @@ namespace Amazon.Cart.Infrastructure.Migrations
 
                             b1.HasKey("ShoppingCartId", "Id");
 
-                            b1.ToTable("CartItem");
+                            b1.ToTable("CartItem", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ShoppingCartId");

@@ -10,7 +10,10 @@ import { tap } from 'rxjs';
   providedIn: 'root',
 })
 export class ShoppingCartService {
-  private baseUrl = `${environment.cartBaseUrl}/carts`;
+  private cartsBaseUrl = `${environment.cartBaseUrl}/carts`;
+  private get cartItemsBaseUrl() {
+    return `${environment.cartBaseUrl}/carts/${this.activeCartId}/items`;
+  }
 
   constructor(
     private http: HttpClient,
@@ -19,24 +22,28 @@ export class ShoppingCartService {
   ) {}
 
   addCartItem(cartItem: CartItemCreateModel) {
-    const activeCartId = this.storageService.retrieve('cartId');
-    if (!activeCartId) {
-      return this.initCart(cartItem).pipe(
+    if (!this.activeCartId) {
+      return this.initCart(cartItem);
+    }
+
+    return this.http.post<any>(this.cartItemsBaseUrl, cartItem);
+  }
+
+  private initCart(cartItem: CartItemCreateModel) {
+    return this.http
+      .post<any>(this.cartsBaseUrl, {
+        customerId: this.customerId,
+        cartItem: cartItem,
+      })
+      .pipe(
         tap((resp) => {
           this.storageService.save('cartId', resp.cartId);
         }),
       );
-    }
-
-    alert('Please implement add cart api');
-    return;
   }
 
-  private initCart(cartItem: CartItemCreateModel) {
-    return this.http.post<any>(this.baseUrl, {
-      customerId: this.customerId,
-      cartItem: cartItem,
-    });
+  get activeCartId() {
+    return this.storageService.retrieve('cartId');
   }
 
   get customerId() {

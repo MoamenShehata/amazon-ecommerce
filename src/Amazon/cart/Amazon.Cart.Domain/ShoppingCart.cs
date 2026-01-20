@@ -16,8 +16,8 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
         Expiration = expiration;
     }
 
-    private readonly List<CartItem> _cartItems = [];
-    public IReadOnlyCollection<CartItem> Items => _cartItems.AsReadOnly();
+    private readonly List<CartItem> _cartItems = new();
+    public IReadOnlyCollection<CartItem> Items => _cartItems;
 
 
     public Guid AddItem(Guid productId, int quantity)
