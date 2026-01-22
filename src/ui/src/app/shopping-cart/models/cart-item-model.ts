@@ -6,3 +6,10 @@ export interface CartItemModel {
   productImageUrl: string;
   quantity: number;
 }
+
+export interface CartProductDto {
+  productId: string;
+  productName: string;
+  productImageUrl: string;
+  itemIds: number[];
+}

@@ -9,12 +9,19 @@ namespace Amazon.Cart.Api.Controllers;
 public class CartItemsController(CartService _cartService) : ApiControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> AddItemCart(Guid cartId, [FromBody] CartItemCreateDto cartItem)
+    public async Task<IActionResult> AddItemToCart(Guid cartId, [FromBody] CartItemCreateDto cartItem)
     {
         var result = await _cartService.AddItemToCartAsync(cartId, cartItem);
         if (result.IsSuccess)
             return Ok(result.Value);
 
+        return RestResult(result);
+    }
+
+    [HttpDelete("{cartItemId}")]
+    public async Task<IActionResult> RemoveItemFromCart(Guid cartId, int cartItemId)
+    {
+        var result = await _cartService.RemoveItemFromCartAsync(cartId, cartItemId);
         return RestResult(result);
     }
 }

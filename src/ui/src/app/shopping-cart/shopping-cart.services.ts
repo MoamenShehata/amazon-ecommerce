@@ -4,19 +4,13 @@ import { CartItemCreateModel } from './models/cart-item-create.models';
 import { AuthService } from '../authentication/services/authentication.service';
 import { StorageService } from '../core/services/storage-service';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { CartItemModel } from './models/cart-item-model';
+import { CartItemModel, CartProductDto } from './models/cart-item-model';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShoppingCartService {
-  private cartItems: BehaviorSubject<CartItemModel[]> = new BehaviorSubject<
-    CartItemModel[]
-  >([]);
-
-  public cartItemsSource = this.cartItems.asObservable();
-
   private cartsBaseUrl = `${environment.cartBaseUrl}/carts`;
   private get cartItemsBaseUrl() {
     return `${environment.cartBaseUrl}/carts/${this.activeCartId}/items`;
@@ -28,33 +22,19 @@ export class ShoppingCartService {
     private storageService: StorageService,
   ) {}
 
-  loadCart() {
-    return this.http
-      .get<CartItemModel[]>(`${this.cartsBaseUrl}/${this.activeCartId}`)
-      .pipe(
-        tap((items) => {
-          this.pushCartItems(items);
-        }),
-      );
-  }
-
-  addCartItem(cartItem: CartItemCreateModel) {
-    const action: (cartItem: CartItemCreateModel) => Observable<CartItemModel> =
-      !this.activeCartId ? this.initCart.bind(this) : this.addItem.bind(this);
-
-    return action(cartItem).pipe(
-      tap((cartItem) => {
-        this.pushCartItems([cartItem]);
-      }),
+  getCart() {
+    return this.http.get<CartProductDto[]>(
+      `${this.cartsBaseUrl}/${this.activeCartId}`,
     );
   }
 
-  private pushCartItems(items: CartItemModel[]) {
-    this.cartItems.next([...this.cartItems.value, ...items]);
-  }
+  addCartItem(cartItem: CartItemCreateModel) {
+    const action: (cartItem: CartItemCreateModel) => Observable<any> = !this
+      .activeCartId
+      ? this.initCart.bind(this)
+      : this.addItem.bind(this);
 
-  private addItem(cartItem: CartItemCreateModel) {
-    return this.http.post<any>(this.cartItemsBaseUrl, cartItem);
+    return action(cartItem);
   }
 
   private initCart(cartItem: CartItemCreateModel) {
@@ -68,6 +48,14 @@ export class ShoppingCartService {
           this.storageService.save('cartId', resp.cartId);
         }),
       );
+  }
+
+  private addItem(cartItem: CartItemCreateModel) {
+    return this.http.post<any>(this.cartItemsBaseUrl, cartItem);
+  }
+
+  removeCartItem(cartItemId: number) {
+    return this.http.delete<any>(`${this.cartItemsBaseUrl}/${cartItemId}`);
   }
 
   get activeCartId() {

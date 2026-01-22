@@ -20,20 +20,29 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
     public IReadOnlyCollection<CartItem> Items => _cartItems;
 
 
-    public Guid AddItem(Guid productId, int quantity, string productName, string productImageUrl)
+    public CartItem AddItem(Guid productId, string productName, string productImageUrl)
     {
-        var item = new CartItem(Id, productId, quantity, productName, productImageUrl);
+        var item = new CartItem(Id, productId, productName, productImageUrl);
         _cartItems.Add(item);
-
-        return item.Id;
+        return item;
     }
 
-    public void RemoveItem(Guid itemId)
+    public void RemoveItem(int itemId)
     {
-        var item = _cartItems.FirstOrDefault(x => x.Id == itemId);
-        if (item != null)
-            _cartItems.Remove(item);
+        var cartItem = _cartItems.FirstOrDefault(x => x.Id == itemId);
+        if (cartItem == null) return;
+
+        _cartItems.Remove(cartItem);
     }
+
+    public void RemoveProductItems(Guid productId)
+    {
+        _cartItems.RemoveAll(x => x.ProductId == productId);
+    }
+
+    public int GetItemsCountForProduct(Guid productId) => _cartItems.Count(i => i.ProductId == productId);
+
+    public void Clear() => _cartItems.Clear();
 
     #region Infra
     private ShoppingCart() : this(Guid.NewGuid(), null)

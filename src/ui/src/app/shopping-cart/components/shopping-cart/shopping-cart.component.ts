@@ -1,24 +1,36 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ShoppingCartService } from '../../shopping-cart.services';
-import { CartItemModel } from '../../models/cart-item-model';
+import { CartItemModel, CartProductDto } from '../../models/cart-item-model';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { ProductCartControlComponent } from '../product-cart-control/product-cart-control.component';
 
 @Component({
   selector: 'shopping-cart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, ProductCartControlComponent],
   templateUrl: './shopping-cart.component.html',
   styleUrl: './shopping-cart.component.css',
 })
 export class ShoppingCartComponent {
-  cartItems: CartItemModel[];
+  cartItems: CartProductDto[] = [];
+
   constructor(private shoppingCartService: ShoppingCartService) {}
 
-  ngOnInit() {
-    this.shoppingCartService.cartItemsSource.subscribe((items) => {
-      this.cartItems = items;
-    });
+  @Input() style: 'full' | 'mini' = 'full';
+  get isFullStyle() {
+    return this.style == 'full';
+  }
 
-    this.shoppingCartService.loadCart().subscribe();
+  ngOnInit() {
+    this.shoppingCartService.getCart().subscribe((cartItems) => {
+      this.cartItems = cartItems;
+    });
+  }
+
+  get cartItemsFalttenedCount() {
+    let count = 0;
+    this.cartItems.forEach((i) => (count += i.itemIds.length));
+    return count;
   }
 }

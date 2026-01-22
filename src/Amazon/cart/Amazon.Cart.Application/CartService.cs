@@ -14,47 +14,58 @@ namespace Amazon.Cart.Application
         IUnitOfWork _unitOfWork
         )
     {
-        public async Task<RestResponse<List<CartItemDto>>> GetByIdAsync(Guid cartId)
+        public async Task<RestResponse<List<CartProductDto>>> GetByIdAsync(Guid cartId)
         {
             var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
             if (cart is null)
-                return RestResponse<List<CartItemDto>>.NotFound($"Cart with id {cartId} was not found");
+                return RestResponse<List<CartProductDto>>.NotFound($"Cart with id {cartId} was not found");
 
 
-            return RestResponse<List<CartItemDto>>.Success(cart.ToItemsDto());
+            return RestResponse<List<CartProductDto>>.Success(cart.ToItemsDto());
         }
 
-        public async Task<RestResponse<CartItemDto>> CreateCartAsync(CartCreateDto createDto)
+        public async Task<RestResponse<CartCreateResultDto>> CreateCartAsync(CartCreateDto createDto)
         {
             var cartCreateResult = await _cartService.CreateCartAsync(createDto.CustomerId);
             if (!cartCreateResult.IsSuccess)
-                return cartCreateResult.MapTo((CartItemDto)null);
+                return cartCreateResult.MapTo((CartCreateResultDto)null);
 
-            var cartItemDto = AddItemToCart(cartCreateResult, createDto.CartItem);
+            var cartItemId = AddItemToCart(cartCreateResult, createDto.CartItem);
 
             await _unitOfWork.CommitAsync();
 
-            return RestResponse<CartItemDto>.Success(cartItemDto);
+            return RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, cartItemId));
         }
 
-        public async Task<RestResponse<CartItemDto>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItem)
+        public async Task<RestResponse<int>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItem)
         {
             var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
             if (cart is null)
-                return RestResponse<CartItemDto>.NotFound($"Cart with id {cartId} was not found");
+                return RestResponse<int>.NotFound($"Cart with id {cartId} was not found");
 
             var cartItemDto = AddItemToCart(cart, cartItem);
 
             await _unitOfWork.CommitAsync();
 
-            return RestResponse<CartItemDto>.Success(cartItemDto);
+            return RestResponse<int>.Success(cartItemDto);
         }
 
-        private CartItemDto AddItemToCart(ShoppingCart cart, CartItemCreateDto cartItem)
+        public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, int cartItemId)
         {
-            var itemId = cart.AddItem(cartItem.ProductId, cartItem.Quantity, cartItem.ProductName, cartItem.ProductImageUrl);
+            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
+            if (cart is null)
+                return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
 
-            return new CartItemDto(cart.Id, itemId, cartItem.ProductId, cartItem.Quantity, cartItem.ProductName, cartItem.ProductImageUrl);
+            cart.RemoveItem(cartItemId);
+            await _unitOfWork.CommitAsync();
+
+            return RestResponse<bool>.Success(true);
+        }
+
+        private int AddItemToCart(ShoppingCart cart, CartItemCreateDto cartItem)
+        {
+            var item = cart.AddItem(cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
+            return item.Id;
         }
     }
 }

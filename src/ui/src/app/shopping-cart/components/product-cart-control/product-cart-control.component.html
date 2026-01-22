@@ -1,0 +1,22 @@
+<button
+  class="btn btn-success"
+  (click)="addToCart()"
+  *ngIf="productItemIds.length == 0"
+>
+  Add to cart
+</button>
+
+<div style="display: flex" *ngIf="productItemIds.length > 0">
+  <button
+    class="btn btn-default"
+    *ngIf="productItemIds.length > 1"
+    (click)="removeProductItem()"
+  >
+    -
+  </button>
+  <span class="badge rounded-pill text-bg-primary">{{
+    productItemIds.length
+  }}</span>
+  <button class="btn btn-success" (click)="addToCart()">+</button>
+  <button class="btn btn-danger" (click)="deleteAllItemsForProduct()">x</button>
+</div>

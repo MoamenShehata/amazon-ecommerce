@@ -68,8 +68,11 @@ namespace Amazon.Cart.Infrastructure.Migrations
                             b1.Property<Guid>("ShoppingCartId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<Guid>("Id")
-                                .HasColumnType("uniqueidentifier");
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<Guid>("ProductId")
                                 .HasColumnType("uniqueidentifier");
@@ -81,9 +84,6 @@ namespace Amazon.Cart.Infrastructure.Migrations
                             b1.Property<string>("ProductName")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Quantity")
-                                .HasColumnType("int");
 
                             b1.HasKey("ShoppingCartId", "Id");
 

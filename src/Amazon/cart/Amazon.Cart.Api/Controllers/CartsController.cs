@@ -8,7 +8,7 @@ namespace Amazon.Cart.Api.Controllers;
 public class CartsController(CartService _cartService) : ApiControllerBase
 {
     [HttpGet("{cartId}")]
-    public async Task<IActionResult> CreateShoppingCart(Guid cartId)
+    public async Task<IActionResult> GetShoppingCart(Guid cartId)
     {
         var result = await _cartService.GetByIdAsync(cartId);
         if (result.IsSuccess)

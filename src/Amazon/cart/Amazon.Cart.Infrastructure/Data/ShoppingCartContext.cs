@@ -27,8 +27,6 @@ namespace Amazon.Cart.Infrastructure.Data
                     b.WithOwner().HasForeignKey(x => x.ShoppingCartId);
 
                     b.HasKey(x => new { x.ShoppingCartId, x.Id });
-
-                    b.Property(x=>x.Id).ValueGeneratedNever();
                 });
 
                 e.Navigation(o => o.Items).HasField("_cartItems")

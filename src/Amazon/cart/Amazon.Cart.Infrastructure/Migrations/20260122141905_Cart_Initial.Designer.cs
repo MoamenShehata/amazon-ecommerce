@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amazon.Cart.Infrastructure.Migrations
 {
     [DbContext(typeof(ShoppingCartContext))]
-    [Migration("20260120085650_Carts_Initial")]
-    partial class Carts_Initial
+    [Migration("20260122141905_Cart_Initial")]
+    partial class Cart_Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,15 +71,22 @@ namespace Amazon.Cart.Infrastructure.Migrations
                             b1.Property<Guid>("ShoppingCartId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<Guid>("Id")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
 
                             b1.Property<Guid>("ProductId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("Quantity")
-                                .HasColumnType("int");
+                            b1.Property<string>("ProductImageUrl")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("ProductName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("ShoppingCartId", "Id");
 
