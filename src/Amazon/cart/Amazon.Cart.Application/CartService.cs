@@ -61,6 +61,18 @@ namespace Amazon.Cart.Application
 
             return RestResponse<bool>.Success(true);
         }
+        
+        public async Task<RestResponse<bool>> RemoveAllProductItemsAsync(Guid cartId, Guid productId)
+        {
+            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
+            if (cart is null)
+                return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
+
+            cart.RemoveProductItems(productId);
+            await _unitOfWork.CommitAsync();
+
+            return RestResponse<bool>.Success(true);
+        }
 
         private int AddItemToCart(ShoppingCart cart, CartItemCreateDto cartItem)
         {

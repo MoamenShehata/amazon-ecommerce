@@ -24,4 +24,11 @@ public class CartItemsController(CartService _cartService) : ApiControllerBase
         var result = await _cartService.RemoveItemFromCartAsync(cartId, cartItemId);
         return RestResult(result);
     }
+
+    [HttpDelete("RemoveAllProductItems/{productId}")]
+    public async Task<IActionResult> RemoveAllProductItems(Guid cartId, Guid productId)
+    {
+        var result = await _cartService.RemoveAllProductItemsAsync(cartId, productId);
+        return RestResult(result);
+    }
 }

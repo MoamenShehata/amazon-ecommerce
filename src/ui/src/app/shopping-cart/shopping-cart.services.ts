@@ -58,6 +58,12 @@ export class ShoppingCartService {
     return this.http.delete<any>(`${this.cartItemsBaseUrl}/${cartItemId}`);
   }
 
+  RemoveAllProductItems(productId: string) {
+    return this.http.delete<any>(
+      `${this.cartItemsBaseUrl}/RemoveAllProductItems/${productId}`,
+    );
+  }
+
   get activeCartId() {
     return this.storageService.retrieve('cartId');
   }

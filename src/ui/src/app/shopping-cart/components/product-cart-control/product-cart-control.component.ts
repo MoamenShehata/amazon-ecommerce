@@ -39,5 +39,11 @@ export class ProductCartControlComponent {
       });
   }
 
-  deleteAllItemsForProduct() {}
+  deleteAllItemsForProduct() {
+    this.shoppingCartService
+      .RemoveAllProductItems(this.product.productId)
+      ?.subscribe((res) => {
+        // this.productItemIds.pop();
+      });
+  }
 }
