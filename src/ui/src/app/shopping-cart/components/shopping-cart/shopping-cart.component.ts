@@ -4,6 +4,7 @@ import { CartItemModel, CartProductDto } from '../../models/cart-item-model';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductCartControlComponent } from '../product-cart-control/product-cart-control.component';
+import { ShoppingCartState } from '../../shopping-cart.state';
 
 @Component({
   selector: 'shopping-cart',
@@ -15,7 +16,15 @@ import { ProductCartControlComponent } from '../product-cart-control/product-car
 export class ShoppingCartComponent {
   cartItems: CartProductDto[] = [];
 
-  constructor(private shoppingCartService: ShoppingCartService) {}
+  constructor(
+    private shoppingCartService: ShoppingCartService,
+    private shoppingCartState: ShoppingCartState,
+  ) {
+    shoppingCartState._source.subscribe((cartItems) => {
+      debugger;
+      this.cartItems = cartItems;
+    });
+  }
 
   @Input() style: 'full' | 'mini' = 'full';
   get isFullStyle() {
@@ -24,7 +33,9 @@ export class ShoppingCartComponent {
 
   ngOnInit() {
     this.shoppingCartService.getCart().subscribe((cartItems) => {
-      this.cartItems = cartItems;
+      cartItems.forEach((cartItem) => {
+        this.shoppingCartState.add(cartItem);
+      });
     });
   }
 

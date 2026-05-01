@@ -1,0 +1,45 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { CartProductDto } from './models/cart-item-model';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ShoppingCartState {
+  _source = new BehaviorSubject<CartProductDto[]>([]);
+
+  add(item: CartProductDto) {
+    debugger;
+    let currentItems = this._source.value;
+
+    const cartProductItem = currentItems.find(
+      (i) => i.productId == item.productId,
+    );
+    if (cartProductItem) {
+      currentItems = currentItems.map((i) => {
+        if (i.productId == item.productId) {
+          return {
+            ...i,
+            itemIds: [...item.itemIds],
+          };
+        }
+        return i;
+      });
+    } else {
+      currentItems.push(item);
+    }
+
+    this._source.next([...currentItems]);
+  }
+
+  remove(itemId: number) {
+    const currentItems = this._source.value;
+    currentItems.forEach((i) => {
+      i.itemIds = i.itemIds.filter((id) => id != itemId);
+    });
+
+    this._source.next(currentItems);
+  }
+
+  cartItems$ = this._source.asObservable();
+}

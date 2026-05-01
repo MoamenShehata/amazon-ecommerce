@@ -3,6 +3,7 @@ import { ShoppingCartService } from '../../shopping-cart.services';
 import { ProductForListModel } from '../../../poduct-catalog/models/product-for-list-model';
 import { CommonModule } from '@angular/common';
 import { CartProductDto } from '../../models/cart-item-model';
+import { ShoppingCartState } from '../../shopping-cart.state';
 
 @Component({
   selector: 'product-cart-control',
@@ -15,7 +16,10 @@ export class ProductCartControlComponent {
   @Input() product: CartProductDto;
   @Input() productItemIds: number[] = [];
 
-  constructor(private shoppingCartService: ShoppingCartService) {}
+  constructor(
+    private shoppingCartService: ShoppingCartService,
+    private shoppingCartState: ShoppingCartState,
+  ) {}
 
   addToCart() {
     this.shoppingCartService
@@ -26,6 +30,14 @@ export class ProductCartControlComponent {
       })
       ?.subscribe((res) => {
         this.productItemIds.push(res.cartItemId);
+
+        debugger;
+        this.shoppingCartState.add({
+          productId: this.product.productId,
+          productName: this.product.productName,
+          productImageUrl: this.product.productImageUrl,
+          itemIds: this.productItemIds,
+        });
       });
   }
 
@@ -36,6 +48,7 @@ export class ProductCartControlComponent {
       .removeCartItem(itemIdToRemove)
       ?.subscribe((res) => {
         this.productItemIds.pop();
+        this.shoppingCartState.remove(itemIdToRemove);
       });
   }
 

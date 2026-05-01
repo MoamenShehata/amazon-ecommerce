@@ -1,6 +1,7 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Domain;
+using Amazon.Cart.Domain.Entities;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
@@ -30,24 +31,23 @@ namespace Amazon.Cart.Application
             if (!cartCreateResult.IsSuccess)
                 return cartCreateResult.MapTo((CartCreateResultDto)null);
 
-            var cartItemId = AddItemToCart(cartCreateResult, createDto.CartItem);
-
+            var cartItem = AddItemToCart(cartCreateResult, createDto.CartItem);
             await _unitOfWork.CommitAsync();
 
-            return RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, cartItemId));
+            return RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, cartItem.Id));
         }
 
-        public async Task<RestResponse<int>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItem)
+        public async Task<RestResponse<int>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItemDto)
         {
             var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
             if (cart is null)
                 return RestResponse<int>.NotFound($"Cart with id {cartId} was not found");
 
-            var cartItemDto = AddItemToCart(cart, cartItem);
+            var cartItem = AddItemToCart(cart, cartItemDto);
 
             await _unitOfWork.CommitAsync();
 
-            return RestResponse<int>.Success(cartItemDto);
+            return RestResponse<int>.Success(cartItem.Id);
         }
 
         public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, int cartItemId)
@@ -74,10 +74,10 @@ namespace Amazon.Cart.Application
             return RestResponse<bool>.Success(true);
         }
 
-        private int AddItemToCart(ShoppingCart cart, CartItemCreateDto cartItem)
+        private CartItem AddItemToCart(ShoppingCart cart, CartItemCreateDto cartItem)
         {
             var item = cart.AddItem(cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
-            return item.Id;
+            return item;
         }
     }
 }
