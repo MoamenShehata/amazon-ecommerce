@@ -16,14 +16,11 @@ public class CartsController(CartService _cartService) : ApiControllerBase
 
         return RestResult(result);
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> CreateShoppingCart([FromBody] CartCreateDto cartModel)
     {
         var result = await _cartService.CreateCartAsync(cartModel);
-        if (result.IsSuccess)
-            return Ok(result.Value);
-
-        return RestResult(result);
+        return Ok(result);
     }
 }

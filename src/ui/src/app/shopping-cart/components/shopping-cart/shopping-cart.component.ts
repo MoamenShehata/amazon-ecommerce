@@ -21,7 +21,6 @@ export class ShoppingCartComponent {
     private shoppingCartState: ShoppingCartState,
   ) {
     shoppingCartState._source.subscribe((cartItems) => {
-      debugger;
       this.cartItems = cartItems;
     });
   }

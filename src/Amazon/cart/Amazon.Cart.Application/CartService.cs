@@ -1,9 +1,11 @@
-﻿using Amazon.Cart.Application.Dtos;
+﻿using System.Threading.Tasks;
+using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using MassTransit;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 
@@ -31,10 +33,15 @@ namespace Amazon.Cart.Application
             if (!cartCreateResult.IsSuccess)
                 return cartCreateResult.MapTo((CartCreateResultDto)null);
 
-            var cartItem = AddItemToCart(cartCreateResult, createDto.CartItem);
+            var result = await AddItemToCartAsync(cartCreateResult, createDto.CartItem);
             await _unitOfWork.CommitAsync();
 
-            return RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, cartItem.Id));
+            var response = RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, result.Value?.Id ?? 0));
+
+            if (!result.IsSuccess)
+                response.WithMessage(result.Error.ToString()!);
+
+            return response;
         }
 
         public async Task<RestResponse<int>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItemDto)
@@ -43,11 +50,12 @@ namespace Amazon.Cart.Application
             if (cart is null)
                 return RestResponse<int>.NotFound($"Cart with id {cartId} was not found");
 
-            var cartItem = AddItemToCart(cart, cartItemDto);
+            var result = await AddItemToCartAsync(cart, cartItemDto);
+            if (!result.IsSuccess)
+                return result.MapTo((int)0);
 
             await _unitOfWork.CommitAsync();
-
-            return RestResponse<int>.Success(cartItem.Id);
+            return RestResponse<int>.Success(result.Value.Id);
         }
 
         public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, int cartItemId)
@@ -61,7 +69,7 @@ namespace Amazon.Cart.Application
 
             return RestResponse<bool>.Success(true);
         }
-        
+
         public async Task<RestResponse<bool>> RemoveAllProductItemsAsync(Guid cartId, Guid productId)
         {
             var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
@@ -74,10 +82,9 @@ namespace Amazon.Cart.Application
             return RestResponse<bool>.Success(true);
         }
 
-        private CartItem AddItemToCart(ShoppingCart cart, CartItemCreateDto cartItem)
+        private async Task<RestResponse<CartItem>> AddItemToCartAsync(ShoppingCart cart, CartItemCreateDto cartItem)
         {
-            var item = cart.AddItem(cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
-            return item;
+            return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
         }
     }
 }

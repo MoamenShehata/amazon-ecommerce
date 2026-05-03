@@ -4,6 +4,7 @@ import { ProductForListModel } from '../../../poduct-catalog/models/product-for-
 import { CommonModule } from '@angular/common';
 import { CartProductDto } from '../../models/cart-item-model';
 import { ShoppingCartState } from '../../shopping-cart.state';
+import { catchError } from 'rxjs';
 
 @Component({
   selector: 'product-cart-control',
@@ -28,10 +29,14 @@ export class ProductCartControlComponent {
         productName: this.product.productName,
         productImageUrl: this.product.productImageUrl,
       })
+      .pipe(
+        catchError((err) => {
+          return [];
+        }),
+      )
       ?.subscribe((res) => {
         this.productItemIds.push(res.cartItemId);
 
-        debugger;
         this.shoppingCartState.add({
           productId: this.product.productId,
           productName: this.product.productName,

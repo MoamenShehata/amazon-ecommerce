@@ -1,4 +1,6 @@
-﻿using Amazon.Cart.Infrastructure.Data;
+﻿using Amazon.Cart.Domain;
+using Amazon.Cart.Infrastructure.Data;
+using Amazon.Cart.Infrastructure.Integrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,8 @@ public static class InfrastructureDependencyRegistrar
             .AddGenericRepos()
             .AddBaseContext<ShoppingCartContext>(o => o.UseSqlServer(configuration.GetConnectionString("Default")));
         ;
+
+        services.AddScoped<IInventoryService, InventoryService>();
 
         return services;
     }

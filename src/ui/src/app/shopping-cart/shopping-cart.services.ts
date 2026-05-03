@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { CartItemCreateModel } from './models/cart-item-create.models';
 import { AuthService } from '../authentication/services/authentication.service';
 import { StorageService } from '../core/services/storage-service';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { CartItemModel, CartProductDto } from './models/cart-item-model';
 import { HttpClient } from '@angular/common/http';
 
@@ -44,8 +44,15 @@ export class ShoppingCartService {
         cartItem: cartItem,
       })
       .pipe(
-        tap((resp) => {
-          this.storageService.save('cartId', resp.cartId);
+        map((resp: any) => {
+          this.storageService.save('cartId', resp.value.cartId);
+
+          if (resp.message) {
+            alert(resp.message);
+            throw new Error(resp.message);
+          }
+
+          return resp.value;
         }),
       );
   }

@@ -7,6 +7,7 @@ namespace Amazon.SharedKernel.API
         public HttpStatusCode StatusCode { get; private set; }
         public object? Error { get; private set; }
         public Exception? Exception { get; private set; }
+        public string? Message { get; private set; }
         public bool IsSuccess => ((int)StatusCode >= 200) && ((int)StatusCode <= 299);
 
         public RestResponse(HttpStatusCode statusCode, object error = null, Exception exception = null)
@@ -22,6 +23,7 @@ namespace Amazon.SharedKernel.API
         public static RestResponse Failure(Exception exception) => new RestResponse(HttpStatusCode.InternalServerError, null, exception);
         public static RestResponse Conflict(object error) => new RestResponse(HttpStatusCode.Conflict, error);
 
+        public void WithMessage(string message) => Message = message;
     }
 
     public class RestResponse<TValue> : RestResponse
