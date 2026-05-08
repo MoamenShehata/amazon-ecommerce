@@ -8,7 +8,7 @@ public class ProductGrpService(ProductAppService _service) : ProductServiceBase
     public override async Task<ProductAvailabilityReply> IsProductAvailableInStock(ProductIdRequest request, ServerCallContext context)
     {
         var productInstance = await _service.GetByIdAsync(Guid.Parse(request.ProductId));
-        if (productInstance is null)
+        if (!productInstance.IsSuccess)
             throw new RpcException(new Status(StatusCode.NotFound, $"Product with id {request.ProductId} not found"));
 
 
