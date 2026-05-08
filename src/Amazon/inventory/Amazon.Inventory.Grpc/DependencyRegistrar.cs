@@ -9,7 +9,10 @@ public static class DependencyRegistrar
     public static void AddServices(this WebApplicationBuilder builder)
     {
         builder.Services
-            .AddGrpc();
+            .AddGrpc(op =>
+            {
+                op.EnableDetailedErrors = false;
+            });
         
         builder.Services
             .AddGrpcReflection();
