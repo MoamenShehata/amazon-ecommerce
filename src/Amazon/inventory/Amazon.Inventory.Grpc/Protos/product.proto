@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package Amazon.Inventory;
+
+option csharp_namespace = "Amazon.Inventory.Grpc";
+
+service ProductService	{
+	rpc IsProductAvailableInStock (ProductIdRequest) returns (ProductAvailabilityReply);
+}
+
+message ProductIdRequest {
+	string productId = 1;
+}
+
+message ProductAvailabilityReply {
+	bool isAvailableInStock = 1;
+	int32 availableQuantity = 2;
+}
