@@ -10,6 +10,9 @@ public static class DependencyRegistrar
     {
         builder.Services
             .AddGrpc();
+        
+        builder.Services
+            .AddGrpcReflection();
 
         builder.Services
             .RegisterApplicationDependencies(builder.Configuration)
