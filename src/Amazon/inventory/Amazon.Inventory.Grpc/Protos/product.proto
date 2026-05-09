@@ -5,11 +5,22 @@ package Amazon.Inventory;
 option csharp_namespace = "Amazon.Inventory.Grpc";
 
 service ProductService	{
+	rpc IsProductAvailableInStock (ProductAvailabilityRequest) returns (ProductAvailabilityReply);
 	rpc HoldItemForPurchaseRequest (ProductIdRequest) returns (HoldItemForPurchaseReply);
 }
 
 message ProductIdRequest {
 	string productId = 1;
+}
+
+message ProductAvailabilityRequest {
+	string productId = 1;
+	int32 quantity = 2;
+}
+
+message ProductAvailabilityReply {
+	bool isAvailableInStock = 1;
+	int32 availableQuantity = 2;
 }
 
 message HoldItemForPurchaseReply {

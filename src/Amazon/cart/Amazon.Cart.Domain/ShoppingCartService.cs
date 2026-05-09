@@ -25,11 +25,12 @@ public class ShoppingCartService(
 
     public async Task<RestResponse<CartItem>> TryAddItemToCartAsync(ShoppingCart cart, Guid productId, string productName, string productImageUrl)
     {
-        var holdRequestId = await _inventoryService.TryHoldProductItemForPurchaseAsync(productId);
-        if (holdRequestId == 0)
+        var totalItemsCountRequested = cart.GetItemsCountForProduct(productId) + 1;
+        var isAvailable = await _inventoryService.IsProductAvailableForQuantityAsync(productId, totalItemsCountRequested);
+        if (!isAvailable)
             return RestResponse<CartItem>.Conflict($"Product with id {productId} is not available in inventory");
 
-        var item = cart.AddItem(productId, holdRequestId, productName, productImageUrl);
+        var item = cart.AddItem(productId, productName, productImageUrl);
         return RestResponse<CartItem>.Success(item);
     }
 }

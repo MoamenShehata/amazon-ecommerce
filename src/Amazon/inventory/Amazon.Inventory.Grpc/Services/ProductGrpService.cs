@@ -7,6 +7,23 @@ namespace Amazon.Inventory.Grpc.Services;
 
 public class ProductGrpService(ProductAppService _service) : ProductServiceBase
 {
+    public override async Task<ProductAvailabilityReply> IsProductAvailableInStock(ProductAvailabilityRequest request, ServerCallContext context)
+    {
+        var productInstance = await _service.GetByIdAsync(Guid.Parse(request.ProductId));
+        if (!productInstance.IsSuccess)
+            return new ProductAvailabilityReply()
+            {
+                IsAvailableInStock = false,
+                AvailableQuantity = 0
+            };
+
+        return new ProductAvailabilityReply()
+        {
+            IsAvailableInStock = productInstance.Value.Inventory.InStockCount >= request.Quantity,
+            AvailableQuantity = productInstance.Value.Inventory.InStockCount
+        };
+    }
+
     public override async Task<HoldItemForPurchaseReply> HoldItemForPurchaseRequest(ProductIdRequest request, ServerCallContext context)
     {
         var productId = Guid.Parse(request.ProductId);
