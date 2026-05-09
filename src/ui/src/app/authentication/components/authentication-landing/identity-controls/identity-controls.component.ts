@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { AuthenticatedUser } from '../../../models/authenticated-user.model';
 import { AuthService } from '../../../services/authentication.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'identity-controls',
@@ -20,6 +21,10 @@ export class IdentityControlsComponent {
 
   startOAuthLogin() {
     this.authService.initiateCodeFlow();
+  }
+
+  navigateToSignUp() {
+    window.location.href = `${environment.authenticationBaseUrl}/Account/RegisterCustomer`;
   }
 
   logout() {

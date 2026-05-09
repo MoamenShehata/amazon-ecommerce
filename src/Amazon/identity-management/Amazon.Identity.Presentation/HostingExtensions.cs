@@ -1,7 +1,9 @@
 using Amazon.Identity.Presentation.Data;
 using Amazon.Identity.Presentation.Models;
 using Amazon.Identity.Presentation.Profiles;
+using Amazon.Identity.Presentation.Services;
 using Duende.IdentityServer;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -13,6 +15,23 @@ namespace Amazon.Identity.Presentation
         public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddRazorPages();
+            
+            builder.Services.AddScoped<AccountService>();
+
+            builder.Services.AddMassTransit(config =>
+            {
+                config.SetKebabCaseEndpointNameFormatter();
+
+                config.UsingRabbitMq((ctxt, configurator) =>
+                {
+                    configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]), host =>
+                    {
+                        host.Username(builder.Configuration["MessageBroker:User"]);
+                        host.Password(builder.Configuration["MessageBroker:Password"]);
+                    });
+                    configurator.ConfigureEndpoints(ctxt);
+                });
+            });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

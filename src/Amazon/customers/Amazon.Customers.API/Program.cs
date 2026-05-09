@@ -1,9 +1,12 @@
+using Amazon.Customers.Application;
 using Amazon.Customers.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .RegisterInfrastructureDependencies(builder.Configuration);
+    .RegisterApplicationDependencies(builder.Configuration)
+    .RegisterInfrastructureDependencies(builder.Configuration)
+    ;
 
 // Add services to the container.
 

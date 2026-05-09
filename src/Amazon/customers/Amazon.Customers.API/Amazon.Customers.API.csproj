@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Amazon.Customers.Application\Amazon.Customers.Application.csproj" />
     <ProjectReference Include="..\Amazon.Customers.Infrastructure\Amazon.Customers.Infrastructure.csproj" />
   </ItemGroup>
 

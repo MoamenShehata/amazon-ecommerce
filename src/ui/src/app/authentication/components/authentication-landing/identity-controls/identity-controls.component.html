@@ -1,11 +1,11 @@
 <ng-container *ngIf="!authenticatedUser">
   <li class="nav-item">
-    <button
-      class="btn btn-outline-light ms-2"
-      type="button"
-      (click)="startOAuthLogin()"
-    >
+    <button class="btn btn-outline-light ms-2" type="button" (click)="startOAuthLogin()">
       Login
+    </button>
+
+    <button class="btn btn-outline-light ms-2" type="button" (click)="navigateToSignUp()">
+      Sign up
     </button>
   </li>
 </ng-container>
