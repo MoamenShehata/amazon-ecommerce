@@ -33,4 +33,13 @@ public class ProductAppService(
         await _unitOfWork.CommitAsync();
         return RestResponse<int>.Success(holdItemIdResult.Value);
     }
+
+    public async Task ReleaseProductsOnHoldAsync(params Guid[] productIds)
+    {
+        var productsOnHold = await _repository.GetAllAsync(x => productIds.Contains(x.Id));
+        foreach (var item in productsOnHold)
+            item.Inventory.ReleaseAllOnHoldItems();
+
+        await _unitOfWork.CommitAsync();
+    }
 }

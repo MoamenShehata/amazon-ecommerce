@@ -1,3 +1,4 @@
+using Amazon.Cart.Api.Jobs;
 using Amazon.Cart.Application;
 using Amazon.Cart.Infrastructure;
 using Amazon.SharedKernel.Extensions;
@@ -12,6 +13,7 @@ builder.Services.AddOpenApi();
 
 builder.Services
     .AddSharedJobs()
+    .AddJob<SoftDeleteExpiredCartsJob>()
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
     ;

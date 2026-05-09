@@ -49,10 +49,17 @@ public class ProductInventory
     public RestResponse<int> HoldItemForPurchase()
     {
         var firstAvailableItem = _items.FirstOrDefault(i => !i.IsOnHold);
-        if (firstAvailableItem is null)
+        if (InStockCount == 0 || firstAvailableItem is null)
             return RestResponse<int>.NotFound($"No available inventory items to hold for purchase");
 
+        firstAvailableItem.HoldForPurchase();
         return RestResponse<int>.Success(firstAvailableItem.Id);
+    }
+
+    public void ReleaseAllOnHoldItems()
+    {
+        foreach (var item in _items.Where(i => i.IsOnHold))
+            item.ReleaseHold();
     }
 
     private ProductInventory() { }

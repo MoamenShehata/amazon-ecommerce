@@ -5,6 +5,7 @@ using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using MassTransit;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
@@ -85,6 +86,16 @@ namespace Amazon.Cart.Application
         private async Task<RestResponse<CartItem>> AddItemToCartAsync(ShoppingCart cart, CartItemCreateDto cartItem)
         {
             return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
+        }
+
+
+        public async Task SoftDeleteExpiredCartsAsync()
+        {
+            var expiredCarts = await _cartsRepo.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow && !x.IsDeleted);
+            foreach (var expiredCart in expiredCarts)
+                expiredCart.SoftDelete();
+
+            await _unitOfWork.CommitAsync();
         }
     }
 }

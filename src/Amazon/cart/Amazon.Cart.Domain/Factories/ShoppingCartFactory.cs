@@ -8,6 +8,6 @@ public class ShoppingCartFactory
     {
         // we can use customerId to get analysis on his previous data to create customer-specific expiration
 
-        return new ShoppingCart(customerId, new CartExpiration(DateTime.UtcNow.AddMinutes(10)));
+        return new ShoppingCart(customerId, new CartExpiration(DateTime.UtcNow.AddMinutes(2)));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Amazon.Inventory.Application.Products;
 using Amazon.Inventory.Domain.Orders;
+using Amazon.Inventory.Domain.Products;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,11 +45,9 @@ namespace Amazon.Inventory.Application
 
         private static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
-            //services
-            //    .AddScoped<ProductsService>()
-            //    .AddScoped<OrdersService>()
-            //    .AddScoped<OrderFactory>()
-            //    ;
+            services
+                .AddScoped<ProductService>()
+                ;
 
             return services;
         }
