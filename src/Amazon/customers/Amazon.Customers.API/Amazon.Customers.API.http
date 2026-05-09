@@ -1,0 +1,6 @@
+@Amazon.Customers.API_HostAddress = http://localhost:5145
+
+GET {{Amazon.Customers.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

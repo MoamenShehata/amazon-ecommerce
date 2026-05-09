@@ -22,4 +22,9 @@ public class ShippingAddress : AuditableEntity<int>
         House = house;
         IsDefault = isDefault;
     }
+
+    private ShippingAddress() : base(0)
+    {
+
+    }
 }
