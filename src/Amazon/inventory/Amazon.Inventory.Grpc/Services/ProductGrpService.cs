@@ -1,7 +1,6 @@
 ﻿using Amazon.Inventory.Application.Products;
 using Grpc.Core;
 using static Amazon.Inventory.Grpc.ProductService;
-using Amazon.Inventory.Grpc;
 
 namespace Amazon.Inventory.Grpc.Services;
 

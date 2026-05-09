@@ -1,0 +1,16 @@
+checkout is process of specifying?
+
+1- payment method
+    - if card
+        - payment must be verified first
+    - if cash
+        - order can be placed instantly
+
+2- the shipping address
+    - select from pre-exsiting
+    - or add new one
+
+3- a final chance if the user want to update the cart(remove/add items)
+    - delegate to the cart components/services
+    
+4- view the final price (product prices, shipping prices, copoun discounts, etc...)
