@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { CartItemCreateModel } from './models/cart-item-create.models';
 import { AuthService } from '../authentication/services/authentication.service';
 import { StorageService } from '../core/services/storage-service';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, tap } from 'rxjs';
 import { CartItemModel, CartProductDto } from './models/cart-item-model';
 import { HttpClient } from '@angular/common/http';
 
@@ -23,9 +23,20 @@ export class ShoppingCartService {
   ) {}
 
   getCart() {
-    return this.http.get<CartProductDto[]>(
-      `${this.cartsBaseUrl}/${this.activeCartId}`,
-    );
+    const activeCartId = this.activeCartId;
+    if (!activeCartId)
+      return new BehaviorSubject<CartProductDto[]>([]).asObservable();
+
+    return this.http
+      .get<CartProductDto[]>(`${this.cartsBaseUrl}/${activeCartId}`)
+      .pipe(
+        catchError((err) => {
+          if (err.status === 404) {
+            this.storageService.delete('cartId');
+          }
+          return new BehaviorSubject<CartProductDto[]>([]).asObservable();
+        }),
+      );
   }
 
   addCartItem(cartItem: CartItemCreateModel) {
