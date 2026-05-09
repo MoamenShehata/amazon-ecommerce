@@ -9,7 +9,6 @@ namespace Amazon.Cart.Domain;
 public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public Guid? CustomerId { get; private set; }
-    public bool IsDeleted { get; private set; }
 
     public CartExpiration Expiration { get; private set; }
 
@@ -47,13 +46,6 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
     public int GetItemsCountForProduct(Guid productId) => _cartItems.Count(i => i.ProductId == productId);
 
     public void Clear() => _cartItems.Clear();
-
-    public void SoftDelete()
-    {
-        IsDeleted = true;
-        RaiseEvent(new CartExpiredEvent([.. Items.Select(x => x.ProductId).Distinct()]));
-        Clear();
-    }
 
     #region Infra
     private ShoppingCart() : this(Guid.NewGuid(), null)

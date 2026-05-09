@@ -89,11 +89,14 @@ namespace Amazon.Cart.Application
         }
 
 
-        public async Task SoftDeleteExpiredCartsAsync()
+        public async Task PurgeExpiredCartsAsync()
         {
-            var expiredCarts = await _cartsRepo.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow && !x.IsDeleted);
+            var expiredCarts = await _cartsRepo.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
             foreach (var expiredCart in expiredCarts)
-                expiredCart.SoftDelete();
+            {
+                expiredCart.RaiseEvent(new CartExpiredEvent([.. expiredCart.Items.Select(x => x.ProductId).Distinct().ToList()]));
+                _cartsRepo.Remove(expiredCart);
+            }
 
             await _unitOfWork.CommitAsync();
         }

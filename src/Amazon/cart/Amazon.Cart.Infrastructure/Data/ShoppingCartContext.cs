@@ -9,6 +9,7 @@ namespace Amazon.Cart.Infrastructure.Data
     public class ShoppingCartContext : DbContextBase
     {
         public DbSet<ShoppingCart> Carts { get; set; }
+        public override bool AutoSaveDomainEvents => true;
 
         public ShoppingCartContext(DbContextOptions<ShoppingCartContext> options) : base(options)
         {

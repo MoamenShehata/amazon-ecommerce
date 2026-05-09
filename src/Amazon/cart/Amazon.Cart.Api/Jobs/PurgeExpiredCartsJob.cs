@@ -1,11 +1,10 @@
 ﻿using Amazon.Cart.Application;
 using Amazon.SharedKernel.Jobs;
-using Amazon.SharedKernel.Jobs.RabbitMq;
 
 namespace Amazon.Cart.Api.Jobs;
 
-public class SoftDeleteExpiredCartsJob(
-    ILogger<SoftDeleteExpiredCartsJob> _logger,
+public class PurgeExpiredCartsJob(
+    ILogger<PurgeExpiredCartsJob> _logger,
     IServiceScopeFactory _serviceScopeFactory
     ) : BackgroundJobBase(_logger)
 {
@@ -14,6 +13,6 @@ public class SoftDeleteExpiredCartsJob(
     {
         var scope = _serviceScopeFactory.CreateScope();
         var cartService = scope.ServiceProvider.GetRequiredService<CartService>();
-        await cartService.SoftDeleteExpiredCartsAsync();
+        await cartService.PurgeExpiredCartsAsync();
     }
 }

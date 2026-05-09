@@ -2,4 +2,4 @@
 
 namespace Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 
-public record CartExpiredEvent(params Guid[] ProductIds) : IntegrationEvent(DateTime.UtcNow);
+public record CartExpiredEvent(Guid[] ProductIds) : IntegrationEvent(DateTime.UtcNow);

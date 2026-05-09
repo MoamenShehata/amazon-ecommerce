@@ -13,7 +13,7 @@ builder.Services.AddOpenApi();
 
 builder.Services
     .AddSharedJobs()
-    .AddJob<SoftDeleteExpiredCartsJob>()
+    .AddJob<PurgeExpiredCartsJob>()
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
     ;
