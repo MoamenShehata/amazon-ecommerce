@@ -25,9 +25,9 @@ export class ShoppingCartComponent {
     });
   }
 
-  @Input() style: 'full' | 'mini' = 'full';
+  @Input() style: 'full' | 'mini' | 'checkout' = 'full';
   get isFullStyle() {
-    return this.style == 'full';
+    return this.style == 'full' || this.style == 'checkout';
   }
 
   ngOnInit() {

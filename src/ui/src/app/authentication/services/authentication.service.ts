@@ -58,7 +58,9 @@ export class AuthService {
     this.oauthService.tryLoginCodeFlow().then(() => {
       if (this.oauthService.hasValidAccessToken()) {
         this.setAuthenticatedUser(true);
-        this.router.navigate(['/']);
+        const returnUrl = decodeURIComponent(this.oauthService.state ?? '/');
+
+        this.router.navigate([returnUrl]);
       }
     });
   }

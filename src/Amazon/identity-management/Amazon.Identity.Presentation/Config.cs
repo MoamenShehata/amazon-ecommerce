@@ -33,7 +33,12 @@ namespace Amazon.Identity.Presentation
                     RequireClientSecret = false,
                     RequirePkce = true,
 
-                    RedirectUris = { "http://localhost:4200/auth/login", "http://localhost:62832/auth/login", "http://localhost:4200/silent-refresh.html" },
+                    RedirectUris = { 
+                        "http://localhost:4200/auth/login",
+                        "http://localhost:62832/auth/login",
+                        "http://localhost:4200/silent-refresh.html",
+                        "http://localhost:4200/cart/checkout",
+                    },
                     FrontChannelLogoutUri = "http://localhost:4200/signout-oidc",
                     PostLogoutRedirectUris = { "http://localhost:4200","http://localhost:62832" },
 

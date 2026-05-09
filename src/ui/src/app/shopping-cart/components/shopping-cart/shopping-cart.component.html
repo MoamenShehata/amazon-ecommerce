@@ -1,21 +1,17 @@
 <ng-container *ngIf="isFullStyle">
-  <div class="row">
+  <div class="row mb-5">
     <div *ngFor="let product of cartItems" class="col-3">
       <div class="card">
-        <img
-          src="{{ product.productImageUrl }}"
-          class="card-img-top"
-          alt="..."
-          style="padding: 40px"
-        />
+        <img src="{{ product.productImageUrl }}" class="card-img-top" alt="..." style="padding: 40px" />
 
         <h5 class="card-header">{{ product.productName }}</h5>
-        <product-cart-control
-          [productItemIds]="product.itemIds"
-          [product]="product"
-        />
+        <product-cart-control [productItemIds]="product.itemIds" [product]="product" />
       </div>
     </div>
+  </div>
+
+  <div class="row" *ngIf="style !== 'checkout'">
+    <button class="btn btn-primary" routerLink="/cart/checkout">Checkout</button>
   </div>
 </ng-container>
 
@@ -24,6 +20,6 @@
     Cart
     <span class="badge rounded-pill text-bg-primary">{{
       cartItemsFalttenedCount
-    }}</span>
+      }}</span>
   </button>
 </ng-container>
