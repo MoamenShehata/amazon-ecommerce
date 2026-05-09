@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.ValueObjects;
+using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
@@ -20,10 +21,11 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
     public IReadOnlyCollection<CartItem> Items => _cartItems;
 
 
-    public CartItem AddItem(Guid productId, string productName, string productImageUrl)
+    public CartItem AddItem(Guid productId, int holdRequestId, string productName, string productImageUrl)
     {
         var item = new CartItem(Id, productId, productName, productImageUrl);
         _cartItems.Add(item);
+        RaiseEvent(new CartItemAddedEvent(productId, holdRequestId));
         return item;
     }
 

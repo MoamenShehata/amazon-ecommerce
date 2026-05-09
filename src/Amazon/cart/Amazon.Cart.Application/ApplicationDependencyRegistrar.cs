@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Factories;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,23 @@ public static class ApplicationDependencyRegistrar
     {
         AddDomainServices(services);
         AddApplicationServices(services);
+
+        services.AddMassTransit(config =>
+        {
+            config.SetKebabCaseEndpointNameFormatter();
+
+            config.AddConsumers(typeof(ApplicationDependencyRegistrar).Assembly);
+
+            config.UsingRabbitMq((ctxt, configurator) =>
+            {
+                configurator.Host(new Uri(configuration["MessageBroker:Host"]), host =>
+                {
+                    host.Username(configuration["MessageBroker:User"]);
+                    host.Password(configuration["MessageBroker:Password"]);
+                });
+                configurator.ConfigureEndpoints(ctxt);
+            });
+        });
 
         return services;
     }

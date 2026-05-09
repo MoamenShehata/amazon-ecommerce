@@ -7,14 +7,14 @@ namespace Amazon.Cart.Infrastructure.Integrations;
 
 internal class InventoryService : IInventoryService
 {
-    public async Task<bool> IsProductAvailableAsync(Guid productId)
+    public async Task<int> TryHoldProductItemForPurchaseAsync(Guid productId)
     {
         var channel = GrpcChannel.ForAddress("https://localhost:7047");
         var client = new ProductServiceClient(channel);
 
-        using var call = client.IsProductAvailableInStockAsync(new ProductIdRequest { ProductId = productId.ToString() });
+        using var call = client.HoldItemForPurchaseRequestAsync(new ProductIdRequest { ProductId = productId.ToString() });
         var result = await call.ResponseAsync;
 
-        return await Task.FromResult(result.IsAvailableInStock);
+        return result.PurchaseRequestId;
     }
 }

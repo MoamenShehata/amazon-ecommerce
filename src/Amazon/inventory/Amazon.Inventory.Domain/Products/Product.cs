@@ -1,4 +1,5 @@
-﻿using Amazon.Inventory.Domain.Products.ValueObjects;
+﻿using Amazon.Inventory.Domain.Products.Entities;
+using Amazon.Inventory.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Products.Events;
 using Moamen.SDKs.Repository;
@@ -14,27 +15,30 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
 
     public Product(Guid id, int inStockCount) : base(id)
     {
-        Inventory = new(inStockCount);
+        Inventory = new(id, inStockCount);
     }
 
-    public void AddToInventory(int quantity) => UpdateInventory(Inventory.Add(quantity));
-
-    public RestResponse<bool> ConsumeForOrder(int quantity)
+    public void AddToInventory(int quantity)
     {
-        var consumeResult = Inventory.Consume(quantity);
+        Inventory.Insert(quantity);
+        UpdateInventory(Inventory.InStockCount, Inventory.InStockCount + quantity);
+    }
+
+    public RestResponse<bool> ConsumeForOrder(int inventoryItemId)
+    {
+        var consumeResult = Inventory.Consume(inventoryItemId);
         if (!consumeResult.IsSuccess)
             return RestResponse<bool>.BadRequest(new BadRequestModel(consumeResult.Error.ToString()!));
 
-        UpdateInventory(consumeResult);
+        UpdateInventory(Inventory.InStockCount + 1, Inventory.InStockCount);
         return RestResponse<bool>.Success(true);
     }
 
-    private void UpdateInventory(ProductInventory newInventory)
+    private void UpdateInventory(int beforeQuantity, int newQuantity)
     {
-        _inventoryChanges.Add(new(Id, Inventory.InStockCount, newInventory.InStockCount));
-        Inventory = new(newInventory);
+        _inventoryChanges.Add(new(Id, beforeQuantity, newQuantity));
 
-        RaiseEvent(new ProductInventoryUpdatedEvent(Id, Inventory.InStockCount));
+        RaiseEvent(new ProductInventoryUpdatedEvent(Id, newQuantity));
     }
 
     #region Infra

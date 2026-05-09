@@ -2,6 +2,7 @@
 using Amazon.Cart.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.Cart.Infrastructure.Data
 {
@@ -31,6 +32,11 @@ namespace Amazon.Cart.Infrastructure.Data
 
                 e.Navigation(o => o.Items).HasField("_cartItems")
              .UsePropertyAccessMode(PropertyAccessMode.Field);
+            });
+
+            modelBuilder.Entity<OutboxMessage>(entity =>
+            {
+                entity.ToTable("OutboxMessages");
             });
 
             base.OnModelCreating(modelBuilder);

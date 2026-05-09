@@ -1,4 +1,5 @@
 ﻿using Amazon.Inventory.Domain.Products;
+using Amazon.Inventory.Domain.Products.Entities;
 using Amazon.Inventory.Domain.Products.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
@@ -17,18 +18,25 @@ namespace Amazon.Inventory.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("inventory");
+
             modelBuilder.Entity<Product>(entity =>
             {
-                entity.ToTable("products", "inventory");
+                entity.ToTable("products");
 
-                entity.ComplexProperty(x => x.Inventory, b =>
+                entity.OwnsOne(x => x.Inventory, b =>
                 {
-                    b.Property(d => d.InStockCount);
+                    b.OwnsMany<InventoryItem>("_items", b =>
+                    {
+                        b.ToTable("inventoryItems");
+
+                        b.WithOwner().HasForeignKey(x => x.ProductId);
+                    });
                 });
 
                 entity.OwnsMany<ProductInventoryChange>("_inventoryChanges", b =>
                 {
-                    b.ToTable("inventoryChanges", "inventory");
+                    b.ToTable("inventoryChanges");
 
                     b.WithOwner().HasForeignKey(x => x.ProductId);
                 });
@@ -37,7 +45,7 @@ namespace Amazon.Inventory.Infrastructure.Data
 
             modelBuilder.Entity<OutboxMessage>(entity =>
             {
-                entity.ToTable("OutboxMessages", "inventory");
+                entity.ToTable("OutboxMessages");
             });
 
             base.OnModelCreating(modelBuilder);

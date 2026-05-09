@@ -1,5 +1,6 @@
 using Amazon.Cart.Application;
 using Amazon.Cart.Infrastructure;
+using Amazon.SharedKernel.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services
+    .AddSharedJobs()
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
     ;
