@@ -10,7 +10,7 @@ public class ShippingInfo
 
     private readonly List<ShippingAddress> _shippingAddresses = new();
 
-    public RestResponse<bool> AddAddress(ShippingAddress newAddress)
+    internal RestResponse<bool> AddAddress(ShippingAddress newAddress)
     {
         if (ShippingAddresses.Count == MaxShippingAddresses)
             return RestResponse<bool>.BadRequest($"A customer cannot have more than {MaxShippingAddresses} shipping addresses.");
@@ -21,7 +21,7 @@ public class ShippingInfo
         return RestResponse<bool>.Success(true);
     }
 
-    public RestResponse<bool> RemoveAddress(int addressId)
+    internal RestResponse<bool> RemoveAddress(int addressId)
     {
         var addressToRemove = _shippingAddresses.FirstOrDefault(x => x.Id == addressId);
         if (addressToRemove == null)
@@ -32,6 +32,7 @@ public class ShippingInfo
 
         _shippingAddresses.Remove(addressToRemove);
         EnsureOneDefaultAddress();
+
         return RestResponse<bool>.Success(true);
     }
 
@@ -39,15 +40,14 @@ public class ShippingInfo
     {
         if (ShippingAddresses.Count == 0) return;
 
-        var candidateAddress = ShippingAddresses.FirstOrDefault(x => x.IsDefault) ?? FirstAddress;
+        var candidateAddress = DefaultAddress ?? FirstAddress;
+        candidateAddress.SetAsDefault();
 
         foreach (var address in _shippingAddresses.Where(a => a != candidateAddress))
             address.UnsetAsDefault();
-
-        candidateAddress.SetAsDefault();
     }
 
     public IReadOnlyCollection<ShippingAddress> ShippingAddresses => _shippingAddresses.OrderByDescending(x => x.CreatedOn).ToList();
-    public ShippingAddress DefaultAddress => ShippingAddresses.FirstOrDefault(addr => addr.IsDefault);
-    public ShippingAddress FirstAddress => ShippingAddresses.FirstOrDefault();
+    internal ShippingAddress DefaultAddress => ShippingAddresses.FirstOrDefault(a => a.IsDefault);
+    internal ShippingAddress FirstAddress => ShippingAddresses.LastOrDefault();
 }

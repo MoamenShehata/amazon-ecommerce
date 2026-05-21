@@ -65,7 +65,7 @@ namespace Amazon.Customers.Infrastructure.Migrations
 
                             b1.HasKey("CustomerId");
 
-                            b1.ToTable("customers");
+                            b1.ToTable("customers", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
@@ -78,7 +78,7 @@ namespace Amazon.Customers.Infrastructure.Migrations
 
                             b1.HasKey("CustomerId");
 
-                            b1.ToTable("customers");
+                            b1.ToTable("customers", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CustomerId");
@@ -114,7 +114,7 @@ namespace Amazon.Customers.Infrastructure.Migrations
 
                                     b2.HasKey("CustomerId", "Id");
 
-                                    b2.ToTable("ShippingAddress");
+                                    b2.ToTable("ShippingAddress", (string)null);
 
                                     b2.WithOwner()
                                         .HasForeignKey("CustomerId");
@@ -139,7 +139,7 @@ namespace Amazon.Customers.Infrastructure.Migrations
 
                                             b3.HasKey("ShippingAddressCustomerId", "ShippingAddressId");
 
-                                            b3.ToTable("ShippingAddress");
+                                            b3.ToTable("ShippingAddress", (string)null);
 
                                             b3.WithOwner()
                                                 .HasForeignKey("ShippingAddressCustomerId", "ShippingAddressId");
@@ -165,7 +165,7 @@ namespace Amazon.Customers.Infrastructure.Migrations
 
                                             b3.HasKey("ShippingAddressCustomerId", "ShippingAddressId");
 
-                                            b3.ToTable("ShippingAddress");
+                                            b3.ToTable("ShippingAddress", (string)null);
 
                                             b3.WithOwner()
                                                 .HasForeignKey("ShippingAddressCustomerId", "ShippingAddressId");
