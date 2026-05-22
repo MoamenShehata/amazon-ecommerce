@@ -69,6 +69,7 @@
 </div>
 
 <div *ngIf="addresses.length > 0 && style === 'select'">
+  <label class="form-label">Ship to address</label>
   <select class="form-control">
     <option value="" disabled selected>Select Shipping Address</option>
     <option *ngFor="let address of addresses" [value]="address.id">
