@@ -10,6 +10,17 @@ builder.Services
     .RegisterInfrastructureDependencies(builder.Configuration)
     ;
 
+builder.Services.AddCors(op =>
+{
+    op.AddPolicy("CORS_Policy", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200", "http://localhost:62832")
+        .AllowCredentials()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -24,6 +35,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("CORS_Policy");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

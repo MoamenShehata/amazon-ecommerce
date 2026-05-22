@@ -8,39 +8,19 @@ import {
   CountryLookup,
 } from "../../../lookups/models/country-lookup.model";
 import {NgFor} from "@angular/common";
+import {CustomerProfileComponent} from "../../../customers/components/customer-profile/customer-profile.component";
 
 @Component({
   selector: "cart-checkout",
   standalone: true,
-  imports: [ShoppingCartComponent, NgFor],
+  imports: [ShoppingCartComponent, NgFor, CustomerProfileComponent],
   templateUrl: "./cart-checkout.component.html",
   styleUrl: "./cart-checkout.component.css",
 })
 export class CartCheckoutComponent extends AppServicesProvider {
-  countries: CountryLookup[] = [];
-
-  constructor(
-    private customerService: CustomerService,
-    private countriesService: CountriesService,
-  ) {
+  constructor(private customerService: CustomerService) {
     super();
   }
 
-  ngOnInit() {
-    this.customerService.getMyProfile().subscribe((res) => {
-      alert("Success");
-    });
-
-    this.countriesService.getCountries().subscribe((countries) => {
-      this.countries = countries;
-    });
-  }
-
-  cities: CityLookup[] = [];
-
-  onCountrySelected(event: any) {
-    const countryId = event.target.value;
-
-    this.cities = this.countries.find((c) => c.id == countryId)?.cities ?? [];
-  }
+  ngOnInit() {}
 }

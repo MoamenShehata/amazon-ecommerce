@@ -17,7 +17,7 @@ namespace Amazon.SharedKernel.Jobs.RabbitMq
             {
                 try
                 {
-                    var integrationEvent = JsonSerializer.Deserialize(item.Body, Assembly.GetExecutingAssembly().GetType(item.Type));
+                    var integrationEvent = JsonSerializer.Deserialize(item.Body, Type.GetType(item.Type));
 
                     await publishEndpoint.Publish(integrationEvent);
                     item.MarkAsSent();
