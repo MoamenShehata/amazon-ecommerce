@@ -1,6 +1,7 @@
 ﻿using Amazon.Customers.Domain;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.Customers.Infrastructure.Data;
 
@@ -10,6 +11,8 @@ public class CustomersContext : DbContextBase
     public CustomersContext(DbContextOptions<CustomersContext> options) : base(options)
     {
     }
+
+    public DbSet<OutboxMessage> EventStore { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,6 +50,11 @@ public class CustomersContext : DbContextBase
                     sa.Property(x => x.IsDefault).IsRequired();
                 });
             });
+        });
+
+        modelBuilder.Entity<OutboxMessage>(entity =>
+        {
+            entity.ToTable("OutboxMessages");
         });
 
         base.OnModelCreating(modelBuilder);

@@ -1,5 +1,7 @@
 ﻿using Amazon.Customers.Application.CustomerProfiles;
+using Amazon.Customers.Domain;
 using Amazon.Customers.Infrastructure.Data;
+using Amazon.Customers.Infrastructure.Integrations;
 using Amazon.Customers.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +21,9 @@ public static class InfrastructureDependencyRegistrar
             .AddBaseContext<CustomerReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
             ;
 
-        services.AddScoped<ICustomerProfileService, CustomerProfileService>()
+        services
+            .AddScoped<ICustomerProfileService, CustomerProfileService>()
+            .AddScoped<IAddressService, AddressService>()
             ;
 
         return services;

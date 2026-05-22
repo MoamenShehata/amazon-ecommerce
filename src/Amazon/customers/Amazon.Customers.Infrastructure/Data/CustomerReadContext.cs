@@ -1,13 +1,14 @@
 ﻿using Amazon.Customers.Application.CustomerProfiles.Models;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 using System.Text.Json;
 
 namespace Amazon.Customers.Infrastructure.Data;
 
 public class CustomerReadContext : DbContextBase
 {
-    public override bool AutoSaveDomainEvents => false;
+    public override bool AutoSaveDomainEvents => true;
     public CustomerReadContext(DbContextOptions<CustomerReadContext> options) : base(options)
     {
     }

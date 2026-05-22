@@ -1,9 +1,11 @@
 using Amazon.Customers.Application;
 using Amazon.Customers.Infrastructure;
+using Amazon.SharedKernel.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
+    .AddSharedJobs()
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
     ;
