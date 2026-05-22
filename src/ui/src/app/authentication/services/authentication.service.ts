@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { AuthenticatedUser } from '../models/authenticated-user.model';
-import { authConfig } from '../constants/oidc-config';
-import { UserClaimTypes } from '../constants/custom-claim.constants';
-import { StorageService } from '../../core/services/storage-service';
-import { Router } from '@angular/router';
+import {Injectable} from "@angular/core";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
+import {OAuthService} from "angular-oauth2-oidc";
+import {AuthenticatedUser} from "../models/authenticated-user.model";
+import {authConfig} from "../constants/oidc-config";
+import {UserClaimTypes} from "../constants/custom-claim.constants";
+import {StorageService} from "../../core/services/storage-service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthService {
   userSubject = new BehaviorSubject<AuthenticatedUser | null>(null);
@@ -19,6 +19,7 @@ export class AuthService {
     private storageService: StorageService,
     private oauthService: OAuthService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
   ) {
     this.setAuthenticatedUser();
   }
@@ -30,6 +31,9 @@ export class AuthService {
       if (this.oauthService.hasValidAccessToken()) {
         this.oauthService.setupAutomaticSilentRefresh();
       }
+      // else {
+      //   this.oauthService.initLoginFlow();
+      // }
     });
   }
 
@@ -50,15 +54,17 @@ export class AuthService {
     if (triggerLoginEvent) this.userLoginEvent.next(user);
   }
 
-  initiateCodeFlow(state: string = '') {
+  initiateCodeFlow(state: string = "") {
     this.oauthService.initCodeFlow(state);
   }
 
   processCodeFlowCallback() {
+    debugger;
     this.oauthService.tryLoginCodeFlow().then(() => {
+      debugger;
       if (this.oauthService.hasValidAccessToken()) {
         this.setAuthenticatedUser(true);
-        const returnUrl = decodeURIComponent(this.oauthService.state ?? '/');
+        const returnUrl = decodeURIComponent(this.oauthService.state ?? "/");
 
         this.router.navigate([returnUrl]);
       }

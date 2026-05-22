@@ -18,6 +18,7 @@ namespace VidGuard.Platform.Authentication.Pages.Account.RegisterCustomer
         private readonly IIdentityServerInteractionService _interaction;
         private readonly AccountService _accountService;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly string[] validReturnUrls = { "http://localhost:4200/auth/signin", "https://localhost:5001/connect/authorize" };
 
         [BindProperty]
         public RegisterCustomerModel Input { get; set; } = default!;
@@ -101,7 +102,7 @@ namespace VidGuard.Platform.Authentication.Pages.Account.RegisterCustomer
             }
 
             // request for a local page
-            if (Url.IsLocalUrl(Input.ReturnUrl))
+            if (Url.IsLocalUrl(Input.ReturnUrl) || validReturnUrls.Contains(Input.ReturnUrl))
             {
                 return Redirect(Input.ReturnUrl);
             }

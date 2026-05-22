@@ -1,19 +1,23 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { AuthenticatedUser } from '../../../models/authenticated-user.model';
-import { AuthService } from '../../../services/authentication.service';
-import { environment } from '../../../../../environments/environment';
+import {CommonModule} from "@angular/common";
+import {Component} from "@angular/core";
+import {AuthenticatedUser} from "../../../models/authenticated-user.model";
+import {AuthService} from "../../../services/authentication.service";
+import {environment} from "../../../../../environments/environment";
+import {OAuthService} from "angular-oauth2-oidc";
 
 @Component({
-  selector: 'identity-controls',
+  selector: "identity-controls",
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './identity-controls.component.html',
+  templateUrl: "./identity-controls.component.html",
 })
 export class IdentityControlsComponent {
   authenticatedUser: AuthenticatedUser | null;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private oauthService: OAuthService,
+  ) {
     authService.userSubject.subscribe((u) => {
       this.authenticatedUser = u;
     });
@@ -24,7 +28,9 @@ export class IdentityControlsComponent {
   }
 
   navigateToSignUp() {
-    window.location.href = `${environment.authenticationBaseUrl}/Account/RegisterCustomer`;
+    const appUrlBase = window.location.origin;
+
+    window.location.href = `${environment.authenticationBaseUrl}/Account/RegisterCustomer?ReturnUrl=${appUrlBase}/auth/signin`;
   }
 
   logout() {
