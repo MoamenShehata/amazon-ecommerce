@@ -17,6 +17,7 @@ export class SignInComponent extends AppServicesProvider {
 
   ngOnInit() {
     this.authService.initiateCodeFlow();
+
     // if (!this.oauthService.hasValidAccessToken()) {
     //   this.oauthService.initLoginFlow();
     // }

@@ -59,9 +59,7 @@ export class AuthService {
   }
 
   processCodeFlowCallback() {
-    debugger;
     this.oauthService.tryLoginCodeFlow().then(() => {
-      debugger;
       if (this.oauthService.hasValidAccessToken()) {
         this.setAuthenticatedUser(true);
         const returnUrl = decodeURIComponent(this.oauthService.state ?? "/");
