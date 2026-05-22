@@ -9,7 +9,7 @@ public class ShippingAddresAdapter(IAddressService _addressService)
 {
     public async Task<RestResponse<ICollection<CustomerProfileAddress>>> ToReadModel(ShippingInfo customerShippingInfo)
     {
-        var countriesResult = await _addressService.GetCountriesInfoAsync(customerShippingInfo.ShippingAddresses.Select(a => a.City.CountryId).ToArray());
+        var countriesResult = await _addressService.GetCountriesInfoAsync(customerShippingInfo.ShippingAddresses.Select(a => a.City.CountryId).Distinct().ToArray());
         if (!countriesResult.IsSuccess)
             return RestResponse<ICollection<CustomerProfileAddress>>.NotFound(countriesResult.Error);
 

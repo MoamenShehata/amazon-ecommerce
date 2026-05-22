@@ -70,6 +70,6 @@ public class AddressService : IAddressService
         if (countries.Count != countryIds.Length)
             return RestResponse<List<CountryLookup>>.BadRequest($"Some Countries were not found");
 
-        return RestResponse<List<CountryLookup>>.Success(countries.Select(c => new CountryLookup(c.Name, c.Cities.Select(ct => new CityLookup(c.Name, ct.Name, ct.Id)).ToList())).ToList());
+        return RestResponse<List<CountryLookup>>.Success(countries.Select(c => new CountryLookup(c.Id, c.Name, c.Cities.Select(ct => new CityLookup(c.Name, ct.Name, ct.Id)).ToList())).ToList());
     }
 }

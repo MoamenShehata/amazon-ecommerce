@@ -1,4 +1,5 @@
 ﻿using Amazon.Customers.Domain.Entities;
+using Amazon.Customers.Domain.Events;
 using Amazon.Customers.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
 using Moamen.SDKs.Repository;
@@ -22,6 +23,7 @@ public class Customer : AuditableAggregate<Guid>, IEntity<Guid>
         if (!addAddressResult.IsSuccess)
             return RestResponse<bool>.BadRequest(addAddressResult.Error.ToString());
 
+        RaiseEvent(new CustomerShippingInfoChangedEvent(Id));
         return RestResponse<bool>.Success(true);
     }
 
@@ -31,6 +33,7 @@ public class Customer : AuditableAggregate<Guid>, IEntity<Guid>
         if (!removeAddressResult.IsSuccess)
             return RestResponse<bool>.BadRequest(removeAddressResult.Error.ToString());
 
+        RaiseEvent(new CustomerShippingInfoChangedEvent(Id));
         return RestResponse<bool>.Success(true);
     }
 

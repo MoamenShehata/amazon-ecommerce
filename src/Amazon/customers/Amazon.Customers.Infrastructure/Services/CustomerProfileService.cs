@@ -1,5 +1,6 @@
 ﻿using Amazon.Customers.Application.CustomerProfiles;
 using Amazon.Customers.Application.CustomerProfiles.Models;
+using Amazon.Customers.Domain;
 using Amazon.Customers.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,4 +19,12 @@ public class CustomerProfileService(CustomerReadContext _readContext) : ICustome
         await _readContext.SaveChangesAsync();
     }
 
+    public async Task UpdateShippingAddressesAsync(Guid customerId, ICollection<CustomerProfileAddress> newAddresses)
+    {
+        var profile = await _readContext.CustomerProfiles.FirstOrDefaultAsync(x => x.CustomerId == customerId);
+        if (profile is null) return;
+
+        profile.Addresses = newAddresses;
+        await _readContext.SaveChangesAsync();
+    }
 }

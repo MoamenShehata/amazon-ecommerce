@@ -27,7 +27,7 @@ public class CustomerService(
     public async Task<RestResponse<bool>> AddShippingAddressAsync(Guid customerId, CityInfo city, HouseInfo house, bool isDefault)
     {
         var customerResult = await GetByIdAsync(customerId);
-        if (customerResult.IsSuccess)
+        if (!customerResult.IsSuccess)
             return customerResult.MapTo(false);
 
         var cityLookupResult = await _addressService.GetCityInfoAsync(city.CountryId, city.CityId);

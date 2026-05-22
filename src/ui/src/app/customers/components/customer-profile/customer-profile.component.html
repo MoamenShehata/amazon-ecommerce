@@ -1,19 +1,12 @@
-<label for="" class="form-label">Country</label>
-<select name="" id="" (change)="onCountrySelected($event)" class="form-control">
-  <option value="" disabled selected>Select Country</option>
-  <option *ngFor="let country of countries" [value]="country.id">
-    {{ country.name }}
-  </option>
-</select>
+<ng-container *ngIf="isReadOnly">
+  <customer-shipping-addresses
+    *ngIf="myProfile"
+    [addresses]="myProfile.addresses"
+    [style]="isReadOnly ? 'select' : 'list'"
+  />
+</ng-container>
 
-<label for="">City</label>
-<select name="" id="">
-  <option value="" *ngFor="let city of cities" [value]="city.id">
-    {{ city.name }}
-  </option>
-</select>
-
-<form class="form-group">
+<!-- <form class="form-group">
   <label class="form-label">Shipping addresse</label>
   <select class="form-control">
     <option value="" disabled selected>Select Country</option>
@@ -21,4 +14,4 @@
       {{ country.name }}
     </option>
   </select>
-</form>
+</form> -->

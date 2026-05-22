@@ -6,4 +6,5 @@ public interface ICustomerProfileService
 {
     Task<CustomerProfile> GetByIdAsync(Guid customerId);
     Task CreateAsync(CustomerProfile customerProfile);
+    Task UpdateShippingAddressesAsync(Guid customerId, ICollection<CustomerProfileAddress> newAddresses);
 }

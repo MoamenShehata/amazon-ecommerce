@@ -13,7 +13,7 @@ import {CustomerProfileComponent} from "../../../customers/components/customer-p
 @Component({
   selector: "cart-checkout",
   standalone: true,
-  imports: [ShoppingCartComponent, NgFor, CustomerProfileComponent],
+  imports: [ShoppingCartComponent, CustomerProfileComponent],
   templateUrl: "./cart-checkout.component.html",
   styleUrl: "./cart-checkout.component.css",
 })

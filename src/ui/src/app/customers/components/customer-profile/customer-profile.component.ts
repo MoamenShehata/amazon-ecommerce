@@ -1,46 +1,29 @@
 import {Component, Input} from "@angular/core";
 import {AppServicesProvider} from "../../../core/services/app-services.provider";
 import {CustomerService} from "../../customer.services";
-import {CountriesService} from "../../../lookups/services/countries.service";
-import {
-  CountryLookup,
-  CityLookup,
-} from "../../../lookups/models/country-lookup.model";
-import {NgFor} from "@angular/common";
+import {CustomerShippingAddressesComponent} from "../customer-shipping-addresses/customer-shipping-addresses.component";
+import {CustomerProfile} from "../../models/customer-profile.model";
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: "customer-profile",
   standalone: true,
-  imports: [NgFor],
+  imports: [CommonModule, CustomerShippingAddressesComponent],
   templateUrl: "./customer-profile.component.html",
   styleUrl: "./customer-profile.component.css",
 })
 export class CustomerProfileComponent extends AppServicesProvider {
-  countries: CountryLookup[] = [];
-  cities: CityLookup[] = [];
+  myProfile: CustomerProfile;
 
   @Input() isReadOnly = true;
 
-  constructor(
-    private customerService: CustomerService,
-    private countriesService: CountriesService,
-  ) {
+  constructor(private customerService: CustomerService) {
     super();
   }
 
   ngOnInit() {
     this.customerService.getMyProfile().subscribe((res) => {
-      alert("Success");
+      this.myProfile = res;
     });
-
-    this.countriesService.getCountries().subscribe((countries) => {
-      this.countries = countries;
-    });
-  }
-
-  onCountrySelected(event: any) {
-    const countryId = event.target.value;
-
-    this.cities = this.countries.find((c) => c.id == countryId)?.cities ?? [];
   }
 }

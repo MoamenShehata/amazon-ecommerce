@@ -1,6 +1,8 @@
 ﻿using Amazon.Customers.Application.CustomerProfiles;
 using Amazon.Customers.Application.CustomerProfiles.Models;
+using Amazon.Customers.Application.Dtos;
 using Amazon.Customers.Domain;
+using Amazon.Customers.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Customers.Events;
 using Amazon.SharedKernel.Extensions;
@@ -40,6 +42,20 @@ public class CustomerAppService(
         await _profilesService.CreateAsync(profile);
     }
 
+    public async Task UpdateProfileAddressesForCustomerAsync(Guid customerId)
+    {
+        var customerResult = await _customerService.GetByIdAsync(customerId);
+        if (!customerResult.IsSuccess) return;
+
+        var existingProfile = await _profilesService.GetByIdAsync(customerId);
+        if (existingProfile is null) return;
+
+        var addressesResult = await _shippingAddresAdapter.ToReadModel(customerResult.Value.ShippingInfo);
+        if (!addressesResult.IsSuccess) return; // or get one by one and check if exists, or return error to nack back to broker
+
+        await _profilesService.UpdateShippingAddressesAsync(customerId, addressesResult.Value);
+    }
+
     public async Task<RestResponse<CustomerProfile>> GetCustomerProfileAsync(Guid customerId)
     {
         var profile = await _profilesService.GetByIdAsync(customerId);
@@ -47,5 +63,15 @@ public class CustomerAppService(
             return RestResponse<CustomerProfile>.BadRequest($"Customer profile for id {customerId} was not found");
 
         return RestResponse<CustomerProfile>.Success(profile);
+    }
+
+    public async Task<RestResponse<bool>> CreateShippingAddressAsync(Guid customerId, CreateShippingAddressRequest request)
+    {
+        var createResult = await _customerService.AddShippingAddressAsync(customerId, request.City, request.House, request.IsDefault);
+        if (!createResult.IsSuccess)
+            return createResult.MapTo(false);
+
+        await _unitOfWork.CommitAsync();
+        return RestResponse<bool>.Success(true);
     }
 }

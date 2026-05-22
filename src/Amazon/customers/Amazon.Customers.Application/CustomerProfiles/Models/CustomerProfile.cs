@@ -8,6 +8,7 @@ public class CustomerProfile
 
 public class CustomerProfileAddress
 {
+    public int? Id { get; set; }
     public string Country { get; private set; }
     public string City { get; private set; }
     public string Street { get; private set; }

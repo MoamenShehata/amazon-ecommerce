@@ -1,0 +1,78 @@
+<ng-container *ngIf="addresses.length == 0 && style === 'list'">
+  <div class="row">
+    <button class="btn btn-success" (click)="openAddAddressModal()">
+      + Add Shipping Address
+    </button>
+  </div>
+  <div
+    class="modal fade"
+    [class.show]="showAddAddressModal"
+    [style.display]="showAddAddressModal ? 'block' : 'none'"
+    tabindex="-1"
+    *ngIf="showAddAddressModal"
+  >
+    <div
+      class="modal-backdrop fade"
+      [class.show]="showAddAddressModal"
+      (click)="closeAddAddressModal()"
+      style="z-index: 0"
+    ></div>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add new shipping address</h5>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="closeAddAddressModal()"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <customer-shipping-address-form />
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div class="row" *ngIf="addresses.length == 0">
+  <h2>You did not add any shpping addresses</h2>
+</div>
+
+<div class="table-responsive" *ngIf="addresses.length > 0 && style === 'list'">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Country</th>
+        <th scope="col">City</th>
+        <th scope="col">Street</th>
+        <th scope="col">Building Number</th>
+        <th scope="col">Apartment Number</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let address of addresses; let i = index">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>{{ address.country }}</td>
+        <td>{{ address.city }}</td>
+        <td>{{ address.street }}</td>
+        <td>{{ address.buildingNumber }}</td>
+        <td>{{ address.apartmentNumber }}</td>
+        <td>
+          <button class="btn btn-sm btn-outline-danger">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="addresses.length > 0 && style === 'select'">
+  <select class="form-control">
+    <option value="" disabled selected>Select Shipping Address</option>
+    <option *ngFor="let address of addresses" [value]="address.id">
+      {{ address.country }}, {{ address.city }}, {{ address.street }}
+    </option>
+  </select>
+</div>

@@ -6,9 +6,10 @@ public class CountryLookup
     public string Name { get; private set; }
     public List<CityLookup> Cities { get; private set; }
 
-    public CountryLookup(string name, List<CityLookup> cities)
+    public CountryLookup(int id, string name, List<CityLookup> cities)
     {
         Name = name;
         Cities = cities;
+        Id = id;
     }
 }
