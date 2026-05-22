@@ -23,7 +23,7 @@ public class ProductInventory
 
     public ProductInventory(ProductInventory newValue) : this(newValue.ProductId, newValue.InStockCount) { }
 
-    public int InStockCount => _items.Count;
+    public int InStockCount => _items.Where(x => !x.IsOnHold).Count();
     public Guid ProductId => _items.FirstOrDefault()?.ProductId ?? throw new InvalidOperationException("No product items available");
 
     public void Insert(int quantity) => InsertProductItems(ProductId, quantity);
