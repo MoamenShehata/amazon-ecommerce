@@ -61,7 +61,7 @@ public class AddressService : IAddressService
         if (country is null)
             return RestResponse<CityLookup>.BadRequest($"Country with id {country} does not have a city with id {cityId}");
 
-        return RestResponse<CityLookup>.Success(new CityLookup(country.Name, city.Name));
+        return RestResponse<CityLookup>.Success(new CityLookup(country.Name, city.Name, city.Id));
     }
 
     public async Task<RestResponse<List<CountryLookup>>> GetCountriesInfoAsync(int[] countryIds)
@@ -70,6 +70,6 @@ public class AddressService : IAddressService
         if (countries.Count != countryIds.Length)
             return RestResponse<List<CountryLookup>>.BadRequest($"Some Countries were not found");
 
-        return RestResponse<List<CountryLookup>>.Success(countries.Select(c => new CountryLookup(c.Name, c.Cities.Select(ct => ct.Name).ToList())).ToList());
+        return RestResponse<List<CountryLookup>>.Success(countries.Select(c => new CountryLookup(c.Name, c.Cities.Select(ct => new CityLookup(c.Name, ct.Name, ct.Id)).ToList())).ToList());
     }
 }

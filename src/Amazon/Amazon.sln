@@ -79,6 +79,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Customers.API", "cus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Customers.Application", "customers\Amazon.Customers.Application\Amazon.Customers.Application.csproj", "{01ABA623-1598-4944-B1FD-C85AD34B2BDC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lookups", "lookups", "{DFAABD25-FF3B-4A80-AF5B-96FC80C20009}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Lookups.Api", "lookups\Amazon.Lookups.Api\Amazon.Lookups.Api.csproj", "{6994ED11-5078-4315-A510-D21560D1DE62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -197,6 +201,10 @@ Global
 		{01ABA623-1598-4944-B1FD-C85AD34B2BDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01ABA623-1598-4944-B1FD-C85AD34B2BDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01ABA623-1598-4944-B1FD-C85AD34B2BDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6994ED11-5078-4315-A510-D21560D1DE62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6994ED11-5078-4315-A510-D21560D1DE62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6994ED11-5078-4315-A510-D21560D1DE62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6994ED11-5078-4315-A510-D21560D1DE62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -232,6 +240,7 @@ Global
 		{FE996270-C3C8-42D9-A886-54B5A59B6B24} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 		{0BD45C80-AB9C-40F4-8400-D1ADDB236BC1} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 		{01ABA623-1598-4944-B1FD-C85AD34B2BDC} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
+		{6994ED11-5078-4315-A510-D21560D1DE62} = {DFAABD25-FF3B-4A80-AF5B-96FC80C20009}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {854E9683-3600-41BC-A815-52488984E5D7}

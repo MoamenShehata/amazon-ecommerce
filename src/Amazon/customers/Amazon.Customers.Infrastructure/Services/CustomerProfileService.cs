@@ -11,4 +11,11 @@ public class CustomerProfileService(CustomerReadContext _readContext) : ICustome
     {
         return await _readContext.CustomerProfiles.AsNoTracking().FirstOrDefaultAsync(x => x.CustomerId == customerId);
     }
+
+    public async Task CreateAsync(CustomerProfile customerProfile)
+    {
+        _readContext.CustomerProfiles.Add(customerProfile);
+        await _readContext.SaveChangesAsync();
+    }
+
 }

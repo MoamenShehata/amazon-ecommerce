@@ -30,6 +30,7 @@ public static class ApplicationDependencyRegistrar
         services
             .AddDomainServices()
             .AddScoped<CustomerAppService>()
+            .AddScoped<ShippingAddresAdapter>()
             ;
 
         return services;

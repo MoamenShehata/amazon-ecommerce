@@ -18,7 +18,7 @@ public static class InfrastructureDependencyRegistrar
         services
             .AddGenericRepos()
             .AddBaseContext<CustomersContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
-            .AddBaseContext<CustomerReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
+            .AddDbContext<CustomerReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
             ;
 
         services
