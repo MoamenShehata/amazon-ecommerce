@@ -20,7 +20,7 @@ public class ShippingAddresAdapter(IAddressService _addressService)
             var country = countriesResult.Value.FirstOrDefault(c => c.Id == address.City.CountryId);
             var city = country.Cities.FirstOrDefault(c => c.CityId == address.City.CityId);
 
-            result.Add(new CustomerProfileAddress(country.Name, city.CityName, address.House.Street, address.House.BuildingNumber, address.House.ApartmentNumber));
+            result.Add(new CustomerProfileAddress(address.Id, country.Name, city.CityName, address.House.Street, address.House.BuildingNumber, address.House.ApartmentNumber));
         }
 
         return RestResponse<ICollection<CustomerProfileAddress>>.Success(result);
