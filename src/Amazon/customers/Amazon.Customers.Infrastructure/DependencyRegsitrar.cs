@@ -1,4 +1,6 @@
-﻿using Amazon.Customers.Infrastructure.Data;
+﻿using Amazon.Customers.Application.CustomerProfiles;
+using Amazon.Customers.Infrastructure.Data;
+using Amazon.Customers.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +16,10 @@ public static class InfrastructureDependencyRegistrar
         services
             .AddGenericRepos()
             .AddBaseContext<CustomersContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
+            .AddBaseContext<CustomerReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
+            ;
+
+        services.AddScoped<ICustomerProfileService, CustomerProfileService>()
             ;
 
         return services;

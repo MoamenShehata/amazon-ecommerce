@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Amazon.Customers.Application\Amazon.Customers.Application.csproj" />
     <ProjectReference Include="..\Amazon.Customers.Domain\Amazon.Customers.Domain.csproj" />
   </ItemGroup>
 

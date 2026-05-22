@@ -31,7 +31,7 @@ public class CustomerService(IRepository<Customer, Guid> _repository)
         return RestResponse<bool>.Success(true);
     }
 
-    private async Task<RestResponse<Customer>> GetByIdAsync(Guid customerId)
+    public async Task<RestResponse<Customer>> GetByIdAsync(Guid customerId)
     {
         var customer = await _repository.GetInstanceAsync(customerId);
         if (customer is null)

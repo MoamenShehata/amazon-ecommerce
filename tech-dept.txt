@@ -1,0 +1,2 @@
+- customer service
+    1- for CustomerReadContext => use NoSQL
