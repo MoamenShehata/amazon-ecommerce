@@ -1,3 +1,17 @@
 <shopping-cart [style]="'checkout'" />
 
 <customer-profile />
+
+<div>
+  <label class="form-label">Payment Method</label>
+  <select class="form-control" (change)="onPaymentMethodChange($event)">
+    <option value="" disabled selected>Select</option>
+    <option *ngFor="let method of paymentMethods" [value]="method.id">
+      {{ method.name }}
+    </option>
+  </select>
+</div>
+
+<button class="btn btn-primary" (click)="proceedToPayment()">
+  Proceed to payment
+</button>
