@@ -1,31 +1,31 @@
-﻿using System.Threading.Tasks;
-using Amazon.Cart.Application.Dtos;
+﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
-using MassTransit;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
+using System.Security.AccessControl;
 
 namespace Amazon.Cart.Application
 {
-    public class CartService(
-        ShoppingCartService _cartService,
+    public class CartAppService(
+        CartService _cartService,
         IRepository<ShoppingCart, Guid> _cartsRepo,
-        IUnitOfWork _unitOfWork
+        IUnitOfWork _unitOfWork,
+        IOtpService _otpService
         )
     {
         public async Task<RestResponse<List<CartProductDto>>> GetByIdAsync(Guid cartId)
         {
-            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
-            if (cart is null)
-                return RestResponse<List<CartProductDto>>.NotFound($"Cart with id {cartId} was not found");
+            var cartResult = await _cartService.GetByIdAsync(cartId);
+            if (!cartResult.IsSuccess)
+                return cartResult.MapTo(null as List<CartProductDto>);
 
-
-            return RestResponse<List<CartProductDto>>.Success(cart.ToItemsDto());
+            return RestResponse<List<CartProductDto>>.Success(cartResult.Value.ToItemsDto());
         }
 
         public async Task<RestResponse<CartCreateResultDto>> CreateCartAsync(CartCreateDto createDto)
@@ -47,7 +47,7 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<int>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItemDto)
         {
-            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
+            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId);
             if (cart is null)
                 return RestResponse<int>.NotFound($"Cart with id {cartId} was not found");
 
@@ -61,7 +61,7 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, int cartItemId)
         {
-            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
+            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId);
             if (cart is null)
                 return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
 
@@ -73,7 +73,7 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<bool>> RemoveAllProductItemsAsync(Guid cartId, Guid productId)
         {
-            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.Expiration.ExpiresAt > DateTime.UtcNow);
+            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId);
             if (cart is null)
                 return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
 
@@ -82,12 +82,6 @@ namespace Amazon.Cart.Application
 
             return RestResponse<bool>.Success(true);
         }
-
-        private async Task<RestResponse<CartItem>> AddItemToCartAsync(ShoppingCart cart, CartItemCreateDto cartItem)
-        {
-            return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
-        }
-
 
         public async Task PurgeExpiredCartsAsync()
         {
@@ -99,6 +93,25 @@ namespace Amazon.Cart.Application
             }
 
             await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, string otp, Guid userId)
+        {
+            var isOtpValid = await _otpService.ValidateAsync(userId, otp);
+            if (!isOtpValid)
+                return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
+
+            var orderCreateResult = await _cartService.TryCreateOrderAsync(cartId, userId);
+            if (!orderCreateResult.IsSuccess)
+                return orderCreateResult.MapTo(Guid.Empty);
+
+            await _unitOfWork.CommitAsync();
+            return RestResponse<Guid>.Success(orderCreateResult.Value);
+        }
+
+        private async Task<RestResponse<CartItem>> AddItemToCartAsync(ShoppingCart cart, CartItemCreateDto cartItem)
+        {
+            return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
         }
     }
 }

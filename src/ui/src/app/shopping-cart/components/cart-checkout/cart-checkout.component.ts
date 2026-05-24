@@ -27,25 +27,27 @@ export class CartCheckoutComponent extends AppServicesProvider {
     {
       id: 1,
       name: "Cash on Delivery",
-      actionRoute: "/checkout/cash",
+      actionRoute: "/cart/checkout/cash",
     },
     {
-      id: 1,
+      id: 2,
       name: "Credit Card",
-      actionRoute: "/checkout/credit-card",
+      actionRoute: "/cart/checkout/credit-card",
     },
   ];
 
   ngOnInit() {}
 
+  paymentMethod: PaymentMethod;
+
   onPaymentMethodChange(event: any) {
     const paymentMethodId = parseInt(event.target.value);
-    const selectedMethod = this.paymentMethods.find(
+    this.paymentMethod = this.paymentMethods.find(
       (m) => m.id === paymentMethodId,
     )!;
-
-    this.router.navigate([selectedMethod.actionRoute]);
   }
 
-  proceedToPayment() {}
+  proceedToPayment() {
+    this.router.navigate([this.paymentMethod.actionRoute]);
+  }
 }

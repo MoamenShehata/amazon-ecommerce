@@ -37,7 +37,7 @@ public static class ApplicationDependencyRegistrar
     private static void AddDomainServices(IServiceCollection services)
     {
         services
-            .AddScoped<ShoppingCartService>()
+            .AddScoped<CartService>()
             .AddScoped<ShoppingCartFactory>()
             ;
     }
@@ -45,7 +45,7 @@ public static class ApplicationDependencyRegistrar
     private static void AddApplicationServices(IServiceCollection services)
     {
         services
-            .AddScoped<CartService>()
+            .AddScoped<CartAppService>()
             ;
     }
 }

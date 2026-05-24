@@ -1,1 +1,7 @@
-<p>cach-checkout works!</p>
+<label for=""></label>
+
+<input type="text" class="form-control" placeholder="Write OTP" #otpInput />
+
+<button class="btn btn-primary mt-3" (click)="checkoutOTP(otpInput.value)">
+  Submit
+</button>

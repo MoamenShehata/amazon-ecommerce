@@ -12,7 +12,7 @@ public class PurgeExpiredCartsJob(
     protected override async Task DoAsync(CancellationToken stoppingToken)
     {
         var scope = _serviceScopeFactory.CreateScope();
-        var cartService = scope.ServiceProvider.GetRequiredService<CartService>();
+        var cartService = scope.ServiceProvider.GetRequiredService<CartAppService>();
         await cartService.PurgeExpiredCartsAsync();
     }
 }

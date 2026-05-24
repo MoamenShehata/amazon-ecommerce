@@ -13,6 +13,7 @@ builder.Services.AddOpenApi();
 
 builder.Services
     .AddSharedJobs()
+    .RegisterSharedServices()
     .AddJob<PurgeExpiredCartsJob>()
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)

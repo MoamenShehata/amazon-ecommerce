@@ -1,5 +1,4 @@
-﻿using Amazon.Inventory.Domain.Products.Entities;
-using Amazon.Inventory.Domain.Products.ValueObjects;
+﻿using Amazon.Inventory.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Products.Events;
 using Moamen.SDKs.Repository;
@@ -23,6 +22,8 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         Inventory.Insert(quantity);
         UpdateInventory(Inventory.InStockCount, Inventory.InStockCount + quantity);
     }
+
+    public RestResponse<bool> ReserveQuantityForOrder(int quantity) => Inventory.LockQuantity(quantity);
 
     public RestResponse<bool> ConsumeForOrder(int inventoryItemId)
     {

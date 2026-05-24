@@ -19,6 +19,8 @@ namespace Amazon.Cart.Infrastructure.Data
         {
             modelBuilder.Entity<ShoppingCart>(e =>
             {
+                e.HasQueryFilter(x => x.Expiration.ExpiresAt > DateTime.UtcNow);
+
                 e.ComplexProperty(c => c.Expiration, b =>
                 {
                     b.Property(p => p.ExpiresAt).HasColumnName(nameof(ShoppingCart.Expiration.ExpiresAt));

@@ -1,5 +1,4 @@
 ﻿using Amazon.Inventory.Domain.Products;
-using Amazon.Inventory.Domain.Products.Entities;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
@@ -9,6 +8,7 @@ namespace Amazon.Inventory.Application.Products;
 
 public class ProductAppService(
     IRepository<Product, Guid> _repository,
+    ProductService _productsService,
     IUnitOfWork _unitOfWork)
 {
     public async Task<RestResponse<Product>> GetByIdAsync(Guid productId)
@@ -18,6 +18,12 @@ public class ProductAppService(
             return RestResponse<Product>.NotFound($"Product with ID {productId} not found.");
 
         return RestResponse<Product>.Success(product);
+    }
+
+    public async Task LockAllForOrderAsync(List<KeyValuePair<Guid, int>> orderItems)
+    {
+        await _productsService.LockAllForOrderAsync(orderItems);
+        await _unitOfWork.CommitAsync();
     }
 
     public async Task<RestResponse<int>> HoldItemForPurchaseAsync(Guid productId)

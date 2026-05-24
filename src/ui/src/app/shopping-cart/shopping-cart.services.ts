@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { CartItemCreateModel } from './models/cart-item-create.models';
-import { AuthService } from '../authentication/services/authentication.service';
-import { StorageService } from '../core/services/storage-service';
-import { BehaviorSubject, catchError, map, Observable, tap } from 'rxjs';
-import { CartItemModel, CartProductDto } from './models/cart-item-model';
-import { HttpClient } from '@angular/common/http';
+import {Injectable} from "@angular/core";
+import {environment} from "../../environments/environment";
+import {CartItemCreateModel} from "./models/cart-item-create.models";
+import {AuthService} from "../authentication/services/authentication.service";
+import {StorageService} from "../core/services/storage-service";
+import {BehaviorSubject, catchError, map, Observable, tap} from "rxjs";
+import {CartItemModel, CartProductDto} from "./models/cart-item-model";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ShoppingCartService {
   private cartsBaseUrl = `${environment.cartBaseUrl}/carts`;
@@ -32,7 +32,7 @@ export class ShoppingCartService {
       .pipe(
         catchError((err) => {
           if (err.status === 404) {
-            this.storageService.delete('cartId');
+            this.storageService.delete("cartId");
           }
           return new BehaviorSubject<CartProductDto[]>([]).asObservable();
         }),
@@ -56,7 +56,7 @@ export class ShoppingCartService {
       })
       .pipe(
         map((resp: any) => {
-          this.storageService.save('cartId', resp.value.cartId);
+          this.storageService.save("cartId", resp.value.cartId);
 
           if (resp.message) {
             alert(resp.message);
@@ -82,8 +82,17 @@ export class ShoppingCartService {
     );
   }
 
+  checkoutUsingOtp(otp: string) {
+    if (!this.activeCartId) return;
+
+    return this.http.post<any>(
+      `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp`,
+      {otp},
+    );
+  }
+
   get activeCartId() {
-    return this.storageService.retrieve('cartId');
+    return this.storageService.retrieve("cartId");
   }
 
   get customerId() {

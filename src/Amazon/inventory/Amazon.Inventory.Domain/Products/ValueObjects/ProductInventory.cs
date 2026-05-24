@@ -1,12 +1,14 @@
 ﻿using Amazon.Inventory.Domain.Products.Entities;
 using Amazon.SharedKernel.API;
-using Amazon.SharedKernel.Extensions;
 
 namespace Amazon.Inventory.Domain.Products.ValueObjects;
 
 public class ProductInventory
 {
     private readonly List<InventoryItem> _items = [];
+
+    private IEnumerable<InventoryItem> AvailableItems => _items.Where(x => !x.IsOnHold);
+    public int InStockCount => AvailableItems.Count();
 
     public ProductInventory(Guid productId, int inStockCount)
     {
@@ -21,9 +23,20 @@ public class ProductInventory
             _items.Add(new InventoryItem(productId));
     }
 
+    public RestResponse<bool> LockQuantity(int quantity)
+    {
+        var isStockCountEnoughResult = CanConsume(quantity);
+        if (!isStockCountEnoughResult.IsSuccess)
+            return isStockCountEnoughResult;
+
+        foreach (var item in AvailableItems.Take(quantity))
+            item.HoldForPurchase();
+     
+        return RestResponse<bool>.Success(true);
+    }
+
     public ProductInventory(ProductInventory newValue) : this(newValue.ProductId, newValue.InStockCount) { }
 
-    public int InStockCount => _items.Where(x => !x.IsOnHold).Count();
     public Guid ProductId => _items.FirstOrDefault()?.ProductId ?? throw new InvalidOperationException("No product items available");
 
     public void Insert(int quantity) => InsertProductItems(ProductId, quantity);

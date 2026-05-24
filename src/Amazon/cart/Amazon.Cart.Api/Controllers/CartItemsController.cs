@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Amazon.Cart.Api.Controllers;
 
 [Route("api/carts/{cartId}/items")]
-public class CartItemsController(CartService _cartService) : ApiControllerBase
+public class CartItemsController(CartAppService _cartService) : ApiControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> AddItemToCart(Guid cartId, [FromBody] CartItemCreateDto cartItem)
