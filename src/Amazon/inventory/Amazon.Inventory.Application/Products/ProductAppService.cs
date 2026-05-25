@@ -20,9 +20,9 @@ public class ProductAppService(
         return RestResponse<Product>.Success(product);
     }
 
-    public async Task LockAllForOrderAsync(List<KeyValuePair<Guid, int>> orderItems)
+    public async Task LockAllForOrderAsync(Guid orderId, List<KeyValuePair<Guid, int>> orderItems)
     {
-        await _productsService.LockAllForOrderAsync(orderItems);
+        await _productsService.LockAllForOrderAsync(orderId, orderItems);
         await _unitOfWork.CommitAsync();
     }
 
@@ -40,12 +40,13 @@ public class ProductAppService(
         return RestResponse<int>.Success(holdItemIdResult.Value);
     }
 
-    public async Task ReleaseProductsOnHoldAsync(params Guid[] productIds)
+    public async Task ReleaseInventoryItemsForOrderAsync(Guid orderId)
     {
-        var productsOnHold = await _repository.GetAllAsync(x => productIds.Contains(x.Id));
-        foreach (var item in productsOnHold)
-            item.Inventory.ReleaseAllOnHoldItems();
-
+        var produt = await _repository.GetAllAsync();
+        var orderProducts = await _repository.GetAllAsync(p => p.Inventory.Items.Any(i => i.ReservedForOrder == orderId));
+        foreach (var product in orderProducts)
+            product.ReleaseReservedItems();
+     
         await _unitOfWork.CommitAsync();
     }
 }

@@ -26,7 +26,7 @@ namespace Amazon.Inventory.Infrastructure.Data
 
                 entity.OwnsOne(x => x.Inventory, b =>
                 {
-                    b.OwnsMany<InventoryItem>("_items", b =>
+                    b.OwnsMany(x => x.Items, b =>
                     {
                         b.ToTable("inventoryItems");
 

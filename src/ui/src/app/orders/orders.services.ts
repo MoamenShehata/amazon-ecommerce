@@ -27,4 +27,8 @@ export class OrdersService {
   getOrderDetails(orderId: string) {
     return this.http.get<OrderDetailsDto>(`${this.baseUrl}/${orderId}`);
   }
+
+  cancelOrder(orderId: string) {
+    return this.http.put(`${this.baseUrl}/${orderId}/cancel`, {});
+  }
 }

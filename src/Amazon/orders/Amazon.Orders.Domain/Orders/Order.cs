@@ -1,5 +1,6 @@
 ﻿using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
+using Amazon.SharedKernel.Orders.Events;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
@@ -24,9 +25,15 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 
 
     private readonly ICollection<OrderStatusChange> _history = new HashSet<OrderStatusChange>();
-    public void UpdateStatus(OrderStatusChange newStatus) => _history.Add(newStatus);
-
+    private void UpdateStatus(OrderStatusChange newStatus) => _history.Add(newStatus);
     public OrderStatusChange Status => _history.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+
+    public void Cancel()
+    {
+        UpdateStatus(new OrderCancelledStatus(Id));
+
+        RaiseEvent(new OrderCancelledEvent(Id));
+    }
 
 
     #region Infra

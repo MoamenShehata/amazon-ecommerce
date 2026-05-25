@@ -26,7 +26,7 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
     {
         var item = new CartItem(Id, productId, productName, productImageUrl);
         _cartItems.Add(item);
-        RaiseEvent(new CartItemAddedEvent(productId, 0));
+        //RaiseEvent(new CartItemAddedEvent(productId, 0));
         return item;
     }
 

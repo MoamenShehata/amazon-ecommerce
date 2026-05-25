@@ -23,7 +23,8 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         UpdateInventory(Inventory.InStockCount, Inventory.InStockCount + quantity);
     }
 
-    public RestResponse<bool> ReserveQuantityForOrder(int quantity) => Inventory.LockQuantity(quantity);
+    public RestResponse<bool> ReserveQuantityForOrder(Guid orderId, int quantity) => Inventory.ReserveQuantityForOrder(orderId, quantity);
+    public void ReleaseReservedItems() => Inventory.ReleaseReservedItems();
 
     public RestResponse<bool> ConsumeForOrder(int inventoryItemId)
     {

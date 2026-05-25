@@ -6,8 +6,9 @@ namespace Amazon.Inventory.Domain.Products.ValueObjects;
 public class ProductInventory
 {
     private readonly List<InventoryItem> _items = [];
+    private IEnumerable<InventoryItem> AvailableItems => _items.Where(x => x.IsAvailable);
+    public IReadOnlyCollection<InventoryItem> Items => _items.ToList();
 
-    private IEnumerable<InventoryItem> AvailableItems => _items.Where(x => !x.IsOnHold);
     public int InStockCount => AvailableItems.Count();
 
     public ProductInventory(Guid productId, int inStockCount)
@@ -23,15 +24,15 @@ public class ProductInventory
             _items.Add(new InventoryItem(productId));
     }
 
-    public RestResponse<bool> LockQuantity(int quantity)
+    internal RestResponse<bool> ReserveQuantityForOrder(Guid orderId, int quantity)
     {
         var isStockCountEnoughResult = CanConsume(quantity);
         if (!isStockCountEnoughResult.IsSuccess)
             return isStockCountEnoughResult;
 
         foreach (var item in AvailableItems.Take(quantity))
-            item.HoldForPurchase();
-     
+            item.ReserveForOrder(orderId);
+
         return RestResponse<bool>.Success(true);
     }
 
@@ -61,18 +62,18 @@ public class ProductInventory
 
     public RestResponse<int> HoldItemForPurchase()
     {
-        var firstAvailableItem = _items.FirstOrDefault(i => !i.IsOnHold);
+        var firstAvailableItem = _items.FirstOrDefault(i => i.IsAvailable);
         if (InStockCount == 0 || firstAvailableItem is null)
             return RestResponse<int>.NotFound($"No available inventory items to hold for purchase");
 
-        firstAvailableItem.HoldForPurchase();
+        firstAvailableItem.ReserveForOrder(Guid.Empty);
         return RestResponse<int>.Success(firstAvailableItem.Id);
     }
 
-    public void ReleaseAllOnHoldItems()
+    internal void ReleaseReservedItems()
     {
-        foreach (var item in _items.Where(i => i.IsOnHold))
-            item.ReleaseHold();
+        foreach (var item in _items.Where(i => !i.IsAvailable))
+            item.Release();
     }
 
     private ProductInventory() { }

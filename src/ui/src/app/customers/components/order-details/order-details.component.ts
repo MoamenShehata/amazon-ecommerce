@@ -42,6 +42,17 @@ export class OrderDetailsComponent extends AppServicesProvider {
     });
   }
 
+  cancelOrder() {
+    this.ordersService.cancelOrder(this.orderId).subscribe({
+      next: () => {
+        this.loadOrderDetails();
+      },
+      error: (err) => {
+        console.error("Error canceling order:", err);
+      },
+    });
+  }
+
   convertAdditionalInfoToIterable(
     additionalInfo: any,
   ): {key: string; value: any}[] {

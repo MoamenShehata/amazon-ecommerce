@@ -26,4 +26,31 @@ public class OrdersService(
 
         return RestResponse<Order>.Created(order, order.Id.ToString());
     }
+
+    public async Task<RestResponse<Order>> GetByIdAsync(Guid id)
+    {
+        var order = await _ordersRepo.GetInstanceAsync(id);
+        if (order is null)
+            return RestResponse<Order>.NotFound($"Order ({id}) was not found");
+
+        return RestResponse<Order>.Success(order);
+    }
+
+    public async Task<RestResponse<bool>> CancelAsync(Guid orderId)
+    {
+        var orderResult = await GetByIdAsync(orderId);
+        if (!orderResult.IsSuccess)
+            return orderResult.MapTo(false);
+
+        return TryCancelOrder(orderResult);
+    }
+
+    private RestResponse<bool> TryCancelOrder(Order order)
+    {
+        if (!order.Status.CanBeCancelled)
+            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be cancelled!");
+
+        order.Cancel();
+        return RestResponse<bool>.Success(true);
+    }
 }

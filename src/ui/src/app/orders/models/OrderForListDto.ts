@@ -12,5 +12,6 @@ export interface OrderDetailsDto {
   statusAdditionalInfo: any;
   totalAmount: number;
   createdAt: Date;
+  canBeCanceled: boolean;
   items: OrderItemDto[];
 }

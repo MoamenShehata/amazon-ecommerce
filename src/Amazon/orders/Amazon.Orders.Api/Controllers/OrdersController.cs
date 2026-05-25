@@ -28,4 +28,7 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
 
         return RestResult(result);
     }
+
+    [HttpPut("{id}/cancel")]
+    public async Task<IActionResult> CancelOrder(Guid id) => RestResult(await _service.CancelAsync(id));
 }

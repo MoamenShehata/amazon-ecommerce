@@ -1,8 +1,9 @@
-﻿using Amazon.SharedKernel.Orders.Events;
+﻿using Amazon.Inventory.Application.Products;
+using Amazon.SharedKernel.Orders.Events;
 using MassTransit;
 using Moamen.SDKs.SharedKernel;
 
-namespace Amazon.Inventory.Application.Products.EventConsumers;
+namespace Amazon.Inventory.Application.Orders.EventConsumers;
 
 public class OrderCreatedEventHandler(
     ProductAppService _productsAppService,
@@ -12,6 +13,6 @@ public class OrderCreatedEventHandler(
     {
         var orderEvent = context.Message;
 
-        await _productsAppService.LockAllForOrderAsync(orderEvent.OrderItems);
+        await _productsAppService.LockAllForOrderAsync(orderEvent.OrderId, orderEvent.OrderItems);
     }
 }

@@ -1,13 +1,12 @@
 ﻿using Amazon.Orders.Application.Orders.Dtos;
+using Amazon.Orders.Application.Orders.Mappers;
 using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
-using Moamen.SDKs.SharedKernel;
-using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.Repository.Pagination;
-using Amazon.Orders.Application.Orders.Mappers;
+using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.Orders.Application.Orders
 {
@@ -18,11 +17,11 @@ namespace Amazon.Orders.Application.Orders
     {
         public async Task<RestResponse<OrderDetailsDto>> GetByIdAsync(Guid id)
         {
-            var order = await _ordersRepo.GetInstanceAsync(id, x => x.Include(d => d.Items));
-            if (order == null)
-                return RestResponse<OrderDetailsDto>.NotFound($"Order ({id}) was not found");
+            var orderResult = await _ordersService.GetByIdAsync(id);
+            if (!orderResult.IsSuccess)
+                return orderResult.MapTo(null as OrderDetailsDto);
 
-            return RestResponse<OrderDetailsDto>.Success(order.ToDetailsDto());
+            return RestResponse<OrderDetailsDto>.Success(orderResult.Value.ToDetailsDto());
         }
 
         public async Task<PagedResult<OrderForListDto, DateTime>> GetCustomerOrdersPageAsync(Guid customerId, SearchOrdersRequest pageRequest)
@@ -44,6 +43,16 @@ namespace Amazon.Orders.Application.Orders
             }
 
             return result.MapTo((OrderCreatedDto)null);
+        }
+
+        public async Task<RestResponse<bool>> CancelAsync(Guid orderId)
+        {
+            var result = await _ordersService.CancelAsync(orderId);
+            if (!result.IsSuccess)
+                return result;
+
+            await _unitOfWork.CommitAsync();
+            return RestResponse<bool>.Success(true);
         }
     }
 }
