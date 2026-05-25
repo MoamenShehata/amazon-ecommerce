@@ -13,7 +13,7 @@ public class ProductCreatedEventHandler(
     {
         var message = context.Message;
 
-        _productsService.Create(message.ProductId, message.Name, 50, message.UnitPrice);
+        _productsService.Create(message.ProductId, message.Name, message.InStockCount, message.UnitPrice);
         await _unitOfWork.CommitAsync();
     }
 }
