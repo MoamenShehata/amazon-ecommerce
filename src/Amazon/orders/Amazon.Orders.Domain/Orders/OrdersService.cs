@@ -1,5 +1,6 @@
 ﻿using Amazon.Orders.Domain.Orders.Factories;
 using Amazon.Orders.Domain.Orders.ValueObjects;
+using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.Orders.Domain.Products;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
@@ -45,12 +46,48 @@ public class OrdersService(
         return TryCancelOrder(orderResult);
     }
 
+    public async Task<RestResponse<bool>> StartProcessingAsync(Guid orderId)
+    {
+        var orderResult = await GetByIdAsync(orderId);
+        if (!orderResult.IsSuccess)
+            return orderResult.MapTo(false);
+
+        return TryStartProcessingAsync(orderResult);
+    }
+
+    public async Task<RestResponse<bool>> StartShippingAsync(Guid orderId)
+    {
+        var orderResult = await GetByIdAsync(orderId);
+        if (!orderResult.IsSuccess)
+            return orderResult.MapTo(false);
+
+        return TryStartShippingAsync(orderResult);
+    }
+
     private RestResponse<bool> TryCancelOrder(Order order)
     {
         if (!order.Status.CanBeCancelled)
             return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be cancelled!");
 
         order.Cancel();
+        return RestResponse<bool>.Success(true);
+    }
+
+    private RestResponse<bool> TryStartProcessingAsync(Order order)
+    {
+        if (order.Status.State != OrderState.Created)
+            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be started to process!");
+
+        order.UpdateStatus(new OrderProcessingStatus(order.Id));
+        return RestResponse<bool>.Success(true);
+    }
+
+    private RestResponse<bool> TryStartShippingAsync(Order order)
+    {
+        if (order.Status.State != OrderState.Processing)
+            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be started to shipp!");
+
+        order.StartShipping(new ShippingCompanyInfo("Egypt, Sharqia, 75, 10th of Ramdan Ordnia road", "+201645454", "Bosta", "https//www.google.com"));
         return RestResponse<bool>.Success(true);
     }
 }

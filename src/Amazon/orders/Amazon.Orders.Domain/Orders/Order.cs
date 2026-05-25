@@ -25,7 +25,7 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 
 
     private readonly ICollection<OrderStatusChange> _history = new HashSet<OrderStatusChange>();
-    private void UpdateStatus(OrderStatusChange newStatus) => _history.Add(newStatus);
+    internal void UpdateStatus(OrderStatusChange newStatus) => _history.Add(newStatus);
     public OrderStatusChange Status => _history.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
 
     public void Cancel()
@@ -33,6 +33,13 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
         UpdateStatus(new OrderCancelledStatus(Id));
 
         RaiseEvent(new OrderCancelledEvent(Id));
+    }
+
+    public void StartShipping(ShippingCompanyInfo shippingCompanyInfo)
+    {
+        UpdateStatus(new OrderShippingStartedStatus(Id, shippingCompanyInfo));
+
+        RaiseEvent(new OrderShippingStartedEvent(Id));
     }
 
 

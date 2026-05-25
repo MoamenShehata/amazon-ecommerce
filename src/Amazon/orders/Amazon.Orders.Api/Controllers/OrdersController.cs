@@ -31,4 +31,10 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
 
     [HttpPut("{id}/cancel")]
     public async Task<IActionResult> CancelOrder(Guid id) => RestResult(await _service.CancelAsync(id));
+
+    [HttpPut("{id}/process")]
+    public async Task<IActionResult> StartProcessingOrder(Guid id) => RestResult(await _service.StartProcessingAsync(id));
+    
+    [HttpPut("{id}/startShipping")]
+    public async Task<IActionResult> StartShippingOrder(Guid id) => RestResult(await _service.StartShippingAsync(id));
 }

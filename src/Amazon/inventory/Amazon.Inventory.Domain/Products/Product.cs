@@ -26,13 +26,15 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
     public RestResponse<bool> ReserveQuantityForOrder(Guid orderId, int quantity) => Inventory.ReserveQuantityForOrder(orderId, quantity);
     public void ReleaseReservedItems() => Inventory.ReleaseReservedItems();
 
-    public RestResponse<bool> ConsumeForOrder(int inventoryItemId)
+    public RestResponse<bool> ConsumeForOrder(Guid orderId)
     {
-        var consumeResult = Inventory.Consume(inventoryItemId);
+        var inventoryItemsBeforeConsume = Inventory.OrderItems(orderId).Count;
+
+        var consumeResult = Inventory.ConsumeForOrder(orderId);
         if (!consumeResult.IsSuccess)
             return RestResponse<bool>.BadRequest(new BadRequestModel(consumeResult.Error.ToString()!));
 
-        UpdateInventory(Inventory.InStockCount + 1, Inventory.InStockCount);
+        UpdateInventory(inventoryItemsBeforeConsume, Inventory.InStockCount);
         return RestResponse<bool>.Success(true);
     }
 

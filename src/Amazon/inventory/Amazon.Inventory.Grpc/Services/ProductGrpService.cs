@@ -23,21 +23,21 @@ public class ProductGrpService(ProductAppService _service) : ProductServiceBase
         };
     }
 
-    public override async Task<HoldItemForPurchaseReply> HoldItemForPurchaseRequest(ProductIdRequest request, ServerCallContext context)
-    {
-        var productId = Guid.Parse(request.ProductId);
+    //public override async Task<HoldItemForPurchaseReply> HoldItemForPurchaseRequest(ProductIdRequest request, ServerCallContext context)
+    //{
+    //    var productId = Guid.Parse(request.ProductId);
 
-        var productInstance = await _service.GetByIdAsync(productId);
-        if (!productInstance.IsSuccess)
-            throw new RpcException(new Status(StatusCode.NotFound, $"Product with id {productId} not found"));
+    //    var productInstance = await _service.GetByIdAsync(productId);
+    //    if (!productInstance.IsSuccess)
+    //        throw new RpcException(new Status(StatusCode.NotFound, $"Product with id {productId} not found"));
 
-        var holdResult = await _service.HoldItemForPurchaseAsync(productId);
-        if (!holdResult.IsSuccess)
-            throw new RpcException(new Status(StatusCode.FailedPrecondition, holdResult.Error.ToString()!));
+    //    var holdResult = await _service.HoldItemForPurchaseAsync(productId);
+    //    if (!holdResult.IsSuccess)
+    //        throw new RpcException(new Status(StatusCode.FailedPrecondition, holdResult.Error.ToString()!));
 
-        return new HoldItemForPurchaseReply()
-        {
-            PurchaseRequestId = holdResult.Value
-        };
-    }
+    //    return new HoldItemForPurchaseReply()
+    //    {
+    //        PurchaseRequestId = holdResult.Value
+    //    };
+    //}
 }

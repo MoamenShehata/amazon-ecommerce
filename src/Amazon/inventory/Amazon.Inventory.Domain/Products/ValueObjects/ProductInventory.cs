@@ -8,6 +8,8 @@ public class ProductInventory
     private readonly List<InventoryItem> _items = [];
     private IEnumerable<InventoryItem> AvailableItems => _items.Where(x => x.IsAvailable);
     public IReadOnlyCollection<InventoryItem> Items => _items.ToList();
+    internal IReadOnlyCollection<InventoryItem> OrderItems(Guid orderId) => [.. _items.Where(x => x.ReservedForOrder == orderId)];
+
 
     public int InStockCount => AvailableItems.Count();
 
@@ -42,13 +44,12 @@ public class ProductInventory
 
     public void Insert(int quantity) => InsertProductItems(ProductId, quantity);
 
-    public RestResponse<bool> Consume(int inventoryItemId)
+    public RestResponse<bool> ConsumeForOrder(Guid orderId)
     {
-        var inventoryItem = _items.FirstOrDefault(x => x.Id == inventoryItemId && x.ProductId == ProductId);
-        if (inventoryItem is null)
-            return RestResponse<bool>.NotFound($"Inventory does not have the specified item");
+        var orderReserverdItems = OrderItems(orderId);
+        foreach (var item in orderReserverdItems)
+            _items.Remove(item);
 
-        _items.Remove(inventoryItem);
         return RestResponse<bool>.Success(true);
     }
 
@@ -75,6 +76,7 @@ public class ProductInventory
         foreach (var item in _items.Where(i => !i.IsAvailable))
             item.Release();
     }
+
 
     private ProductInventory() { }
 }

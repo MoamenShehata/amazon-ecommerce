@@ -2,4 +2,4 @@
 
 namespace Amazon.SharedKernel.Orders.Events;
 
-public record OrderCancelledEvent(Guid OrderId) : IntegrationEvent(DateTime.UtcNow);
+public record OrderShippingStartedEvent(Guid OrderId) : IntegrationEvent(DateTime.UtcNow);

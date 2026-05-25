@@ -13,6 +13,6 @@ public class OrderCreatedEventHandler(
     {
         var orderEvent = context.Message;
 
-        await _productsAppService.LockAllForOrderAsync(orderEvent.OrderId, orderEvent.OrderItems);
+        await _productsAppService.ReserveProductItemsForOrderAsync(orderEvent.OrderId, orderEvent.OrderItems);
     }
 }
