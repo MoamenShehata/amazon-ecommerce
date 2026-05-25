@@ -4,7 +4,7 @@ using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 
-namespace Amazon.Cart.Domain;
+namespace Amazon.Cart.Domain.Services;
 
 public class CartService(
         ShoppingCartFactory _cartFactory,
@@ -34,14 +34,14 @@ public class CartService(
         return RestResponse<ShoppingCart>.Success(cart);
     }
 
-    public async Task<RestResponse<CartItem>> TryAddItemToCartAsync(ShoppingCart cart, Guid productId, string productName, string productImageUrl)
+    public async Task<RestResponse<CartItem>> TryAddItemToCartAsync(ShoppingCart cart, Guid productId)
     {
         var totalItemsCountRequested = cart.GetItemsCountForProduct(productId) + 1;
         var isAvailable = await _inventoryService.IsProductAvailableForQuantityAsync(productId, totalItemsCountRequested);
         if (!isAvailable)
             return RestResponse<CartItem>.Conflict($"Product with id {productId} is not available in inventory");
 
-        var item = cart.AddItem(productId, productName, productImageUrl);
+        var item = cart.AddItem(productId);
         return RestResponse<CartItem>.Success(item);
     }
 

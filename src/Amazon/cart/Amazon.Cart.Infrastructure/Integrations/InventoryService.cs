@@ -1,4 +1,4 @@
-﻿using Amazon.Cart.Domain;
+﻿using Amazon.Cart.Domain.Services;
 using Amazon.Inventory.Grpc;
 using Grpc.Net.Client;
 using static Amazon.Inventory.Grpc.ProductService;

@@ -1,5 +1,5 @@
-﻿using Amazon.Cart.Domain;
-using Amazon.Cart.Domain.Factories;
+﻿using Amazon.Cart.Domain.Factories;
+using Amazon.Cart.Domain.Services;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -38,18 +38,17 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
     public void AttachToCategory(Guid categoryId) => CategoryId = categoryId;
 
     public Guid CategoryId { get; private set; }
-    public Guid ImageId { get; private set; }
-    public string? ImageUrl { get; private set; }
+    //public Guid ImageId { get; private set; }
+    public string ImageUrl { get; private set; }
     public void UpdateImageUrl(string imageUrl) => ImageUrl = imageUrl;
 
-    internal Product(Guid categoryId, string name, ProductPrice price, List<ProductProperty> properties) : base(Guid.NewGuid())
+    internal Product(Guid categoryId, string name, ProductPrice price, string imageUrl, List<ProductProperty> properties) : base(Guid.NewGuid())
     {
         CategoryId = categoryId;
         Name = name;
         Price = price;
-
+        ImageUrl = imageUrl;
         Properties = properties;
-        ImageId = Guid.NewGuid();
     }
 
     private Product() : base(Guid.Empty) { }

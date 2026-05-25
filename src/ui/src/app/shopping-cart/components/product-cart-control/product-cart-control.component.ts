@@ -1,20 +1,20 @@
-import { Component, Input } from '@angular/core';
-import { ShoppingCartService } from '../../shopping-cart.services';
-import { ProductForListModel } from '../../../poduct-catalog/models/product-for-list-model';
-import { CommonModule } from '@angular/common';
-import { CartProductDto } from '../../models/cart-item-model';
-import { ShoppingCartState } from '../../shopping-cart.state';
-import { catchError } from 'rxjs';
+import {Component, Input} from "@angular/core";
+import {ShoppingCartService} from "../../shopping-cart.services";
+import {ProductForListModel} from "../../../poduct-catalog/models/product-for-list-model";
+import {CommonModule} from "@angular/common";
+import {CartItemDto} from "../../models/cart-item-model";
+import {ShoppingCartState} from "../../shopping-cart.state";
+import {catchError} from "rxjs";
 
 @Component({
-  selector: 'product-cart-control',
+  selector: "product-cart-control",
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './product-cart-control.component.html',
-  styleUrl: './product-cart-control.component.css',
+  templateUrl: "./product-cart-control.component.html",
+  styleUrl: "./product-cart-control.component.css",
 })
 export class ProductCartControlComponent {
-  @Input() product: CartProductDto;
+  @Input() cartItem: CartItemDto;
   @Input() productItemIds: number[] = [];
 
   constructor(
@@ -25,9 +25,7 @@ export class ProductCartControlComponent {
   addToCart() {
     this.shoppingCartService
       .addCartItem({
-        productId: this.product.productId,
-        productName: this.product.productName,
-        productImageUrl: this.product.productImageUrl,
+        productId: this.cartItem.productId,
       })
       .pipe(
         catchError((err) => {
@@ -38,9 +36,9 @@ export class ProductCartControlComponent {
         this.productItemIds.push(res.cartItemId);
 
         this.shoppingCartState.add({
-          productId: this.product.productId,
-          productName: this.product.productName,
-          productImageUrl: this.product.productImageUrl,
+          productId: this.cartItem.productId,
+          productName: this.cartItem.productName,
+          productImageUrl: this.cartItem.productImageUrl,
           itemIds: this.productItemIds,
         });
       });
@@ -59,7 +57,7 @@ export class ProductCartControlComponent {
 
   deleteAllItemsForProduct() {
     this.shoppingCartService
-      .RemoveAllProductItems(this.product.productId)
+      .RemoveAllProductItems(this.cartItem.productId)
       ?.subscribe((res) => {
         // this.productItemIds.pop();
       });

@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
+using Amazon.Cart.Domain.Products;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -31,6 +32,13 @@ namespace Amazon.Cart.Infrastructure.Data
                     b.WithOwner().HasForeignKey(x => x.ShoppingCartId);
 
                     b.HasKey(x => new { x.ShoppingCartId, x.Id });
+
+                    b
+                    .HasOne(x => x.Product)
+                    .WithMany()
+                    .HasForeignKey(x => x.ProductId);
+
+                    b.Navigation(x => x.Product).AutoInclude();
                 });
 
                 e.Navigation(o => o.Items).HasField("_cartItems")
@@ -40,6 +48,11 @@ namespace Amazon.Cart.Infrastructure.Data
             modelBuilder.Entity<OutboxMessage>(entity =>
             {
                 entity.ToTable("OutboxMessages");
+            });
+
+            modelBuilder.Entity<Product>(b =>
+            {
+                b.OwnsOne(x => x.Info);
             });
 
             base.OnModelCreating(modelBuilder);

@@ -8,4 +8,5 @@ public record ProductCreatedEvent
     string Name,
     int InStockCount,
     decimal UnitPrice,
-    string CategoryFullName) : IntegrationEvent(DateTime.UtcNow);
+    string CategoryFullName,
+    string ImageUrl) : IntegrationEvent(DateTime.UtcNow);

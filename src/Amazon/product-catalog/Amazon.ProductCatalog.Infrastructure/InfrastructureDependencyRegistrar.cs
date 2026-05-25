@@ -1,4 +1,6 @@
-﻿using Amazon.ProductCatalog.Infrastructure.Data;
+﻿using Amazon.ProductCatalog.Domain.Products;
+using Amazon.ProductCatalog.Infrastructure.Data;
+using Amazon.ProductCatalog.Infrastructure.Integration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,12 @@ namespace Amazon.ProductCatalog.Infrastructure
                 .AddGenericRepos()
                 .AddBaseContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")));
             ;
+
+            services.AddHttpClient();
+
+            services
+                .AddScoped<IMediaService, ProductMediaService>()
+                ;
 
             return services;
         }

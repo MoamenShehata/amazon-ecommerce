@@ -7,7 +7,7 @@ export interface CartItemModel {
   quantity: number;
 }
 
-export interface CartProductDto {
+export interface CartItemDto {
   productId: string;
   productName: string;
   productImageUrl: string;

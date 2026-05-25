@@ -1,12 +1,12 @@
-﻿using Amazon.Inventory.Domain.Products;
+﻿using Amazon.Cart.Domain.Products;
 using Amazon.SharedKernel.Products.Events;
 using MassTransit;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 
-namespace Amazon.Inventory.Application.Products.EventConsumers;
+namespace Amazon.Cart.Application.EventConsumers;
 
-public class InventoryProductCreatedEventHandler(
+public class CartProductCreatedEventHandler(
 IRepository<Product, Guid> _productsRepo,
 IUnitOfWork _unitOfWork) : IConsumer<ProductCreatedEvent>
 {
@@ -14,7 +14,7 @@ IUnitOfWork _unitOfWork) : IConsumer<ProductCreatedEvent>
     {
         var productEvent = context.Message;
 
-        var product = new Product(productEvent.ProductId, productEvent.InStockCount);
+        var product = new Product(productEvent.ProductId, new Domain.Products.ValueObjects.ProductInfo(productEvent.Name, productEvent.ImageUrl));
         _productsRepo.Add(product);
 
         await _unitOfWork.CommitAsync();

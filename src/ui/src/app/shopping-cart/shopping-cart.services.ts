@@ -4,7 +4,7 @@ import {CartItemCreateModel} from "./models/cart-item-create.models";
 import {AuthService} from "../authentication/services/authentication.service";
 import {StorageService} from "../core/services/storage-service";
 import {BehaviorSubject, catchError, map, Observable, tap} from "rxjs";
-import {CartItemModel, CartProductDto} from "./models/cart-item-model";
+import {CartItemModel, CartItemDto} from "./models/cart-item-model";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -25,16 +25,16 @@ export class ShoppingCartService {
   getCart() {
     const activeCartId = this.activeCartId;
     if (!activeCartId)
-      return new BehaviorSubject<CartProductDto[]>([]).asObservable();
+      return new BehaviorSubject<CartItemDto[]>([]).asObservable();
 
     return this.http
-      .get<CartProductDto[]>(`${this.cartsBaseUrl}/${activeCartId}`)
+      .get<CartItemDto[]>(`${this.cartsBaseUrl}/${activeCartId}`)
       .pipe(
         catchError((err) => {
           if (err.status === 404) {
             this.storageService.delete("cartId");
           }
-          return new BehaviorSubject<CartProductDto[]>([]).asObservable();
+          return new BehaviorSubject<CartItemDto[]>([]).asObservable();
         }),
       );
   }

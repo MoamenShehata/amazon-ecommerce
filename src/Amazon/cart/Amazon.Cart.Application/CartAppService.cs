@@ -2,13 +2,13 @@
 using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
+using Amazon.Cart.Domain.Services;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
-using System.Security.AccessControl;
 
 namespace Amazon.Cart.Application
 {
@@ -19,13 +19,13 @@ namespace Amazon.Cart.Application
         IOtpService _otpService
         )
     {
-        public async Task<RestResponse<List<CartProductDto>>> GetByIdAsync(Guid cartId)
+        public async Task<RestResponse<List<CartItemDto>>> GetByIdAsync(Guid cartId)
         {
             var cartResult = await _cartService.GetByIdAsync(cartId);
             if (!cartResult.IsSuccess)
-                return cartResult.MapTo(null as List<CartProductDto>);
+                return cartResult.MapTo(null as List<CartItemDto>);
 
-            return RestResponse<List<CartProductDto>>.Success(cartResult.Value.ToItemsDto());
+            return RestResponse<List<CartItemDto>>.Success(cartResult.Value.ToItemsDto());
         }
 
         public async Task<RestResponse<CartCreateResultDto>> CreateCartAsync(CartCreateDto createDto)
@@ -111,7 +111,7 @@ namespace Amazon.Cart.Application
 
         private async Task<RestResponse<CartItem>> AddItemToCartAsync(ShoppingCart cart, CartItemCreateDto cartItem)
         {
-            return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId, cartItem.ProductName, cartItem.ProductImageUrl);
+            return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Amazon.Cart.Domain;
+﻿using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Infrastructure.Data;
 using Amazon.Cart.Infrastructure.Integrations;
 using Microsoft.EntityFrameworkCore;

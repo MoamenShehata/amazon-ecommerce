@@ -1,6 +1,7 @@
 ﻿using Amazon.SharedKernel.Media;
 using Amazon.SharedKernel.Media.Events;
 using Media.Application.Storage;
+using Media.Domain;
 using Media.Domain.Factories;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
@@ -21,7 +22,7 @@ namespace Media.Application
             return new MediaContent(File.ReadAllBytes(media.Path), media.MimeType, media.Name);
         }
 
-        public async Task CreateAsync(Guid mediaId, Guid ownerId, MediaContent mediaUploadRequest, bool isPublic)
+        public async Task<Domain.Media> CreateAsync(Guid mediaId, Guid ownerId, MediaContent mediaUploadRequest, bool isPublic)
         {
             var uploadedFile = await _storageService.UploadAsync(mediaUploadRequest, isPublic);
 
@@ -32,6 +33,8 @@ namespace Media.Application
             _repository.Add(media);
 
             await _unitOfWork.CommitAsync();
+
+            return media;
         }
 
         private Domain.Media Create(Guid mediaId, Guid ownerId, MediaFile mediaFile, bool isPublic)

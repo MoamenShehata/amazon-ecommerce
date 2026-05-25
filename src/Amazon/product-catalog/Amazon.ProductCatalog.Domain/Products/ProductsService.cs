@@ -11,7 +11,8 @@ namespace Amazon.ProductCatalog.Domain.Products;
 public class ProductsService(
     IEfCoreRepository<Category, Guid> _categoriesRepository,
     CategoriesService _categoriesService,
-    IEfCoreRepository<Product, Guid> _productsRepository
+    IEfCoreRepository<Product, Guid> _productsRepository,
+    IMediaService _mediaService
     )
 {
     public async Task<RestResponse<(Product, Category)>> CreateAsync(Guid categoryId, string name, int inStockCount, ProductPrice price, List<ProductProperty> properties, MediaContent mediaUploadRequest)
@@ -20,10 +21,12 @@ public class ProductsService(
         if (categoryResult is null)
             return RestResponse<(Product, Category)>.NotFound($"Category with id {categoryId} not found");
 
-        var product = categoryResult.Value.NewProduct(name, price, properties);
-        
-        product.RaiseEvent(new ProductCreatedEvent(categoryId, product.Id, product.Name, inStockCount, product.Price.Amount, categoryResult.Value.FullName));
-        product.RaiseEvent(new MediaCreateRequestedEvent(product.ImageId, product.Id, mediaUploadRequest, true));
+
+        var imageUrl = await _mediaService.UploadFileAsync(mediaUploadRequest);
+        var product = categoryResult.Value.NewProduct(name, imageUrl, price, properties);
+
+        product.RaiseEvent(new ProductCreatedEvent(categoryId, product.Id, product.Name, inStockCount, product.Price.Amount, categoryResult.Value.FullName, imageUrl));
+        product.RaiseEvent(new MediaCreateRequestedEvent(product.Id, product.Id, mediaUploadRequest, true));
 
         _productsRepository.Add(product);
 

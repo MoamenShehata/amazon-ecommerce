@@ -1,6 +1,6 @@
 ﻿namespace Amazon.Cart.Application.Dtos
 {
-    public record CartProductDto(
+    public record CartItemDto(
         Guid ProductId,
         string ProductName,
         string ProductImageUrl,

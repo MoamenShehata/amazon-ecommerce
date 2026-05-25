@@ -1,20 +1,20 @@
-import { Component, Input } from '@angular/core';
-import { ShoppingCartService } from '../../shopping-cart.services';
-import { CartItemModel, CartProductDto } from '../../models/cart-item-model';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { ProductCartControlComponent } from '../product-cart-control/product-cart-control.component';
-import { ShoppingCartState } from '../../shopping-cart.state';
+import {Component, Input} from "@angular/core";
+import {ShoppingCartService} from "../../shopping-cart.services";
+import {CartItemModel, CartItemDto} from "../../models/cart-item-model";
+import {CommonModule} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {ProductCartControlComponent} from "../product-cart-control/product-cart-control.component";
+import {ShoppingCartState} from "../../shopping-cart.state";
 
 @Component({
-  selector: 'shopping-cart',
+  selector: "shopping-cart",
   standalone: true,
   imports: [CommonModule, RouterLink, ProductCartControlComponent],
-  templateUrl: './shopping-cart.component.html',
-  styleUrl: './shopping-cart.component.css',
+  templateUrl: "./shopping-cart.component.html",
+  styleUrl: "./shopping-cart.component.css",
 })
 export class ShoppingCartComponent {
-  cartItems: CartProductDto[] = [];
+  cartItems: CartItemDto[] = [];
 
   constructor(
     private shoppingCartService: ShoppingCartService,
@@ -25,9 +25,9 @@ export class ShoppingCartComponent {
     });
   }
 
-  @Input() style: 'full' | 'mini' | 'checkout' = 'full';
+  @Input() style: "full" | "mini" | "checkout" = "full";
   get isFullStyle() {
-    return this.style == 'full' || this.style == 'checkout';
+    return this.style == "full" || this.style == "checkout";
   }
 
   ngOnInit() {

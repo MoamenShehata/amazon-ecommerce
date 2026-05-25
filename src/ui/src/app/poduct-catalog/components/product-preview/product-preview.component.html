@@ -18,10 +18,11 @@
     <span
       class="btn btn-primary mx-1"
       *ngFor="let cat of product.categories.split(',')"
-      >{{ cat }}</span
     >
+      {{ cat }}
+    </span>
   </div>
   <div class="card-footer">
-    <product-cart-control [product]="productForModel" />
+    <product-cart-control [cartItem]="productForModel" />
   </div>
 </div>

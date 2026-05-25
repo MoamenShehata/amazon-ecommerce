@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { CartProductDto } from './models/cart-item-model';
+import {Injectable} from "@angular/core";
+import {BehaviorSubject} from "rxjs";
+import {CartItemDto} from "./models/cart-item-model";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class ShoppingCartState {
-  _source = new BehaviorSubject<CartProductDto[]>([]);
+  _source = new BehaviorSubject<CartItemDto[]>([]);
 
-  add(item: CartProductDto) {
+  add(item: CartItemDto) {
     let currentItems = this._source.value;
 
     const cartProductItem = currentItems.find(

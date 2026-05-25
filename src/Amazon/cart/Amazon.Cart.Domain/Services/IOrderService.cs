@@ -1,5 +1,4 @@
-﻿
-namespace Amazon.Cart.Domain;
+﻿namespace Amazon.Cart.Domain.Services;
 
 public interface IOrderService
 {
