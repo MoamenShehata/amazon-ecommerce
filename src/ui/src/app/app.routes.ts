@@ -1,30 +1,35 @@
-import { Routes } from '@angular/router';
+import {Routes} from "@angular/router";
 
 export const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: '/catalog/products',
+    path: "",
+    pathMatch: "full",
+    redirectTo: "/catalog/products",
   },
   {
-    path: 'auth',
+    path: "auth",
     loadChildren: () =>
-      import('./authentication/authentication.routes').then(
+      import("./authentication/authentication.routes").then(
         (m) => m.authRoutes,
       ),
   },
   {
-    path: 'catalog',
+    path: "catalog",
     loadChildren: () =>
-      import('./poduct-catalog/product-catalog.routes').then(
+      import("./poduct-catalog/product-catalog.routes").then(
         (m) => m.catalogRoutes,
       ),
   },
   {
-    path: 'cart',
+    path: "cart",
     loadChildren: () =>
-      import('./shopping-cart/shopping-cart.routes').then(
+      import("./shopping-cart/shopping-cart.routes").then(
         (m) => m.shoppingCartRoutes,
       ),
+  },
+  {
+    path: "my",
+    loadChildren: () =>
+      import("./customers/customer.routes").then((m) => m.CustomerRoutes),
   },
 ];

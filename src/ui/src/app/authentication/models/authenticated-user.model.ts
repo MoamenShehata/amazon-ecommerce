@@ -1,4 +1,4 @@
-import { RoleNames } from './role-names';
+import {RoleNames} from "./role-names";
 
 export class AuthenticatedUser {
   constructor(
@@ -10,5 +10,9 @@ export class AuthenticatedUser {
 
   get isAdmin() {
     return this.role == RoleNames.Admin;
+  }
+
+  get isCustomer() {
+    return this.role == RoleNames.Customer;
   }
 }

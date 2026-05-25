@@ -1,0 +1,27 @@
+<div *ngIf="isLoading" class="alert alert-info" role="alert">
+  Loading order details...
+</div>
+
+<div *ngIf="orderDetails && !isLoading" class="card">
+  <div class="card-header">order details...</div>
+  <div class="card-body">
+    <!-- <h5 class="card-title">Order Details</h5>
+    <p class="card-text">
+      <strong>Created At:</strong>
+      {{ orderDetails.createdAt | date: "medium" }}
+    </p>
+    <p class="card-text">
+      <strong>Total Amount:</strong>
+      ${{ orderDetails.totalAmount }}
+    </p> -->
+
+    <h6>Items:</h6>
+    <ul class="list-group list-group-flush">
+      <li *ngFor="let item of orderDetails.items" class="list-group-item">
+        {{ item.productName }} - Quantity: {{ item.quantity }} - Price: ${{
+          item.unitPrice
+        }}
+      </li>
+    </ul>
+  </div>
+</div>

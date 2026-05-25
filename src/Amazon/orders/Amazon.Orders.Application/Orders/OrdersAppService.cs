@@ -6,6 +6,7 @@ using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Microsoft.EntityFrameworkCore;
+using Moamen.SDKs.Repository.Pagination;
 
 namespace Amazon.Orders.Application.Orders
 {
@@ -14,13 +15,24 @@ namespace Amazon.Orders.Application.Orders
         OrdersService _ordersService,
         IUnitOfWork _unitOfWork)
     {
-        public async Task<RestResponse<OrderDto>> GetByIdAsync(Guid id)
+        public async Task<RestResponse<OrderDetailsDto>> GetByIdAsync(Guid id)
         {
             var order = await _ordersRepo.GetInstanceAsync(id, x => x.Include(d => d.Items));
             if (order == null)
-                return RestResponse<OrderDto>.NotFound($"Order ({id}) was not found");
+                return RestResponse<OrderDetailsDto>.NotFound($"Order ({id}) was not found");
 
-            return RestResponse<OrderDto>.Success(new OrderDto(id, order.Items.Select(x => new KeyValuePair<string, int>(x.ProductInfo.Name, x.Quantity)).ToList()));
+            return RestResponse<OrderDetailsDto>.Success(new OrderDetailsDto(id, order.Items.Select(i => new OrderItemDto(i.ProductInfo.Name, "", i.ProductInfo.UnitPrice, i.Quantity)).ToList()));
+        }
+
+        public async Task<PagedResult<OrderForListDto, DateTime>> GetCustomerOrdersPageAsync(Guid customerId, SearchOrdersRequest pageRequest)
+        {
+            var page = pageRequest.PageNumber == 1
+            ? await _ordersRepo.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn, [x => x.Customer.Id == customerId])
+            : await _ordersRepo.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue), [x => x.Customer.Id == customerId]);
+
+            var dtos = page.Items.Select(o => new OrderForListDto(o.Id, o.CreatedOn, "Pending"));
+
+            return new PagedResult<OrderForListDto, DateTime>(dtos, page.TotalCount, page.LastSeenValue);
         }
 
         public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(OrderCreateDto request)

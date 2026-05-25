@@ -4,11 +4,12 @@ import {AuthenticatedUser} from "../../../models/authenticated-user.model";
 import {AuthService} from "../../../services/authentication.service";
 import {environment} from "../../../../../environments/environment";
 import {OAuthService} from "angular-oauth2-oidc";
+import {RouterModule} from "@angular/router";
 
 @Component({
   selector: "identity-controls",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: "./identity-controls.component.html",
 })
 export class IdentityControlsComponent {
