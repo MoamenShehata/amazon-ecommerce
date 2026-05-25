@@ -64,6 +64,15 @@ public class OrdersService(
         return TryStartShippingAsync(orderResult);
     }
 
+    public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid orderId)
+    {
+        var orderResult = await GetByIdAsync(orderId);
+        if (!orderResult.IsSuccess)
+            return orderResult.MapTo(false);
+
+        return TryCompleteShippingAsync(orderResult);
+    }
+
     private RestResponse<bool> TryCancelOrder(Order order)
     {
         if (!order.Status.CanBeCancelled)
@@ -87,7 +96,16 @@ public class OrdersService(
         if (order.Status.State != OrderState.Processing)
             return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be started to shipp!");
 
-        order.StartShipping(new ShippingCompanyInfo("Egypt, Sharqia, 75, 10th of Ramdan Ordnia road", "+201645454", "Bosta", "https//www.google.com"));
+        order.StartShipping("95874ab-87", new ShippingCompanyInfo("Egypt, Sharqia, 75, 10th of Ramdan Ordnia road", " + 201645454", "Bosta", "https//www.google.com"));
+        return RestResponse<bool>.Success(true);
+    }
+
+    private RestResponse<bool> TryCompleteShippingAsync(Order order)
+    {
+        if (order.Status.State != OrderState.ShippingStarted)
+            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be updated to ship completed!");
+
+        order.UpdateStatus(new OrderShippedStatus(order.Id));
         return RestResponse<bool>.Success(true);
     }
 }

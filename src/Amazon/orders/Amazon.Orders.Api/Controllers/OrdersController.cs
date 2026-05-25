@@ -37,4 +37,13 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
     
     [HttpPut("{id}/startShipping")]
     public async Task<IActionResult> StartShippingOrder(Guid id) => RestResult(await _service.StartShippingAsync(id));
+    
+    [HttpPut("{id}/shipped")]
+    public async Task<IActionResult> ShippingCompleted(Guid id) => RestResult(await _service.ShippingCompletedAsync(id));
+
+    [HttpPut("{id}/deliveryAccepted")]
+    public async Task<IActionResult> DeliveryAccepted(Guid id) => RestResult(await _service.StartShippingAsync(id));
+
+    [HttpPut("{id}/customerDelivered")]
+    public async Task<IActionResult> CustomerDelivered(Guid id) => RestResult(await _service.StartShippingAsync(id));
 }

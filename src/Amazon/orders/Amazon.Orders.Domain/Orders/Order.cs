@@ -35,9 +35,9 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
         RaiseEvent(new OrderCancelledEvent(Id));
     }
 
-    public void StartShipping(ShippingCompanyInfo shippingCompanyInfo)
+    public void StartShipping(string trackingId, ShippingCompanyInfo shippingCompanyInfo)
     {
-        UpdateStatus(new OrderShippingStartedStatus(Id, shippingCompanyInfo));
+        UpdateStatus(new OrderShippingStartedStatus(Id, trackingId, shippingCompanyInfo));
 
         RaiseEvent(new OrderShippingStartedEvent(Id));
     }

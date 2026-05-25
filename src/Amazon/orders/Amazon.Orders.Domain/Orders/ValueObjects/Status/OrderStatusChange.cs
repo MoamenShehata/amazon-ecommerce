@@ -47,28 +47,27 @@ public class OrderProcessingStatus(Guid orderId) : OrderStatusChange(orderId, Or
 public class OrderShippingStartedStatus : OrderStatusChange
 {
     public ShippingCompanyInfo CompanyInfo { get; private set; }
-    public OrderShippingStartedStatus(Guid orderId, ShippingCompanyInfo companyInfo) : base(orderId, OrderState.ShippingStarted)
+    public string TrackingId { get; private set; }
+    public OrderShippingStartedStatus(Guid orderId, string trackingId, ShippingCompanyInfo companyInfo) : base(orderId, OrderState.ShippingStarted)
     {
+        TrackingId = trackingId;
         CompanyInfo = companyInfo;
     }
 
     public override object AdditionalInfo => CompanyInfo;
     public override bool CanBeCancelled => false;
 
-    private OrderShippingStartedStatus() : this(Guid.Empty, null) { }
+    private OrderShippingStartedStatus() : this(Guid.Empty, null, null) { }
 }
 
 public class OrderShippedStatus : OrderStatusChange
 {
-    public string TrackingId { get; private set; }
-    public OrderShippedStatus(Guid orderId, string trackingId) : base(orderId, OrderState.Shipped)
+    public OrderShippedStatus(Guid orderId) : base(orderId, OrderState.Shipped)
     {
-        TrackingId = trackingId;
     }
 
-    public override object AdditionalInfo => TrackingId;
     public override bool CanBeCancelled => false;
-    private OrderShippedStatus() : this(Guid.Empty, null) { }
+    private OrderShippedStatus() : this(Guid.Empty) { }
 }
 
 public class OrderDeliveryRecievedStatus : OrderStatusChange
