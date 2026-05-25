@@ -20,8 +20,8 @@ export class CachCheckoutComponent extends AppServicesProvider {
     }
 
     this.cartService.checkoutUsingOtp(otp)?.subscribe(
-      (res) => {
-        alert(res);
+      (orederId) => {
+        this.router.navigate(["/my/orders", orederId]);
       },
       (err) => {
         alert(err.error);

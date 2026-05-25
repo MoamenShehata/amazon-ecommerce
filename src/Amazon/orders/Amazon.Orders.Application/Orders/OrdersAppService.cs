@@ -7,6 +7,7 @@ using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.Repository.Pagination;
+using Amazon.Orders.Application.Orders.Mappers;
 
 namespace Amazon.Orders.Application.Orders
 {
@@ -21,7 +22,7 @@ namespace Amazon.Orders.Application.Orders
             if (order == null)
                 return RestResponse<OrderDetailsDto>.NotFound($"Order ({id}) was not found");
 
-            return RestResponse<OrderDetailsDto>.Success(new OrderDetailsDto(id, order.Items.Select(i => new OrderItemDto(i.ProductInfo.Name, "", i.ProductInfo.UnitPrice, i.Quantity)).ToList()));
+            return RestResponse<OrderDetailsDto>.Success(order.ToDetailsDto());
         }
 
         public async Task<PagedResult<OrderForListDto, DateTime>> GetCustomerOrdersPageAsync(Guid customerId, SearchOrdersRequest pageRequest)
@@ -30,9 +31,7 @@ namespace Amazon.Orders.Application.Orders
             ? await _ordersRepo.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn, [x => x.Customer.Id == customerId])
             : await _ordersRepo.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue), [x => x.Customer.Id == customerId]);
 
-            var dtos = page.Items.Select(o => new OrderForListDto(o.Id, o.CreatedOn, "Pending"));
-
-            return new PagedResult<OrderForListDto, DateTime>(dtos, page.TotalCount, page.LastSeenValue);
+            return new PagedResult<OrderForListDto, DateTime>(page.Items.Select(o => o.ToForListDto()), page.TotalCount, page.LastSeenValue);
         }
 
         public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(OrderCreateDto request)

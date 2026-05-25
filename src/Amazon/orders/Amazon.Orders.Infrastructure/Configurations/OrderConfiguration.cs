@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Amazon.Orders.Domain.Orders;
+using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using MassTransit.Transports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -34,6 +35,13 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Navigation(o => o.Items).HasField("_orderItems")
              .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder
+            .HasMany<OrderStatusChange>("_history")
+            .WithOne()
+            .HasForeignKey(x => x.OrderId);
+
+        builder.Navigation("_history").AutoInclude();
     }
 }
 

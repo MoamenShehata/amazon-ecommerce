@@ -8,5 +8,9 @@ export interface OrderForListDto {
 
 export interface OrderDetailsDto {
   id: string;
+  status: string;
+  statusAdditionalInfo: any;
+  totalAmount: number;
+  createdAt: Date;
   items: OrderItemDto[];
 }

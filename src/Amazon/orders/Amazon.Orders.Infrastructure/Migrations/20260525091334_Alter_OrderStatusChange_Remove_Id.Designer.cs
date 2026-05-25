@@ -5,6 +5,7 @@ using Amazon.Orders.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amazon.Orders.Infrastructure.Migrations
 {
     [DbContext(typeof(OrdersContext))]
-    partial class OrdersContextModelSnapshot : ModelSnapshot
+    [Migration("20260525091334_Alter_OrderStatusChange_Remove_Id")]
+    partial class Alter_OrderStatusChange_Remove_Id
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,12 +69,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -83,7 +80,7 @@ namespace Amazon.Orders.Infrastructure.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderId", "Id");
+                    b.HasKey("OrderId");
 
                     b.ToTable("statusHistory", "orders");
 
@@ -283,9 +280,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
                             b1.Property<Guid>("OrderDeliveryRecievedStatusOrderId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("OrderDeliveryRecievedStatusId")
-                                .HasColumnType("int");
-
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
@@ -294,12 +288,12 @@ namespace Amazon.Orders.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("OrderDeliveryRecievedStatusOrderId", "OrderDeliveryRecievedStatusId");
+                            b1.HasKey("OrderDeliveryRecievedStatusOrderId");
 
                             b1.ToTable("statusHistory", "orders");
 
                             b1.WithOwner()
-                                .HasForeignKey("OrderDeliveryRecievedStatusOrderId", "OrderDeliveryRecievedStatusId");
+                                .HasForeignKey("OrderDeliveryRecievedStatusOrderId");
                         });
 
                     b.Navigation("DeliveryMember")
@@ -312,9 +306,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
                         {
                             b1.Property<Guid>("OrderShippingStartedStatusOrderId")
                                 .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("OrderShippingStartedStatusId")
-                                .HasColumnType("int");
 
                             b1.Property<string>("Address")
                                 .IsRequired()
@@ -332,12 +323,12 @@ namespace Amazon.Orders.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("OrderShippingStartedStatusOrderId", "OrderShippingStartedStatusId");
+                            b1.HasKey("OrderShippingStartedStatusOrderId");
 
                             b1.ToTable("statusHistory", "orders");
 
                             b1.WithOwner()
-                                .HasForeignKey("OrderShippingStartedStatusOrderId", "OrderShippingStartedStatusId");
+                                .HasForeignKey("OrderShippingStartedStatusOrderId");
                         });
 
                     b.Navigation("CompanyInfo")

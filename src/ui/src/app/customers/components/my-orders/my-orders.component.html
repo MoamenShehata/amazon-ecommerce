@@ -8,13 +8,15 @@
       <table class="table table-striped">
         <thead>
           <tr>
+            <th>#</th>
             <th>Status</th>
             <th>Created At</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of ordersPage.items">
+          <tr *ngFor="let order of ordersPage.items; let i = index">
+            <td>{{ i + 1 }}</td>
             <td>{{ order.status }}</td>
             <td>{{ order.createdAt | date: "medium" }}</td>
             <td>

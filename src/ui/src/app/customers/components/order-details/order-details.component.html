@@ -5,7 +5,6 @@
 <div *ngIf="orderDetails && !isLoading" class="card">
   <div class="card-header">order details...</div>
   <div class="card-body">
-    <!-- <h5 class="card-title">Order Details</h5>
     <p class="card-text">
       <strong>Created At:</strong>
       {{ orderDetails.createdAt | date: "medium" }}
@@ -13,7 +12,27 @@
     <p class="card-text">
       <strong>Total Amount:</strong>
       ${{ orderDetails.totalAmount }}
-    </p> -->
+    </p>
+
+    <p class="card-text">
+      <strong>Status:</strong>
+      {{ orderDetails.status }}
+    </p>
+
+    <div class="card-text" *ngIf="orderDetails.statusAdditionalInfo">
+      <strong>Additional Info:</strong>
+      <ul>
+        <li
+          *ngFor="
+            let info of convertAdditionalInfoToIterable(
+              orderDetails.statusAdditionalInfo
+            )
+          "
+        >
+          {{ info.key }}: {{ info.value }}
+        </li>
+      </ul>
+    </div>
 
     <h6>Items:</h6>
     <ul class="list-group list-group-flush">

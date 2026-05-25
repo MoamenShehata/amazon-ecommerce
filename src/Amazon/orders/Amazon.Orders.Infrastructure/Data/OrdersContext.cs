@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
+using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.Orders.Domain.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -28,6 +29,25 @@ public class OrdersContext : DbContextBase
         {
             entity.ToTable("OutboxMessages", "orders");
         });
+
+        modelBuilder.Entity<OrderCreatedStatus>();
+        modelBuilder.Entity<OrderCancelledStatus>();
+        modelBuilder.Entity<OrderProcessingStatus>();
+
+        modelBuilder.Entity<OrderShippingStartedStatus>(b =>
+        {
+            b.OwnsOne(x => x.CompanyInfo);
+        });
+
+        modelBuilder.Entity<OrderShippedStatus>();
+
+
+        modelBuilder.Entity<OrderDeliveryRecievedStatus>(b =>
+        {
+            b.OwnsOne(x => x.DeliveryMember);
+        });
+
+        modelBuilder.Entity<OrderDeliveredStatus>();
 
         base.OnModelCreating(modelBuilder);
     }

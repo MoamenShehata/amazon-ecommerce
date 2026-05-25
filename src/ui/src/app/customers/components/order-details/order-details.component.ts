@@ -41,4 +41,14 @@ export class OrderDetailsComponent extends AppServicesProvider {
       },
     });
   }
+
+  convertAdditionalInfoToIterable(
+    additionalInfo: any,
+  ): {key: string; value: any}[] {
+    if (!additionalInfo || typeof additionalInfo !== "object") {
+      return [];
+    }
+
+    return Object.entries(additionalInfo).map(([key, value]) => ({key, value}));
+  }
 }

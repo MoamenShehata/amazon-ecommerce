@@ -15,7 +15,7 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
         return Ok(await _service.GetCustomerOrdersPageAsync(userId, pageRequest));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetOrderById")]
     public async Task<IActionResult> GetOrderDetails(Guid id) => RestResult(await _service.GetByIdAsync(id));
 
     [HttpPost]
@@ -28,20 +28,4 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
 
         return RestResult(result);
     }
-
-    //[HttpPut("{id}")]
-    //public async Task<IActionResult> UpdateCategory(
-    //    Guid id,
-    //    [FromBody] UpdateCategoryRequest request)
-    //{
-    //    return RestResult(await _categoriesAppService.UpdateAsync(id, request));
-    //}
-
-    //[HttpDelete("{id}")]
-    //public async Task<IActionResult> DeleteCategory(
-    //    Guid id,
-    //    [FromQuery] Guid? orphanProductsNewCategoryId = null)
-    //{
-    //    return RestResult(await _categoriesAppService.DeleteAsync(id, orphanProductsNewCategoryId));
-    //}
 }

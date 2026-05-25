@@ -1,4 +1,5 @@
 ﻿using Amazon.Orders.Domain.Orders.ValueObjects;
+using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
@@ -15,10 +16,18 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
     {
         Customer = customer;
         _orderItems = orderItems;
+        UpdateStatus(new OrderCreatedStatus(orderId));
     }
 
     public decimal Price => _orderItems.Sum(x => x.Price);
     public int UniqueItemsCount => _orderItems.Count;
+
+
+    private readonly ICollection<OrderStatusChange> _history = new HashSet<OrderStatusChange>();
+    public void UpdateStatus(OrderStatusChange newStatus) => _history.Add(newStatus);
+
+    public OrderStatusChange Status => _history.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+
 
     #region Infra
     private Order() : base(Guid.Empty) { }
