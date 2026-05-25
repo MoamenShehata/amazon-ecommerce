@@ -42,6 +42,22 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
         RaiseEvent(new OrderShippingStartedEvent(Id));
     }
 
+    public void DeliveryAccepted(DeliveryMember deliveryMember)
+    {
+        UpdateStatus(new OrderDeliveryRecievedStatus(Id, deliveryMember));
+
+        RaiseEvent(new OrderRecievedByDeliveryGuyEvent(Id, deliveryMember.Name, deliveryMember.PhoneNumber));
+        // to send sms to the customer
+    }
+
+    public void Complete()
+    {
+        UpdateStatus(new OrderDeliveredStatus(Id));
+
+        RaiseEvent(new OrderCompletedEvent(Id));
+        // to send sms to the customer
+    }
+
 
     #region Infra
     private Order() : base(Guid.Empty) { }

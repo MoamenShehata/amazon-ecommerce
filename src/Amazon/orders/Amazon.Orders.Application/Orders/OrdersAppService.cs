@@ -90,5 +90,29 @@ namespace Amazon.Orders.Application.Orders
             await _unitOfWork.CommitAsync();
             return RestResponse<bool>.Success(true);
         }
+        
+        public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid orderId)
+        {
+            // validate user permissions
+
+            var result = await _ordersService.DeliveryAcceptedAsync(orderId);
+            if (!result.IsSuccess)
+                return result;
+
+            await _unitOfWork.CommitAsync();
+            return RestResponse<bool>.Success(true);
+        }
+        
+        public async Task<RestResponse<bool>> CompletedAsync(Guid orderId)
+        {
+            // validate user permissions
+
+            var result = await _ordersService.CompletedAsync(orderId);
+            if (!result.IsSuccess)
+                return result;
+
+            await _unitOfWork.CommitAsync();
+            return RestResponse<bool>.Success(true);
+        }
     }
 }
