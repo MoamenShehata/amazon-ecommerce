@@ -43,12 +43,6 @@
       </li>
     </ul>
 
-    <button
-      class="btn btn-danger"
-      (click)="cancelOrder()"
-      *ngIf="orderDetails.canBeCanceled"
-    >
-      Cancel Order
-    </button>
+    <button class="btn btn-danger" (click)="cancelOrder()">Cancel Order</button>
   </div>
 </div>

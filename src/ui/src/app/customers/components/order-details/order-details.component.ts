@@ -48,7 +48,7 @@ export class OrderDetailsComponent extends AppServicesProvider {
         this.loadOrderDetails();
       },
       error: (err) => {
-        console.error("Error canceling order:", err);
+        alert(err.error);
       },
     });
   }
