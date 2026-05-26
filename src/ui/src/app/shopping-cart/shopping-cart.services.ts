@@ -88,6 +88,9 @@ export class ShoppingCartService {
     return this.http.post<any>(
       `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp`,
       {otp},
+      {
+        headers: {"Authorization": `Bearer ${this.authService.accessToken}`},
+      },
     );
   }
 

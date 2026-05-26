@@ -15,7 +15,7 @@ namespace Amazon.Identity.Presentation
         public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddRazorPages();
-            
+
             builder.Services.AddScoped<AccountService>();
 
             builder.Services.AddMassTransit(config =>
@@ -53,13 +53,14 @@ namespace Amazon.Identity.Presentation
                 .AddInMemoryClients(Config.Clients)
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<CustomProfileService>()
+                .AddInMemoryApiResources(Config.ApiResources)
                 .AddLicenseSummary();
 
             builder.Services.AddCors(op =>
             {
                 op.AddPolicy("CORS_Policy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200", "http://localhost:62832")
+                    policy.WithOrigins("http://localhost:4200", "http://localhost:62832", "http://localhost:59017")
                     .AllowCredentials()
                     .AllowAnyMethod()
                     .AllowAnyHeader();

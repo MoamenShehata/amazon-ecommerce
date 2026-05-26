@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Amazon.SharedKernel.API;
 
@@ -27,4 +28,6 @@ public abstract class ApiControllerBase : ControllerBase
         }
 
     }
+
+    public Guid UserId => Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
 }

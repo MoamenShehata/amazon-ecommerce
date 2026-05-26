@@ -2,6 +2,7 @@
 using Amazon.Cart.Application;
 using Amazon.Cart.Application.Dtos;
 using Amazon.SharedKernel.API;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.Cart.Api.Controllers;
@@ -25,11 +26,11 @@ public class CartsController(CartAppService _cartService) : ApiControllerBase
         return Ok(result);
     }
 
+    [Authorize(Policy = "POLICY")]
     [HttpPost("{cartId}/checkoutOtp")]
     public async Task<IActionResult> CheckoutCartUsingOtp(Guid cartId, [FromBody] CheckoutUsingOtpDto request)
     {
-        var userId = Guid.Parse("5b32881f-dac9-4f88-ac0c-6e770afc85ce"); // should come from jwt
-        var result = await _cartService.CheckoutCartUsingOtpAsync(cartId, request.Otp, userId);
+        var result = await _cartService.CheckoutCartUsingOtpAsync(cartId, request.Otp, UserId);
         if (result.IsSuccess)
             return Ok(result.Value);
 
