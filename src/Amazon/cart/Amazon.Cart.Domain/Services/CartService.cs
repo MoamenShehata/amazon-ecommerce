@@ -51,8 +51,9 @@ public class CartService(
         if (!cartResult.IsSuccess)
             return cartResult.MapTo(Guid.Empty);
 
-        if (!cartResult.Value.CanBeCheckedoutForUser(userId))
-            return RestResponse<Guid>.BadRequest($"Cart is owned by another user!");
+        var checkoutResult = cartResult.Value.TryCheckoutForUser(userId);
+        if (!checkoutResult.IsSuccess)
+            return checkoutResult.MapTo(Guid.Empty);
 
         var orderAvailabilityResult = await CanOrderBeSatisifiedForCartAsync(cartResult);
         if (!orderAvailabilityResult.IsSuccess)

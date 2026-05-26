@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.ValueObjects;
+using Amazon.SharedKernel.API;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
@@ -41,7 +42,16 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
         _cartItems.RemoveAll(x => x.ProductId == productId);
     }
 
-    public bool CanBeCheckedoutForUser(Guid userId) => !CustomerId.HasValue || CustomerId == userId;
+    public RestResponse<bool> TryCheckoutForUser(Guid userId)
+    {
+        if (!CanBeCheckedoutForUser(userId))
+            return RestResponse<bool>.BadRequest($"Cart is owned by another user!");
+
+        CustomerId = userId;
+        return RestResponse<bool>.Success(true);
+    }
+
+    private bool CanBeCheckedoutForUser(Guid userId) => !CustomerId.HasValue || CustomerId == userId;
 
     public int GetItemsCountForProduct(Guid productId) => _cartItems.Count(i => i.ProductId == productId);
 
