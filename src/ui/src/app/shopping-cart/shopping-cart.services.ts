@@ -50,10 +50,16 @@ export class ShoppingCartService {
 
   private initCart(cartItem: CartItemCreateModel) {
     return this.http
-      .post<CartItemModel>(this.cartsBaseUrl, {
-        customerId: this.customerId,
-        cartItem: cartItem,
-      })
+      .post<CartItemModel>(
+        this.cartsBaseUrl,
+        {
+          customerId: this.customerId,
+          cartItem: cartItem,
+        },
+        {
+          headers: {"Authorization": `Bearer ${this.authService.accessToken}`},
+        },
+      )
       .pipe(
         map((resp: any) => {
           this.storageService.save("cartId", resp.value.cartId);

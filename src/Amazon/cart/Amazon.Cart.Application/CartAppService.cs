@@ -35,7 +35,7 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<CartCreateResultDto>> CreateCartAsync(CartCreateDto createDto)
         {
-            var cartCreateResult = await _cartService.CreateCartAsync(createDto.CustomerId);
+            var cartCreateResult = await _cartService.CreateCartAsync(_currentUser.IsAuthenticated ? _currentUser.Id : null);
             if (!cartCreateResult.IsSuccess)
                 return cartCreateResult.MapTo((CartCreateResultDto)null);
 
