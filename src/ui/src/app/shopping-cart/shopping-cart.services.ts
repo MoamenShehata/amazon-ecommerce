@@ -49,6 +49,13 @@ export class ShoppingCartService {
   }
 
   private initCart(cartItem: CartItemCreateModel) {
+    let options = {};
+    if (this.authService.isAuthenticated) {
+      options = {
+        headers: {"Authorization": `Bearer ${this.authService.accessToken}`},
+      };
+    }
+
     return this.http
       .post<CartItemModel>(
         this.cartsBaseUrl,
@@ -56,9 +63,7 @@ export class ShoppingCartService {
           customerId: this.customerId,
           cartItem: cartItem,
         },
-        {
-          headers: {"Authorization": `Bearer ${this.authService.accessToken}`},
-        },
+        options,
       )
       .pipe(
         map((resp: any) => {

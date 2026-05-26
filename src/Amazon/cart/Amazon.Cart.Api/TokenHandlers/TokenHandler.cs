@@ -14,10 +14,10 @@ public sealed class CartTokenHandler : TokenHandler
         // Validate using built-in JWT handler
         var result = await _innerHandler.ValidateTokenAsync(token, validationParameters);
 
-        //if (!result.IsValid)
-        //{
-        //    return result;
-        //}
+        if (!result.IsValid)
+        {
+            return result;
+        }
 
         // OPTIONAL: custom logic after validation
         var principal = result.ClaimsIdentity != null
