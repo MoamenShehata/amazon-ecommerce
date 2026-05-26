@@ -1,6 +1,8 @@
 using Amazon.Cart.Api.Jobs;
+using Amazon.Cart.Api.Services;
 using Amazon.Cart.Api.TokenHandlers;
 using Amazon.Cart.Application;
+using Amazon.Cart.Application.Services;
 using Amazon.Cart.Infrastructure;
 using Amazon.SharedKernel.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +21,8 @@ builder.Services
     .AddSharedJobs()
     .RegisterSharedServices()
     .AddJob<PurgeExpiredCartsJob>()
+    .AddScoped<IAuthenticationService, AuthenticationService>()
+    .AddHttpContextAccessor()
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
     ;

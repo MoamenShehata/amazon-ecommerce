@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
+using Amazon.Cart.Application.Services;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Services;
@@ -16,9 +17,13 @@ namespace Amazon.Cart.Application
         CartService _cartService,
         IRepository<ShoppingCart, Guid> _cartsRepo,
         IUnitOfWork _unitOfWork,
-        IOtpService _otpService
+        IOtpService _otpService,
+        IAuthenticationService _authenticationService
         )
     {
+        private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
+        private Guid _currentUserId => _currentUser.Id;
+
         public async Task<RestResponse<List<CartItemDto>>> GetByIdAsync(Guid cartId)
         {
             var cartResult = await _cartService.GetByIdAsync(cartId);
@@ -95,13 +100,13 @@ namespace Amazon.Cart.Application
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, string otp, Guid userId)
+        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, string otp)
         {
-            var isOtpValid = await _otpService.ValidateAsync(userId, otp);
+            var isOtpValid = await _otpService.ValidateAsync(_currentUserId, otp);
             if (!isOtpValid)
                 return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
 
-            var orderCreateResult = await _cartService.TryCreateOrderAsync(cartId, userId);
+            var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId);
             if (!orderCreateResult.IsSuccess)
                 return orderCreateResult.MapTo(Guid.Empty);
 
@@ -113,5 +118,6 @@ namespace Amazon.Cart.Application
         {
             return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId);
         }
+
     }
 }

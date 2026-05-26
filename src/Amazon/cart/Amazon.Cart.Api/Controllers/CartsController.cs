@@ -30,7 +30,7 @@ public class CartsController(CartAppService _cartService) : ApiControllerBase
     [HttpPost("{cartId}/checkoutOtp")]
     public async Task<IActionResult> CheckoutCartUsingOtp(Guid cartId, [FromBody] CheckoutUsingOtpDto request)
     {
-        var result = await _cartService.CheckoutCartUsingOtpAsync(cartId, request.Otp, UserId);
+        var result = await _cartService.CheckoutCartUsingOtpAsync(cartId, request.Otp);
         if (result.IsSuccess)
             return Ok(result.Value);
 

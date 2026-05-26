@@ -45,11 +45,14 @@ public class CartService(
         return RestResponse<CartItem>.Success(item);
     }
 
-    public async Task<RestResponse<Guid>> TryCreateOrderAsync(Guid cartId, Guid userId)
+    public async Task<RestResponse<Guid>> TryCheckoutAsync(Guid cartId, Guid userId)
     {
         var cartResult = await GetByIdAsync(cartId);
         if (!cartResult.IsSuccess)
             return cartResult.MapTo(Guid.Empty);
+
+        if (!cartResult.Value.CanBeCheckedoutForUser(userId))
+            return RestResponse<Guid>.BadRequest($"Cart is owned by another user!");
 
         var orderAvailabilityResult = await CanOrderBeSatisifiedForCartAsync(cartResult);
         if (!orderAvailabilityResult.IsSuccess)

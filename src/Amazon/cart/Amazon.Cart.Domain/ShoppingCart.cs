@@ -41,6 +41,8 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
         _cartItems.RemoveAll(x => x.ProductId == productId);
     }
 
+    public bool CanBeCheckedoutForUser(Guid userId) => !CustomerId.HasValue || CustomerId == userId;
+
     public int GetItemsCountForProduct(Guid productId) => _cartItems.Count(i => i.ProductId == productId);
 
     public void Clear() => _cartItems.Clear();
