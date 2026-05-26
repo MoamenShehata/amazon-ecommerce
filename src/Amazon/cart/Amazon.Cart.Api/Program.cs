@@ -1,10 +1,5 @@
-using Amazon.Cart.Api.Jobs;
-using Amazon.Cart.Api.Services;
+using Amazon.Cart.Api;
 using Amazon.Cart.Api.TokenHandlers;
-using Amazon.Cart.Application;
-using Amazon.Cart.Application.Services;
-using Amazon.Cart.Infrastructure;
-using Amazon.SharedKernel.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,67 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services
-    .AddSharedJobs()
-    .RegisterSharedServices()
-    .AddJob<PurgeExpiredCartsJob>()
-    .AddScoped<IAuthenticationService, AuthenticationService>()
-    .AddHttpContextAccessor()
-    .RegisterApplicationDependencies(builder.Configuration)
-    .RegisterInfrastructureDependencies(builder.Configuration)
-    ;
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-            .AddJwtBearer(options =>
-            {
-                options.UseSecurityTokenValidators = false;
-                //options.SecurityTokenValidators.Clear();
-                options.TokenHandlers.Clear();
-                options.TokenHandlers.Add(new CartTokenHandler());
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidAudiences = ["amazon-cart"],
-                    ValidateIssuer = false,
-                    ValidIssuer = "https://localhost:5001",
-
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = false,
-                    RequireSignedTokens = false,
-                    SignatureValidator = (token, parameters) =>
-                    {
-                        return new JwtSecurityToken(token);
-                    }
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = context =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnAuthenticationFailed = context =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnMessageReceived = context =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnChallenge = context =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnForbidden = context =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                };
-            });
+    .AddApiServices(builder.Configuration);
 
 builder.Services.AddCors(op =>
 {
