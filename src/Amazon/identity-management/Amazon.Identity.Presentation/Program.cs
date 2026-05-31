@@ -45,6 +45,7 @@ try
     }
 
     await UsersSeeder.SeedAsync(app.Services);
+    await RolesSeeder.SeedAsync(app.Services);
 
     app.Run();
 }
