@@ -1,0 +1,37 @@
+<div class="card mb-3">
+    <div class="row g-0 align-items-center">
+        <div class="col-md-1">
+            <img src="{{ cartItem.productImageUrl }}" class="img-fluid" alt="{{ cartItem.productName }}" />
+        </div>
+
+        <div class="col-md-9">
+            <div class="card-body">
+                <h5 class="card-title mb-2">{{ cartItem.productName }}</h5>
+
+                <p class="mb-1">
+                    <strong>Unit Price:</strong>
+                    <span *ngIf="unitPrice !== null; else noPrice">${{ unitPrice?.toFixed(2) }}</span>
+                    <ng-template #noPrice>—</ng-template>
+                </p>
+
+                <p class="mb-1">
+                    <strong>Quantity:</strong>
+                    <span class="badge rounded-pill text-bg-primary">{{ quantity }}</span>
+                </p>
+
+                <p class="mb-0">
+                    <strong>Subtotal:</strong>
+                    <span *ngIf="unitPrice !== null; else noSubtotal">${{ subtotal.toFixed(2) }}</span>
+                    <ng-template #noSubtotal>—</ng-template>
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-2 d-flex justify-content-center">
+            <div class="p-2">
+                <product-cart-control [productItemIds]="cartItem.itemIds" [cartItem]="cartItem"
+                    (onAllItemsRemoved)="emitOnAllItemsRemoved()" />
+            </div>
+        </div>
+    </div>
+</div>

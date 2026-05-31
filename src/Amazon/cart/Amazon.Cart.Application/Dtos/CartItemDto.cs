@@ -4,5 +4,6 @@
         Guid ProductId,
         string ProductName,
         string ProductImageUrl,
-        List<int> ItemIds);
+        List<int> ItemIds,
+        decimal UnitPrice);
 }

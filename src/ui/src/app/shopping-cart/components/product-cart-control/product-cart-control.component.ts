@@ -1,10 +1,9 @@
-import {Component, Input} from "@angular/core";
-import {ShoppingCartService} from "../../shopping-cart.services";
-import {ProductForListModel} from "../../../poduct-catalog/models/product-for-list-model";
-import {CommonModule} from "@angular/common";
-import {CartItemDto} from "../../models/cart-item-model";
-import {ShoppingCartState} from "../../shopping-cart.state";
-import {catchError} from "rxjs";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { ShoppingCartService } from "../../shopping-cart.services";
+import { CommonModule } from "@angular/common";
+import { CartItemDto } from "../../models/cart-item-model";
+import { ShoppingCartState } from "../../shopping-cart.state";
+import { catchError } from "rxjs";
 
 @Component({
   selector: "product-cart-control",
@@ -17,10 +16,16 @@ export class ProductCartControlComponent {
   @Input() cartItem: CartItemDto;
   @Input() productItemIds: number[] = [];
 
+  @Output() onAllItemsRemoved: EventEmitter<void> = new EventEmitter();
+
+  get quantity(): number {
+    return this.productItemIds?.length ?? 0;
+  }
+
   constructor(
     private shoppingCartService: ShoppingCartService,
     private shoppingCartState: ShoppingCartState,
-  ) {}
+  ) { }
 
   addToCart() {
     this.shoppingCartService
@@ -40,26 +45,35 @@ export class ProductCartControlComponent {
           productName: this.cartItem.productName,
           productImageUrl: this.cartItem.productImageUrl,
           itemIds: this.productItemIds,
+          unitPrice: this.cartItem.unitPrice,
         });
       });
   }
 
   removeProductItem() {
-    let itemIdToRemove = this.productItemIds[this.productItemIds.length - 1];
+    if (this.productItemIds.length === 0) {
+      return;
+    }
 
-    this.shoppingCartService
-      .removeCartItem(itemIdToRemove)
-      ?.subscribe((res) => {
-        this.productItemIds.pop();
-        this.shoppingCartState.remove(itemIdToRemove);
-      });
+    const itemIdToRemove = this.productItemIds[this.productItemIds.length - 1];
+
+    this.shoppingCartService.removeCartItem(itemIdToRemove)?.subscribe(() => {
+      this.productItemIds = this.productItemIds.slice(0, -1);
+      this.shoppingCartState.remove(itemIdToRemove);
+    });
   }
 
   deleteAllItemsForProduct() {
+    if (this.quantity === 0) {
+      return;
+    }
+
     this.shoppingCartService
       .RemoveAllProductItems(this.cartItem.productId)
-      ?.subscribe((res) => {
-        // this.productItemIds.pop();
+      ?.subscribe(() => {
+        this.productItemIds = [];
+        this.shoppingCartState.removeAll(this.cartItem.productId);
+        this.onAllItemsRemoved.emit();
       });
   }
 }

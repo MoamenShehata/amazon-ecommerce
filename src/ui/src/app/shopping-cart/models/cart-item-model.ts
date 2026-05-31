@@ -12,4 +12,6 @@ export interface CartItemDto {
   productName: string;
   productImageUrl: string;
   itemIds: number[];
+  unitPrice?: number;
+  subTotal?: number;
 }

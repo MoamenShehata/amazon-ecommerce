@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Domain.Products;
+using Amazon.Cart.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.Products.Events;
 using MassTransit;
 using Moamen.SDKs.Repository;
@@ -14,7 +15,7 @@ IUnitOfWork _unitOfWork) : IConsumer<ProductCreatedEvent>
     {
         var productEvent = context.Message;
 
-        var product = new Product(productEvent.ProductId, new Domain.Products.ValueObjects.ProductInfo(productEvent.Name, productEvent.ImageUrl));
+        var product = new Product(productEvent.ProductId, new ProductInfo(productEvent.Name, productEvent.ImageUrl, productEvent.UnitPrice));
         _productsRepo.Add(product);
 
         await _unitOfWork.CommitAsync();

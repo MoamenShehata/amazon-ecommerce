@@ -1,10 +1,10 @@
-import {Component, Input} from "@angular/core";
-import {ProductForListModel} from "../../models/product-for-list-model";
-import {CommonModule} from "@angular/common";
-import {ShoppingCartService} from "../../../shopping-cart/shopping-cart.services";
-import {StorageService} from "../../../core/services/storage-service";
-import {ProductCartControlComponent} from "../../../shopping-cart/components/product-cart-control/product-cart-control.component";
-import {CartItemDto} from "../../../shopping-cart/models/cart-item-model";
+import { Component, Input } from "@angular/core";
+import { ProductForListModel } from "../../models/product-for-list-model";
+import { CommonModule } from "@angular/common";
+import { ShoppingCartService } from "../../../shopping-cart/shopping-cart.services";
+import { StorageService } from "../../../core/services/storage-service";
+import { ProductCartControlComponent } from "../../../shopping-cart/components/product-cart-control/product-cart-control.component";
+import { CartItemDto } from "../../../shopping-cart/models/cart-item-model";
 
 @Component({
   selector: "product-preview",
@@ -22,6 +22,7 @@ export class ProductPreviewComponent {
       productName: this.product.name,
       productImageUrl: this.product.imageUrl!,
       itemIds: [],
+      unitPrice: this.product.unitPrice,
     };
   }
 }
