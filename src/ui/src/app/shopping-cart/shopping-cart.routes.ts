@@ -16,7 +16,7 @@ export const shoppingCartRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: "checkout/cash",
+    path: "checkout/cash/:id",
     component: CachCheckoutComponent,
   },
   {

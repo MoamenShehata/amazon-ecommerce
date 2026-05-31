@@ -3,6 +3,7 @@ import { environment } from "../../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "../../authentication/services/authentication.service";
 import { PaymentMethod } from "../models/payment-method.model";
+import { tap } from "rxjs";
 
 @Injectable({
     providedIn: "root",
@@ -24,10 +25,10 @@ export class PaymentsService {
 
     createPaymentRequest(paymentMethodId: string, deliverToAddressId: number | null = null) {
         const options = {
-            headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
+            headers: { "Authorization": `Bearer ${this.authService.accessToken}` }
         };
 
         return this.http
-            .post<PaymentMethod[]>(`${this.baseUrl}/${paymentMethodId}/requests`, { deliverToAddressId }, options);
+            .post<any>(`${this.baseUrl}/${paymentMethodId}/requests`, { deliverToAddressId }, options);
     }
 }

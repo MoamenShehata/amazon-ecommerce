@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
+using Amazon.Cart.Application.Payments;
 using Amazon.Cart.Application.Services;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
@@ -18,7 +19,8 @@ namespace Amazon.Cart.Application
         IRepository<ShoppingCart, Guid> _cartsRepo,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
-        IAuthenticationService _authenticationService
+        IAuthenticationService _authenticationService,
+        PaymentsAppService _paymentsAppService
         )
     {
         private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
@@ -100,11 +102,13 @@ namespace Amazon.Cart.Application
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, string otp)
+        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, Guid paymentRequestId, string otp)
         {
             var isOtpValid = await _otpService.ValidateAsync(_currentUserId, otp);
             if (!isOtpValid)
                 return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
+
+            await _paymentsAppService.ConfirmPaymentAsync(paymentRequestId);
 
             var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId);
             if (!orderCreateResult.IsSuccess)

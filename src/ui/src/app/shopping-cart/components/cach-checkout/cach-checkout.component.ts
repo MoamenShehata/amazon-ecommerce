@@ -10,16 +10,23 @@ import { ShoppingCartService } from "../../shopping-cart.services";
   styleUrl: "./cach-checkout.component.css",
 })
 export class CachCheckoutComponent extends AppServicesProvider {
+  paymentRequestId: string;
+
   constructor(private cartService: ShoppingCartService) {
     super();
   }
 
-  checkoutOTP(otp: string) {
-    if (!otp) {
-      return;
-    }
+  ngOnInit() {
+    this.activatedRoute.paramMap.subscribe((params) => {
+      this.paymentRequestId = params.get("id")!;
+    });
+  }
 
-    this.cartService.checkoutUsingOtp(otp)?.subscribe(
+  checkoutOTP(otp: string) {
+    if (!otp) return;
+
+
+    this.cartService.checkoutUsingOtp(this.paymentRequestId, otp)?.subscribe(
       (orederId) => {
         this.cartService.clearInMemoryCart();
         this.router.navigate(["/my/orders", orederId]);

@@ -3,6 +3,7 @@ using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Infrastructure.Configurations.Carts;
 using Amazon.Cart.Infrastructure.Configurations.Payments;
+using Amazon.Cart.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -12,6 +13,8 @@ namespace Amazon.Cart.Infrastructure.Data
     public class ShoppingCartContext : DbContextBase
     {
         public DbSet<ShoppingCart> Carts { get; set; }
+        public DbSet<CustomerClaim> UserClaims { get; set; }
+
         public override bool AutoSaveDomainEvents => true;
 
         public ShoppingCartContext(DbContextOptions<ShoppingCartContext> options) : base(options)
@@ -32,6 +35,13 @@ namespace Amazon.Cart.Infrastructure.Data
             modelBuilder.Entity<Product>(b =>
             {
                 b.OwnsOne(x => x.Info);
+            });
+
+            modelBuilder.Entity<CustomerClaim>(b =>
+            {
+                b.ToTable("Claims", "customer");
+
+                b.HasKey(x => new { x.CustomerId, x.Key });
             });
 
             base.OnModelCreating(modelBuilder);

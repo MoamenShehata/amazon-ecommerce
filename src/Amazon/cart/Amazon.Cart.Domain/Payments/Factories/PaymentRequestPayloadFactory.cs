@@ -5,7 +5,7 @@ namespace Amazon.Cart.Domain.Payments.Factories;
 
 public class PaymentRequestPayloadFactory
 {
-    public PaymentRequestPayload OfCash(string phoneNumber, string country, string city, string postalCode, string street, string buildingNumber)
+    public PaymentRequestPayload OfCash(string phoneNumber, string country, string city, string postalCode, string street, int buildingNumber)
     {
         var payload = new PayWithCashPayload(phoneNumber, country, city, postalCode, street, buildingNumber);
 

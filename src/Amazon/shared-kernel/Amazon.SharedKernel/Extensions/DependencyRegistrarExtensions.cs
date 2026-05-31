@@ -9,6 +9,8 @@ namespace Amazon.SharedKernel.Extensions
         {
             services
                 .AddScoped<IOtpService, OtpService>()
+                .AddScoped<ISmsService, SmsService>()
+                .AddScoped<ITextGenerator, TextGenerator>()
                 ;
 
             return services;

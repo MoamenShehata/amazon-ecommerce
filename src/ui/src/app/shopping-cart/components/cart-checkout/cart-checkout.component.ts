@@ -47,8 +47,8 @@ export class CartCheckoutComponent extends AppServicesProvider {
 
   proceedToPayment() {
     this.paymentsService.createPaymentRequest(this.paymentMethodId, this.deliverToAddress)
-      .subscribe((paymentRequest) => {
-
+      .subscribe((result) => {
+        this.router.navigate([`/cart/${result.redirectTo}`]);
       });
   }
 }

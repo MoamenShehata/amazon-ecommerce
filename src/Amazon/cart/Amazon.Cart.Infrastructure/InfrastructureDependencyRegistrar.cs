@@ -2,6 +2,8 @@
 using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Infrastructure.Data;
 using Amazon.Cart.Infrastructure.Integrations;
+using Amazon.Cart.Infrastructure.Services;
+using Amazon.SharedKernel.Common.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,7 @@ public static class InfrastructureDependencyRegistrar
             .AddScoped<IInventoryService, InventoryService>()
             .AddScoped<IOrderService, OrderService>()
             .AddScoped<ICustomerService, CustomerService>()
+            .AddScoped<IUserClaimsStore, CartUserClaimsStore>()
             ;
 
         return services;

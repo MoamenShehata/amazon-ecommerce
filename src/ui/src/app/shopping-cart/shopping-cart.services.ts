@@ -95,11 +95,11 @@ export class ShoppingCartService {
     );
   }
 
-  checkoutUsingOtp(otp: string) {
+  checkoutUsingOtp(paymentRequestId: string, otp: string) {
     if (!this.activeCartId) return;
 
     return this.http.post<any>(
-      `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp`,
+      `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp/${paymentRequestId}`,
       { otp },
       {
         headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
