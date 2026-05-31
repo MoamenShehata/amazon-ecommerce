@@ -47,11 +47,21 @@ public static class DependencyRegistrar
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    ValidateLifetime = true,
+                    ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = configuration.GetValue<string>("JwtSettings:Issuer"),
                     ValidAudiences = [configuration.GetValue<string>("JwtSettings:Audience")],
-
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        return Task.CompletedTask;
+                    },
+                    OnForbidden = context =>
+                    {
+                        return Task.CompletedTask;
+                    },
                 };
             });
 

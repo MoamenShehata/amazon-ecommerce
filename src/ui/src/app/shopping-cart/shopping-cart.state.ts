@@ -9,7 +9,6 @@ export class ShoppingCartState {
   _source = new BehaviorSubject<CartItemDto[]>([]);
 
   add(item: CartItemDto) {
-    debugger;
     let currentItems = this._source.value;
 
     const cartProductItem = currentItems.find(
