@@ -1,6 +1,8 @@
 ﻿using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Products;
+using Amazon.Cart.Infrastructure.Configurations.Carts;
+using Amazon.Cart.Infrastructure.Configurations.Payments;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -18,32 +20,9 @@ namespace Amazon.Cart.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ShoppingCart>(e =>
-            {
-                e.HasQueryFilter(x => x.Expiration.ExpiresAt > DateTime.UtcNow);
-
-                e.ComplexProperty(c => c.Expiration, b =>
-                {
-                    b.Property(p => p.ExpiresAt).HasColumnName(nameof(ShoppingCart.Expiration.ExpiresAt));
-                });
-
-                e.OwnsMany(x => x.Items, b =>
-                {
-                    b.WithOwner().HasForeignKey(x => x.ShoppingCartId);
-
-                    b.HasKey(x => new { x.ShoppingCartId, x.Id });
-
-                    b
-                    .HasOne(x => x.Product)
-                    .WithMany()
-                    .HasForeignKey(x => x.ProductId);
-
-                    b.Navigation(x => x.Product).AutoInclude();
-                });
-
-                e.Navigation(o => o.Items).HasField("_cartItems")
-             .UsePropertyAccessMode(PropertyAccessMode.Field);
-            });
+            modelBuilder.ApplyConfiguration(new ShoppingCartConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentRequestConfiguration());
 
             modelBuilder.Entity<OutboxMessage>(entity =>
             {

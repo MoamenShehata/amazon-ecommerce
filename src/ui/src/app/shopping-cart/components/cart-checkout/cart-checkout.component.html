@@ -1,6 +1,6 @@
 <shopping-cart [style]="'checkout'" />
 
-<customer-profile />
+<customer-profile (onDeliveryAddressSelected)="setDeliveryAddress($event)" />
 
 <div>
   <label class="form-label">Payment Method</label>

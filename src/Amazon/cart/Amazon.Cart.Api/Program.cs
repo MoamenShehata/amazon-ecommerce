@@ -1,7 +1,10 @@
 using Amazon.Cart.Api;
 using Amazon.Cart.Api.TokenHandlers;
+using Amazon.Cart.Domain.Payments;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Moamen.SDKs.Repository;
+using Moamen.SDKs.SharedKernel;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,9 +31,18 @@ builder.Services.AddCors(op =>
 
 builder.Services.AddAuthorization(op =>
 {
-    op.AddPolicy("POLICY", builder =>
+    op.AddPolicy("CARTS_POLICY", builder =>
     {
         builder.RequireClaim("scope", "amazon.cart");
+    });
+});
+
+
+builder.Services.AddAuthorization(op =>
+{
+    op.AddPolicy("CUSTOMERS_POLICY", builder =>
+    {
+        builder.RequireClaim("scope", "amazon.customers");
     });
 });
 
@@ -50,4 +62,17 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.Use(async (ctxt, rd) =>
+{
+    var repo = ctxt.RequestServices.GetRequiredService<IRepository<PaymentMethod, Guid>>();
+    var uow = ctxt.RequestServices.GetRequiredService<IUnitOfWork>();
+
+    if ((await repo.GetAllAsync()).Count() == 0)
+    {
+        repo.Add(PaymentMethod.ForCash());
+        repo.Add(PaymentMethod.ForVisa());
+        await uow.CommitAsync();
+    }
+    await rd(ctxt);
+});
 app.Run();

@@ -1,4 +1,7 @@
-﻿using Amazon.Cart.Domain.Factories;
+﻿using Amazon.Cart.Application.Payments;
+using Amazon.Cart.Domain.Factories;
+using Amazon.Cart.Domain.Payments;
+using Amazon.Cart.Domain.Payments.Factories;
 using Amazon.Cart.Domain.Services;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +42,9 @@ public static class ApplicationDependencyRegistrar
         services
             .AddScoped<CartService>()
             .AddScoped<ShoppingCartFactory>()
+            .AddScoped<PaymentsService>()
+            .AddScoped<PaymentRequestFactory>()
+            .AddScoped<PaymentRequestPayloadFactory>()
             ;
     }
 
@@ -46,6 +52,7 @@ public static class ApplicationDependencyRegistrar
     {
         services
             .AddScoped<CartAppService>()
+            .AddScoped<PaymentsAppService>()
             ;
     }
 }

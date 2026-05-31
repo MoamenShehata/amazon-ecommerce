@@ -26,12 +26,18 @@ namespace Amazon.Identity.Presentation
                 {
                     Scopes = { "amazon.cart" },
                 },
+                
+                new ApiResource("amazon-customers","Amazon Customers Data Center")
+                {
+                    Scopes = { "amazon.customers" },
+                },
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
             [
                 new ApiScope("amazon.catalog","Amazon Store Catalog APIs"),
                 new ApiScope("amazon.cart","Amazon Store Catalog APIs"),
+                new ApiScope("amazon.customers","Amazon Customers Data Center"),
             ];
 
         public static IEnumerable<Client> Clients =>
@@ -56,7 +62,7 @@ namespace Amazon.Identity.Presentation
                     PostLogoutRedirectUris = { "http://localhost:4200","http://localhost:62832" },
 
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "email", "amazon.catalog","amazon.cart" },
+                    AllowedScopes = { "openid", "profile", "email", "amazon.catalog","amazon.cart","amazon.customers" },
                     AlwaysIncludeUserClaimsInIdToken = true
                 },
 

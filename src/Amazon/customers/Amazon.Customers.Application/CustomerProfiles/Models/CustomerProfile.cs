@@ -9,8 +9,10 @@ public class CustomerProfile
 public class CustomerProfileAddress
 {
     public int Id { get; set; }
+    public string PhoneNumber { get; private set; }
     public string Country { get; private set; }
     public string City { get; private set; }
+    public string PostalCode { get; private set; }
     public string Street { get; private set; }
     public int BuildingNumber { get; private set; }
     public int? ApartmentNumber { get; private set; }

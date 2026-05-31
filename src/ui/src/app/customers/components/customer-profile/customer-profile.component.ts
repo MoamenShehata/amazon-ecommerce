@@ -1,9 +1,9 @@
-import {Component, Input} from "@angular/core";
-import {AppServicesProvider} from "../../../core/services/app-services.provider";
-import {CustomerService} from "../../customer.services";
-import {CustomerShippingAddressesComponent} from "../customer-shipping-addresses/customer-shipping-addresses.component";
-import {CustomerProfile} from "../../models/customer-profile.model";
-import {CommonModule} from "@angular/common";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { AppServicesProvider } from "../../../core/services/app-services.provider";
+import { CustomerService } from "../../customer.services";
+import { CustomerShippingAddressesComponent } from "../customer-shipping-addresses/customer-shipping-addresses.component";
+import { CustomerProfile } from "../../models/customer-profile.model";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "customer-profile",
@@ -17,6 +17,8 @@ export class CustomerProfileComponent extends AppServicesProvider {
 
   @Input() isReadOnly = true;
 
+  @Output() onDeliveryAddressSelected = new EventEmitter<number>();
+
   constructor(private customerService: CustomerService) {
     super();
   }
@@ -25,5 +27,10 @@ export class CustomerProfileComponent extends AppServicesProvider {
     this.customerService.getMyProfile().subscribe((res) => {
       this.myProfile = res;
     });
+  }
+
+  emitOnDeliveryAddressSelected(event: any) {
+    const addressId = parseInt(event);
+    this.onDeliveryAddressSelected.emit(addressId);
   }
 }

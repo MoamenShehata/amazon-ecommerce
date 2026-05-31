@@ -1,7 +1,4 @@
 <ng-container *ngIf="isReadOnly">
-  <customer-shipping-addresses
-    *ngIf="myProfile"
-    [addresses]="myProfile.addresses"
-    [style]="isReadOnly ? 'select' : 'list'"
-  />
+  <customer-shipping-addresses *ngIf="myProfile" [addresses]="myProfile.addresses"
+    [style]="isReadOnly ? 'select' : 'list'" (onDeliveryAddressSelected)="emitOnDeliveryAddressSelected($event)" />
 </ng-container>

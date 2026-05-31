@@ -4,28 +4,15 @@
       + Add Shipping Address
     </button>
   </div>
-  <div
-    class="modal fade"
-    [class.show]="showAddAddressModal"
-    [style.display]="showAddAddressModal ? 'block' : 'none'"
-    tabindex="-1"
-    *ngIf="showAddAddressModal"
-  >
-    <div
-      class="modal-backdrop fade"
-      [class.show]="showAddAddressModal"
-      (click)="closeAddAddressModal()"
-      style="z-index: 0"
-    ></div>
+  <div class="modal fade" [class.show]="showAddAddressModal" [style.display]="showAddAddressModal ? 'block' : 'none'"
+    tabindex="-1" *ngIf="showAddAddressModal">
+    <div class="modal-backdrop fade" [class.show]="showAddAddressModal" (click)="closeAddAddressModal()"
+      style="z-index: 0"></div>
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Add new shipping address</h5>
-          <button
-            type="button"
-            class="btn-close"
-            (click)="closeAddAddressModal()"
-          ></button>
+          <button type="button" class="btn-close" (click)="closeAddAddressModal()"></button>
         </div>
         <div class="modal-body">
           <customer-shipping-address-form />
@@ -70,7 +57,7 @@
 
 <div *ngIf="addresses.length > 0 && style === 'select'">
   <label class="form-label">Ship to address</label>
-  <select class="form-control">
+  <select class="form-control" (change)="emitSelectedAddress($event)">
     <option value="" disabled selected>Select Shipping Address</option>
     <option *ngFor="let address of addresses" [value]="address.id">
       {{ address.country }}, {{ address.city }}, {{ address.street }}

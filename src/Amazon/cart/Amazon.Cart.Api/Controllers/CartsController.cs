@@ -26,7 +26,7 @@ public class CartsController(CartAppService _cartService) : ApiControllerBase
         return Ok(result);
     }
 
-    [Authorize(Policy = "POLICY")]
+    [Authorize(Policy = "CARTS_POLICY")]
     [HttpPost("{cartId}/checkoutOtp")]
     public async Task<IActionResult> CheckoutCartUsingOtp(Guid cartId, [FromBody] CheckoutUsingOtpDto request)
     {
