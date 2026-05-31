@@ -29,20 +29,29 @@
             <!-- Category ID -->
             <div class="mb-3">
               <label for="categoryId" class="form-label">Category ID</label>
-              <select
-                class="form-control"
-                id="categoryId"
-                formControlName="categoryId"
-                placeholder="Enter category ID (UUID)"
-                [class.is-invalid]="
-                  createForm.get('categoryId')?.invalid &&
-                  createForm.get('categoryId')?.touched
-                "
-              >
-                <option *ngFor="let cat of categories" [value]="cat.id">
-                  {{ cat.name }}
-                </option>
-              </select>
+              <div class="input-group">
+                <select
+                  class="form-control"
+                  id="categoryId"
+                  formControlName="categoryId"
+                  [class.is-invalid]="
+                    createForm.get('categoryId')?.invalid &&
+                    createForm.get('categoryId')?.touched
+                  "
+                >
+                  <option value="">Select a category</option>
+                  <option *ngFor="let cat of categories" [value]="cat.id">
+                    {{ cat.name }}
+                  </option>
+                </select>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="openCategoryModal()"
+                >
+                  New Category
+                </button>
+              </div>
 
               <div
                 class="invalid-feedback"
@@ -52,6 +61,105 @@
                 "
               >
                 Category ID is required.
+              </div>
+            </div>
+
+            <div *ngIf="isCategoryModalOpen">
+              <div class="modal-backdrop fade show"></div>
+              <div
+                class="modal fade show d-block"
+                tabindex="-1"
+                role="dialog"
+                aria-modal="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Create New Category</h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        aria-label="Close"
+                        (click)="closeCategoryModal()"
+                      ></button>
+                    </div>
+                    <form [formGroup]="createCategoryForm">
+                      <div class="modal-body">
+                        <div
+                          *ngIf="categoryModalErrorMessage"
+                          class="alert alert-danger"
+                          role="alert"
+                        >
+                          {{ categoryModalErrorMessage }}
+                        </div>
+
+                        <div class="mb-3">
+                          <label for="categoryName" class="form-label">
+                            Category Name
+                          </label>
+                          <input
+                            type="text"
+                            id="categoryName"
+                            class="form-control"
+                            formControlName="name"
+                            [class.is-invalid]="
+                              createCategoryForm.get('name')?.invalid &&
+                              createCategoryForm.get('name')?.touched
+                            "
+                          />
+                        <div
+                          class="invalid-feedback"
+                          *ngIf="
+                            createCategoryForm.get('name')?.invalid &&
+                            createCategoryForm.get('name')?.touched
+                          "
+                        >
+                          Category name is required and must be at least 3 characters.
+                        </div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="parentCategoryId" class="form-label">
+                          Parent Category
+                        </label>
+                        <select
+                          id="parentCategoryId"
+                          class="form-select"
+                          formControlName="parentCategoryId"
+                        >
+                          <option [ngValue]="null">None</option>
+                          <option
+                            *ngFor="let category of categories"
+                            [ngValue]="category.id"
+                          >
+                            {{ category.name }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    </form>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        (click)="closeCategoryModal()"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        [disabled]="
+                          categoryModalIsSubmitting ||
+                          createCategoryForm.invalid
+                        "
+                        (click)="onCreateCategory()"
+                      >
+                        {{ categoryModalIsSubmitting ? 'Saving...' : 'Save Category' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 

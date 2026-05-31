@@ -38,6 +38,10 @@ export class ProductCreateComponent implements OnInit {
   };
 
   categories: CategoryForListModel[] = [];
+  createCategoryForm!: FormGroup;
+  isCategoryModalOpen = false;
+  categoryModalErrorMessage = '';
+  categoryModalIsSubmitting = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -47,6 +51,7 @@ export class ProductCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    this.initializeCategoryModalForm();
 
     this.catalogService
       .getCategoriesPage(this.pageRequest)
@@ -64,6 +69,54 @@ export class ProductCreateComponent implements OnInit {
       minimumPrice: [0, [Validators.required, Validators.min(0)]],
       maximumPrice: [0, [Validators.required, Validators.min(0)]],
       properties: this.formBuilder.array([]),
+    });
+  }
+
+  private initializeCategoryModalForm(): void {
+    this.createCategoryForm = this.formBuilder.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      parentCategoryId: [null],
+    });
+  }
+
+  openCategoryModal(): void {
+    this.categoryModalErrorMessage = '';
+    this.categoryModalIsSubmitting = false;
+    this.isCategoryModalOpen = true;
+  }
+
+  closeCategoryModal(): void {
+    this.isCategoryModalOpen = false;
+    this.categoryModalErrorMessage = '';
+    this.categoryModalIsSubmitting = false;
+    this.initializeCategoryModalForm();
+  }
+
+  onCreateCategory(): void {
+    if (this.createCategoryForm.invalid) {
+      this.categoryModalErrorMessage = 'Please enter a valid category name.';
+      return;
+    }
+
+    const categoryRequest = {
+      name: this.createCategoryForm.value.name,
+      parentCategoryId: this.createCategoryForm.value.parentCategoryId || null,
+    };
+
+    this.categoryModalIsSubmitting = true;
+    this.categoryModalErrorMessage = '';
+
+    this.catalogService.createCategory(categoryRequest).subscribe({
+      next: (createdCategory) => {
+        this.categories = [...this.categories, createdCategory];
+        this.createForm.get('categoryId')?.setValue(createdCategory.id);
+        this.closeCategoryModal();
+      },
+      error: (err) => {
+        this.categoryModalErrorMessage =
+          err.error?.message || 'Failed to create category. Please try again.';
+        this.categoryModalIsSubmitting = false;
+      },
     });
   }
 

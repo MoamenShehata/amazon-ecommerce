@@ -23,6 +23,10 @@ export class CatalogService {
     );
   }
 
+  createCategory(categoryRequest: { name: string; parentCategoryId?: string | null }) {
+    return this.http.post<CategoryForListModel>(this.categoriesBaseUrl, categoryRequest);
+  }
+
   getProductsPage(pageRequest: PageRequest) {
     return this.http.get<PagedResult<ProductForListModel>>(
       `${this.productsBaseUrl}?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}&lastSeenValue=${pageRequest.lastSeenValue}`,
