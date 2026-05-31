@@ -1,6 +1,6 @@
-import {Component} from "@angular/core";
-import {AppServicesProvider} from "../../../core/services/app-services.provider";
-import {ShoppingCartService} from "../../shopping-cart.services";
+import { Component } from "@angular/core";
+import { AppServicesProvider } from "../../../core/services/app-services.provider";
+import { ShoppingCartService } from "../../shopping-cart.services";
 
 @Component({
   selector: "app-cach-checkout",
@@ -21,6 +21,7 @@ export class CachCheckoutComponent extends AppServicesProvider {
 
     this.cartService.checkoutUsingOtp(otp)?.subscribe(
       (orederId) => {
+        this.cartService.clearInMemoryCart();
         this.router.navigate(["/my/orders", orederId]);
       },
       (err) => {

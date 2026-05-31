@@ -54,5 +54,9 @@ export class ShoppingCartState {
     this._source.next(currentItems);
   }
 
+  clear() {
+    this._source.next([]);
+  }
+
   cartItems$ = this._source.asObservable();
 }

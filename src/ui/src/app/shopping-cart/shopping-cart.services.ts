@@ -1,11 +1,12 @@
-import {Injectable} from "@angular/core";
-import {environment} from "../../environments/environment";
-import {CartItemCreateModel} from "./models/cart-item-create.models";
-import {AuthService} from "../authentication/services/authentication.service";
-import {StorageService} from "../core/services/storage-service";
-import {BehaviorSubject, catchError, map, Observable, tap} from "rxjs";
-import {CartItemModel, CartItemDto} from "./models/cart-item-model";
-import {HttpClient} from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
+import { CartItemCreateModel } from "./models/cart-item-create.models";
+import { AuthService } from "../authentication/services/authentication.service";
+import { StorageService } from "../core/services/storage-service";
+import { BehaviorSubject, catchError, map, Observable, tap } from "rxjs";
+import { CartItemModel, CartItemDto } from "./models/cart-item-model";
+import { HttpClient } from "@angular/common/http";
+import { ShoppingCartState } from "./shopping-cart.state";
 
 @Injectable({
   providedIn: "root",
@@ -20,7 +21,8 @@ export class ShoppingCartService {
     private http: HttpClient,
     private authService: AuthService,
     private storageService: StorageService,
-  ) {}
+    private shoppingCartState: ShoppingCartState,
+  ) { }
 
   getCart() {
     const activeCartId = this.activeCartId;
@@ -52,7 +54,7 @@ export class ShoppingCartService {
     let options = {};
     if (this.authService.isAuthenticated) {
       options = {
-        headers: {"Authorization": `Bearer ${this.authService.accessToken}`},
+        headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
       };
     }
 
@@ -98,11 +100,16 @@ export class ShoppingCartService {
 
     return this.http.post<any>(
       `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp`,
-      {otp},
+      { otp },
       {
-        headers: {"Authorization": `Bearer ${this.authService.accessToken}`},
+        headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
       },
     );
+  }
+
+  clearInMemoryCart() {
+    this.storageService.delete("cartId");
+    this.shoppingCartState.clear();
   }
 
   get activeCartId() {
