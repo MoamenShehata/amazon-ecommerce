@@ -20,14 +20,14 @@ namespace Amazon.Cart.Application.Payments
             return RestResponse<List<PaymentMethodDto>>.Success(methods.Select(m => new PaymentMethodDto(m.Id, m.Name)).ToList());
         }
 
-        public async Task<RestResponse<Guid>> CreatePaymentRequestAsync(Guid paymentMethodId, int? deliverToAddressId)
+        public async Task<RestResponse<string>> CreatePaymentRequestAsync(Guid paymentMethodId, int? deliverToAddressId)
         {
             var result = await _paymentsService.CreatePaymentRequestAsync(paymentMethodId, _authenticationService.CurrentUser.Id, deliverToAddressId);
             if (!result.IsSuccess)
-                return result.MapTo(Guid.Empty);
+                return result.MapTo(string.Empty);
 
             await _unitOfWork.CommitAsync();
-            return RestResponse<Guid>.Success(result.Value);
+            return RestResponse<string>.Success(result.Value);
         }
     }
 }

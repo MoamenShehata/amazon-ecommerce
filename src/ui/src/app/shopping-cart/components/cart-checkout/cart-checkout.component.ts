@@ -33,24 +33,22 @@ export class CartCheckoutComponent extends AppServicesProvider {
     });
   }
 
-  paymentMethod: PaymentMethod;
+  paymentMethodId: string;
 
   deliverToAddress: number | null = null;
   setDeliveryAddress(addressId: number) {
-    alert("Selected delivery address id: " + addressId);
     this.deliverToAddress = addressId;
   }
 
   onPaymentMethodChange(event: any) {
-    const paymentMethodId = parseInt(event.target.value);
-
-    // this.paymentsService.createPaymentRequest(paymentMethodId)
-    // this.paymentMethod = this.paymentMethods.find(
-    //   (m) => m.id === paymentMethodId,
-    // )!;
+    const paymentMethodId = event.target.value;
+    this.paymentMethodId = paymentMethodId;
   }
 
   proceedToPayment() {
-    this.router.navigate([this.paymentMethod.actionRoute]);
+    this.paymentsService.createPaymentRequest(this.paymentMethodId, this.deliverToAddress)
+      .subscribe((paymentRequest) => {
+
+      });
   }
 }

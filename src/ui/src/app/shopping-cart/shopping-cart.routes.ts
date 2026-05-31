@@ -1,8 +1,8 @@
-import {Routes} from "@angular/router";
-import {ShoppingCartComponent} from "./components/shopping-cart/shopping-cart.component";
-import {CartCheckoutComponent} from "./components/cart-checkout/cart-checkout.component";
-import {authGuard} from "../core/guards/auth-guard";
-import {CachCheckoutComponent} from "./components/cach-checkout/cach-checkout.component";
+import { Routes } from "@angular/router";
+import { ShoppingCartComponent } from "./components/shopping-cart/shopping-cart.component";
+import { CartCheckoutComponent } from "./components/cart-checkout/cart-checkout.component";
+import { authGuard } from "../core/guards/auth-guard";
+import { CachCheckoutComponent } from "./components/cach-checkout/cach-checkout.component";
 
 export const shoppingCartRoutes: Routes = [
   {
@@ -20,7 +20,7 @@ export const shoppingCartRoutes: Routes = [
     component: CachCheckoutComponent,
   },
   {
-    path: "checkout/credit-card",
+    path: "checkout/card",
     component: CartCheckoutComponent,
   },
 ];

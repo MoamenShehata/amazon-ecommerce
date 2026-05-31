@@ -8,14 +8,14 @@ public class PaymentsService(
     IRepository<PaymentMethod, Guid> _repository,
    PaymentRequestFactory _paymentRequestFactory)
 {
-    public async Task<RestResponse<Guid>> CreatePaymentRequestAsync(Guid paymentMethodId, Guid userId, int? deliverToAddressId)
+    public async Task<RestResponse<string>> CreatePaymentRequestAsync(Guid paymentMethodId, Guid userId, int? deliverToAddressId)
     {
         var method = await _repository.GetInstanceAsync(paymentMethodId);
         if (method is null)
-            return RestResponse<Guid>.NotFound(new { Message = $"Payment method with id {paymentMethodId} not found" });
+            return RestResponse<string>.NotFound(new { Message = $"Payment method with id {paymentMethodId} not found" });
 
         var paymentRequest = await _paymentRequestFactory.CreateAsync(method, userId, deliverToAddressId);
 
-        return RestResponse<Guid>.Created(paymentRequest.Id, paymentRequest.Id.ToString());
+        return RestResponse<string>.Success(method.RedirectToAppUrlPath);
     }
 }

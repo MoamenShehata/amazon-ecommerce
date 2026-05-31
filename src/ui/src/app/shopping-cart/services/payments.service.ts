@@ -8,7 +8,7 @@ import { PaymentMethod } from "../models/payment-method.model";
     providedIn: "root",
 })
 export class PaymentsService {
-    private baseUrl = `${environment.cartBaseUrl}/paymentMethods/`;
+    private baseUrl = `${environment.cartBaseUrl}/paymentMethods`;
 
 
     constructor(

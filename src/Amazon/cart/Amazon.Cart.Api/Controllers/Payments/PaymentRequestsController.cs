@@ -14,9 +14,9 @@ public class PaymentRequestsController(PaymentsAppService _paymentsAppService) :
     public async Task<IActionResult> CreatePaymentRequest(Guid paymentMethodId, [FromBody] CreatePaymentRequestDto request)
     {
         var result = await _paymentsAppService.CreatePaymentRequestAsync(paymentMethodId, request.DeliverToAddressId);
-        if (result.IsSuccess)
-            return Ok(result.Value);
+        if (!result.IsSuccess)
+            return BadRequest(result.Error);
 
-        return RestResult(result);
+        return Redirect($"http://localhost:4200/{result.Value}");
     }
 }

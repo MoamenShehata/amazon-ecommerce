@@ -1,5 +1,5 @@
 export interface PaymentMethod {
-  id: number;
+  id: string;
   name: string;
   actionRoute: string;
 }
