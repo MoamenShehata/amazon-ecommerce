@@ -4,6 +4,13 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { CustomerProfile } from "./models/customer-profile.model";
 
+export interface PaymentCardDto {
+  id: number;
+  cardHolder: string;
+  cardNumber: string;
+  expiresAt: string;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -23,6 +30,21 @@ export class CustomerService {
   addShippingAddress(request: any) {
     return this.http.post<CustomerProfile>(
       `${this.baseUrl}/ShippingAddresses`,
+      request,
+    );
+  }
+
+  getPaymentCards() {
+    return this.http.get<PaymentCardDto[]>(`${this.meUrl}/PaymentCards`);
+  }
+
+  createPaymentCard(request: {
+    cardHolder: string;
+    cardNumber: string;
+    expiresAt: Date;
+  }) {
+    return this.http.post<PaymentCardDto>(
+      `${this.meUrl}/PaymentCards`,
       request,
     );
   }

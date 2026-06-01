@@ -11,7 +11,7 @@ public class PaymentCardInfo
         ArgumentException.ThrowIfNullOrEmpty(holderName, nameof(holderName));
         ArgumentOutOfRangeException.ThrowIfGreaterThan(holderName.Length, 20);
 
-        HolderName = holderName;
+        HolderName = holderName.ToUpperInvariant();
         Number = number;
         Expiration = expiration;
     }

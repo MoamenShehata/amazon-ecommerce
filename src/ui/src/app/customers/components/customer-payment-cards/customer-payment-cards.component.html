@@ -1,1 +1,49 @@
-<h3>Payment Cards</h3>
+<div class="table-responsive">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="mb-2">Payment Cards</h3>
+
+        <button class="btn btn-success" (click)="openCreateModal()">
+            + Add New Card
+        </button>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Card Holder</th>
+                <th scope="col">Card Number</th>
+                <th scope="col">Expires At</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let card of paymentCards; let i = index">
+                <th scope="row">{{ i + 1 }}</th>
+                <td>{{ card.cardHolder }}</td>
+                <td>{{ card.cardNumber }}</td>
+                <td>{{ card.expiresAt }}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1"
+    *ngIf="showModal">
+    <div class="modal-backdrop fade" [class.show]="showModal" (click)="closeCreateModal()" style="z-index: 0">
+    </div>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new payment card</h5>
+                <button type="button" class="btn-close" (click)="closeCreateModal()"></button>
+            </div>
+            <div class="modal-body">
+                <payment-card-form (cardSaved)="onCardSaved($event)" />
+            </div>
+        </div>
+    </div>
+</div>

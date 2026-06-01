@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -10,6 +10,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
   styleUrl: './payment-card-form.component.css'
 })
 export class PaymentCardFormComponent implements OnInit {
+  @Output() cardSaved = new EventEmitter<{
+    cardHolder: string;
+    cardNumber: string;
+    expiresAt: Date;
+  }>();
+
   paymentForm!: FormGroup;
   isSubmitting = false;
   successMessage = '';
@@ -20,9 +26,8 @@ export class PaymentCardFormComponent implements OnInit {
   ngOnInit(): void {
     this.paymentForm = this.fb.group({
       cardHolder: ['', [Validators.required, Validators.minLength(2)]],
-      cardNumber: ['', [Validators.required, Validators.pattern('^\\d{13,19}$')]],
-      expiryMonth: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])$')]],
-      expiryYear: ['', [Validators.required, Validators.pattern('^\\d{4}$')]],
+      cardNumber: ['', [Validators.required, Validators.pattern('^\\d{16}$')]],
+      expiresAt: ['', [Validators.required, Validators.pattern('^\\d{4}-\\d{2}$')]],
     });
   }
 
@@ -42,11 +47,13 @@ export class PaymentCardFormComponent implements OnInit {
 
     this.isSubmitting = true;
 
-    // Simulate payment processing
-    setTimeout(() => {
-      this.isSubmitting = false;
-      this.successMessage = 'Payment processed successfully (demo).';
-      this.paymentForm.reset();
-    }, 900);
+    const value = this.paymentForm.value;
+    const cardRequest = {
+      cardHolder: value.cardHolder,
+      cardNumber: value.cardNumber,
+      expiresAt: new Date(value.expiresAt),
+    };
+
+    this.cardSaved.emit(cardRequest);
   }
 }
