@@ -1,33 +1,30 @@
+<li class="nav-link">
+  <shopping-cart [style]="'mini'" />
+</li>
+
 <ng-container *ngIf="!authenticatedUser">
-  <li class="nav-item">
-    <button
-      class="btn btn-outline-light ms-2"
-      type="button"
-      (click)="startOAuthLogin()"
-    >
+  <li class="nav-link">
+    <button class="btn btn-outline-light ms-2" type="button" (click)="startOAuthLogin()">
       Login
     </button>
 
-    <button
-      class="btn btn-outline-light ms-2"
-      type="button"
-      (click)="navigateToSignUp()"
-    >
+    <button class="btn btn-outline-light ms-2" type="button" (click)="navigateToSignUp()">
       Sign up
     </button>
   </li>
 </ng-container>
 
 <ng-container *ngIf="authenticatedUser">
-  <li class="nav-item">
+
+  <li class="nav-link">
     <span>{{ authenticatedUser.email }}</span>
   </li>
 
   <li class="nav-item" *ngIf="authenticatedUser.isCustomer">
-    <button routerLink="/my/orders">My Orders</button>
+    <a routerLink="/my/profile" class="nav-link">My Profile</a>
   </li>
 
-  <li class="nav-item">
+  <li class="nav-link">
     <button (click)="logout()">Logout</button>
   </li>
 </ng-container>

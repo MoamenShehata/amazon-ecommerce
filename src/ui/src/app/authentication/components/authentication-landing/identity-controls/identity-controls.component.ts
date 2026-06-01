@@ -1,15 +1,16 @@
-import {CommonModule} from "@angular/common";
-import {Component} from "@angular/core";
-import {AuthenticatedUser} from "../../../models/authenticated-user.model";
-import {AuthService} from "../../../services/authentication.service";
-import {environment} from "../../../../../environments/environment";
-import {OAuthService} from "angular-oauth2-oidc";
-import {RouterModule} from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { AuthenticatedUser } from "../../../models/authenticated-user.model";
+import { AuthService } from "../../../services/authentication.service";
+import { environment } from "../../../../../environments/environment";
+import { OAuthService } from "angular-oauth2-oidc";
+import { RouterModule } from "@angular/router";
+import { ShoppingCartComponent } from "../../../../shopping-cart/components/shopping-cart/shopping-cart.component";
 
 @Component({
   selector: "identity-controls",
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ShoppingCartComponent],
   templateUrl: "./identity-controls.component.html",
 })
 export class IdentityControlsComponent {
