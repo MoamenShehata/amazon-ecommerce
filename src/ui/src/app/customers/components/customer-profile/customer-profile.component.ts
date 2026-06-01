@@ -15,7 +15,7 @@ import { CommonModule } from "@angular/common";
 export class CustomerProfileComponent extends AppServicesProvider {
   myProfile: CustomerProfile;
 
-  @Input() isReadOnly = true;
+  @Input() isReadOnly = false;
 
   @Output() onDeliveryAddressSelected = new EventEmitter<number>();
 
