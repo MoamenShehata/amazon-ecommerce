@@ -1,4 +1,4 @@
-import {OrderItemDto} from "./OrderItemDto";
+import { OrderItemDto } from "./OrderItemDto";
 
 export interface OrderForListDto {
   id: string;
@@ -14,4 +14,6 @@ export interface OrderDetailsDto {
   createdAt: Date;
   canBeCanceled: boolean;
   items: OrderItemDto[];
+  deliveryAddress: string;
+  paymentInfo: string;
 }

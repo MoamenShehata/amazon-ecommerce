@@ -14,7 +14,7 @@ public class OrdersService(
     OrderFactory _orderFactory
     )
 {
-    public async Task<RestResponse<Order>> PlaceOrderAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems)
+    public async Task<RestResponse<Order>> PlaceOrderAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, object deliveryAddress)
     {
         var productsValidationResult = await _productsService.ValidateProducts(cartItems);
         if (!productsValidationResult.IsSuccess)
@@ -22,7 +22,7 @@ public class OrdersService(
 
         //validate customer data
 
-        var order = await _orderFactory.CreateAsync(customerInfo, cartItems);
+        var order = await _orderFactory.CreateAsync(customerInfo, cartItems, paymentInfo, deliveryAddress);
         _ordersRepo.Add(order);
 
         return RestResponse<Order>.Created(order, order.Id.ToString());
@@ -81,7 +81,7 @@ public class OrdersService(
 
         return TryDeliveryAcceptedAsync(orderResult);
     }
-    
+
     public async Task<RestResponse<bool>> CompletedAsync(Guid orderId)
     {
         var orderResult = await GetByIdAsync(orderId);
@@ -135,7 +135,7 @@ public class OrdersService(
         order.DeliveryAccepted(new DeliveryMember("Mohsen abady", "01127970304"));
         return RestResponse<bool>.Success(true);
     }
-    
+
     private RestResponse<bool> TryCompleteAsync(Order order)
     {
         if (order.Status.State != OrderState.DeliveryRecieved)

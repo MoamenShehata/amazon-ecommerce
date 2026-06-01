@@ -122,7 +122,7 @@ namespace Amazon.Cart.Application
             if (!isOtpValid)
                 return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
 
-            var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId);
+            var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId, new { PaymentMethod = "Cash" });
             if (!orderCreateResult.IsSuccess)
                 return orderCreateResult.MapTo(Guid.Empty);
 

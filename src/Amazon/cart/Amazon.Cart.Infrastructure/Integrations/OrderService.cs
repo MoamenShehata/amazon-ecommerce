@@ -11,7 +11,7 @@ internal class OrderCreatedDto
 }
 public class OrderService(IHttpClientFactory _httpClientFactory) : IOrderService
 {
-    public async Task<Guid> CreateOrderAsync(Guid userId, string email, List<KeyValuePair<Guid, int>> shoppingCart)
+    public async Task<Guid> CreateOrderAsync(Guid userId, string email, List<KeyValuePair<Guid, int>> shoppingCart, object PaymentInfo, object DeliveryAddress)
     {
         using var client = _httpClientFactory.CreateClient();
 
@@ -20,6 +20,8 @@ public class OrderService(IHttpClientFactory _httpClientFactory) : IOrderService
             UserId = userId,
             Email = email,
             ShoppingCart = shoppingCart,
+            PaymentInfo,
+            DeliveryAddress
         };
 
         var requestAsJson = JsonSerializer.Serialize(requestBody);

@@ -73,7 +73,7 @@ public class CartService(
         return await _paymentsService.UsePaymentMethodAsync(paymentMethodId, userId, deliveryAddressResult);
     }
 
-    public async Task<RestResponse<Guid>> TryCheckoutAsync(Guid cartId, Guid userId)
+    public async Task<RestResponse<Guid>> TryCheckoutAsync(Guid cartId, Guid userId, object PaymentInfo)
     {
         var cartResult = await GetByIdForUserAsync(cartId, userId);
         if (!cartResult.IsSuccess)
@@ -83,7 +83,9 @@ public class CartService(
         if (!orderAvailabilityResult.IsSuccess)
             return orderAvailabilityResult.MapTo(Guid.Empty);
 
-        var orderIdCreated = await _orderService.CreateOrderAsync(userId, "should be queried from CART", [.. cartResult.Value.Items.GroupBy(x => x.ProductId).Select(x => new KeyValuePair<Guid, int>(x.Key, x.Count()))]);
+        var deliveryAddressResult = await _customerService.GetCustomerDeliveryAddressOrDefaultAsync(userId, cartResult.Value.DeliverToAddressId);
+
+        var orderIdCreated = await _orderService.CreateOrderAsync(userId, "should be queried from CART", [.. cartResult.Value.Items.GroupBy(x => x.ProductId).Select(x => new KeyValuePair<Guid, int>(x.Key, x.Count()))], PaymentInfo, deliveryAddressResult.Value);
 
         _cartsRepo.Remove(cartResult.Value);
 

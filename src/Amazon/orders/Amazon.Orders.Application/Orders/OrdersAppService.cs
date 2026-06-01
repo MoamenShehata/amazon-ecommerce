@@ -35,7 +35,7 @@ namespace Amazon.Orders.Application.Orders
 
         public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(OrderCreateDto request)
         {
-            var result = await _ordersService.PlaceOrderAsync(new CustomerInfo(request.UserId, request.Email), request.ShoppingCart);
+            var result = await _ordersService.PlaceOrderAsync(new CustomerInfo(request.UserId, request.Email), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
             if (result.IsSuccess)
             {
                 await _unitOfWork.CommitAsync();
@@ -54,7 +54,7 @@ namespace Amazon.Orders.Application.Orders
             await _unitOfWork.CommitAsync();
             return RestResponse<bool>.Success(true);
         }
-        
+
         public async Task<RestResponse<bool>> StartProcessingAsync(Guid orderId)
         {
             // validate user permissions
@@ -78,7 +78,7 @@ namespace Amazon.Orders.Application.Orders
             await _unitOfWork.CommitAsync();
             return RestResponse<bool>.Success(true);
         }
-        
+
         public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid orderId)
         {
             // validate user permissions
@@ -90,7 +90,7 @@ namespace Amazon.Orders.Application.Orders
             await _unitOfWork.CommitAsync();
             return RestResponse<bool>.Success(true);
         }
-        
+
         public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid orderId)
         {
             // validate user permissions
@@ -102,7 +102,7 @@ namespace Amazon.Orders.Application.Orders
             await _unitOfWork.CommitAsync();
             return RestResponse<bool>.Success(true);
         }
-        
+
         public async Task<RestResponse<bool>> CompletedAsync(Guid orderId)
         {
             // validate user permissions

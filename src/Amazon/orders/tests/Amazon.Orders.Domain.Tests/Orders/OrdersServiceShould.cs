@@ -36,7 +36,7 @@ namespace Amazon.Orders.Domain.Tests.Orders
                 new KeyValuePair<Guid, int>(Guid.NewGuid(),10)
             };
 
-            var result = await orderService.PlaceOrderAsync(new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), cartItems);
+            var result = await orderService.PlaceOrderAsync(new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), cartItems, null, null);
 
             Assert.False(result.IsSuccess);
             Assert.Null(result.Value);
@@ -54,7 +54,7 @@ namespace Amazon.Orders.Domain.Tests.Orders
                 new KeyValuePair<Guid, int>(Guid.Parse("F954B880-3C4A-4AEA-AAFA-ADE614AE8576"),7)
             };
 
-            var result = await orderService.PlaceOrderAsync(new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), cartItems);
+            var result = await orderService.PlaceOrderAsync(new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), cartItems, null, null);
 
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Value);
