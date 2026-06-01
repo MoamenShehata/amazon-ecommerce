@@ -102,13 +102,25 @@ namespace Amazon.Cart.Application
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, Guid paymentRequestId, string otp)
+        public async Task<RestResponse<int>> SetupForCheckoutAsync(Guid cartId, UpdateCartDto updateCartDto)
+        {
+            var cartResult = await _cartService.GetByIdAsync(cartId);
+            if (!cartResult.IsSuccess)
+                return cartResult.MapTo(-1);
+
+            var setupResult = await _cartService.SetupForCheckoutAsync(cartResult, _currentUserId, updateCartDto.DeliverToAddressId, updateCartDto.PaymentMethodId);
+            if (!setupResult.IsSuccess)
+                return setupResult.MapTo(-1);
+
+            await _unitOfWork.CommitAsync();
+            return setupResult;
+        }
+
+        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, string otp)
         {
             var isOtpValid = await _otpService.ValidateAsync(_currentUserId, otp);
             if (!isOtpValid)
                 return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
-
-            await _paymentsAppService.ConfirmPaymentAsync(paymentRequestId);
 
             var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId);
             if (!orderCreateResult.IsSuccess)

@@ -95,11 +95,23 @@ export class ShoppingCartService {
     );
   }
 
-  checkoutUsingOtp(paymentRequestId: string, otp: string) {
+  setupForCheckout(dto: any) {
+    if (!this.activeCartId) throw new Error("No active cart");
+
+    return this.http.put<number>(
+      `${this.cartsBaseUrl}/${this.activeCartId}`,
+      dto,
+      {
+        headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
+      },
+    );
+  }
+
+  checkoutUsingOtp(otp: string) {
     if (!this.activeCartId) return;
 
     return this.http.post<any>(
-      `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp/${paymentRequestId}`,
+      `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp`,
       { otp },
       {
         headers: { "Authorization": `Bearer ${this.authService.accessToken}` },

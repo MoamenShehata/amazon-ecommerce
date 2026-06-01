@@ -10,7 +10,7 @@ namespace Amazon.Cart.Api.Controllers;
 public class CartsController(CartAppService _cartService) : ApiControllerBase
 {
     [HttpGet("{cartId}")]
-    public async Task<IActionResult> GetShoppingCart(Guid cartId)
+    public async Task<IActionResult> GetById(Guid cartId)
     {
         var result = await _cartService.GetByIdAsync(cartId);
         if (result.IsSuccess)
@@ -20,17 +20,25 @@ public class CartsController(CartAppService _cartService) : ApiControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateShoppingCart([FromBody] CartCreateDto cartModel)
+    public async Task<IActionResult> Create([FromBody] CartCreateDto cartModel)
     {
         var result = await _cartService.CreateCartAsync(cartModel);
         return Ok(result);
     }
 
     [Authorize(Policy = "CARTS_POLICY")]
-    [HttpPost("{cartId}/checkoutOtp/{paymentRequestId}")]
-    public async Task<IActionResult> CheckoutCartUsingOtp(Guid cartId, Guid paymentRequestId, [FromBody] CheckoutUsingOtpDto request)
+    [HttpPut("{cartId}")]
+    public async Task<IActionResult> SetupForCheckout(Guid cartId, [FromBody] UpdateCartDto request)
     {
-        var result = await _cartService.CheckoutCartUsingOtpAsync(cartId, paymentRequestId, request.Otp);
+        var result = await _cartService.SetupForCheckoutAsync(cartId, request);
+        return RestResult(result);
+    }
+
+    [Authorize(Policy = "CARTS_POLICY")]
+    [HttpPost("{cartId}/checkoutOtp")]
+    public async Task<IActionResult> CheckoutCartUsingOtp(Guid cartId, [FromBody] CheckoutUsingOtpDto request)
+    {
+        var result = await _cartService.CheckoutCartUsingOtpAsync(cartId, request.Otp);
         if (result.IsSuccess)
             return Ok(result.Value);
 

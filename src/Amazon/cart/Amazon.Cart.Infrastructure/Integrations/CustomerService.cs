@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Domain.Integrations;
 using Amazon.SharedKernel.API;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace Amazon.Cart.Infrastructure.Integrations;
@@ -16,12 +17,19 @@ public class CustomerService(IHttpClientFactory _httpClientFactory) : ICustomerS
     {
         using var client = _httpClientFactory.CreateClient();
 
-        var response = await client.GetAsync($"https://localhost:7128/api/customers/{userId}");
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var response = await client.GetAsync($"https://localhost:7128/api/customers/{userId}");
+            response.EnsureSuccessStatusCode();
 
-        var responseBody = await response.Content.ReadFromJsonAsync<GetCustomerProfileResponse>();
-        var address = responseBody.Addresses.FirstOrDefault(a => (addressId.HasValue && a.Id == addressId) || true);
+            var responseBody = await response.Content.ReadFromJsonAsync<GetCustomerProfileResponse>();
+            var address = responseBody.Addresses.FirstOrDefault(a => (addressId.HasValue && a.Id == addressId) || true);
 
-        return RestResponse<CustomerDeliveryAddress>.Success(address);
+            return RestResponse<CustomerDeliveryAddress>.Success(address);
+        }
+        catch (Exception ex)
+        {
+            return RestResponse<CustomerDeliveryAddress>.Failure(ex);
+        }
     }
 }

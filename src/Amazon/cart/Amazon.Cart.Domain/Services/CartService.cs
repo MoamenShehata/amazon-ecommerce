@@ -1,5 +1,7 @@
 ﻿using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Factories;
+using Amazon.Cart.Domain.Integrations;
+using Amazon.Cart.Domain.Payments;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
@@ -10,7 +12,9 @@ public class CartService(
         ShoppingCartFactory _cartFactory,
         IRepository<ShoppingCart, Guid> _cartsRepo,
         IInventoryService _inventoryService,
-        IOrderService _orderService
+        ICustomerService _customerService,
+        IOrderService _orderService,
+        PaymentsService _paymentsService
         )
 {
     public async Task<RestResponse<ShoppingCart>> CreateCartAsync(Guid? customerId)
@@ -45,15 +49,26 @@ public class CartService(
         return RestResponse<CartItem>.Success(item);
     }
 
+    public async Task<RestResponse<int>> SetupForCheckoutAsync(ShoppingCart cart, Guid userId, int deliverToAddressId, Guid paymentMethodId)
+    {
+        var attachResult = cart.AttachToUser(userId);
+        if (!attachResult.IsSuccess)
+            return attachResult.MapTo(-1);
+
+        var deliveryAddressResult = await _customerService.GetCustomerDeliveryAddressOrDefaultAsync(userId, deliverToAddressId);
+        if (!deliveryAddressResult.IsSuccess)
+            return deliveryAddressResult.MapTo(-1);
+
+        cart.SetDeliverToAddress(deliverToAddressId);
+
+        return await _paymentsService.UsePaymentMethodAsync(paymentMethodId, userId, deliveryAddressResult);
+    }
+
     public async Task<RestResponse<Guid>> TryCheckoutAsync(Guid cartId, Guid userId)
     {
         var cartResult = await GetByIdAsync(cartId);
         if (!cartResult.IsSuccess)
             return cartResult.MapTo(Guid.Empty);
-
-        var checkoutResult = cartResult.Value.TryCheckoutForUser(userId);
-        if (!checkoutResult.IsSuccess)
-            return checkoutResult.MapTo(Guid.Empty);
 
         var orderAvailabilityResult = await CanOrderBeSatisifiedForCartAsync(cartResult);
         if (!orderAvailabilityResult.IsSuccess)

@@ -21,14 +21,4 @@ export class PaymentsService {
         return this.http
             .get<PaymentMethod[]>(this.baseUrl);
     }
-
-
-    createPaymentRequest(paymentMethodId: string, deliverToAddressId: number | null = null) {
-        const options = {
-            headers: { "Authorization": `Bearer ${this.authService.accessToken}` }
-        };
-
-        return this.http
-            .post<any>(`${this.baseUrl}/${paymentMethodId}/requests`, { deliverToAddressId }, options);
-    }
 }

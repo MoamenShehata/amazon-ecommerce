@@ -12,6 +12,8 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     public CartExpiration Expiration { get; private set; }
 
+    public int? DeliverToAddressId { get; private set; }
+
     internal ShoppingCart(Guid? customerId, CartExpiration expiration) : base(Guid.NewGuid())
     {
         CustomerId = customerId;
@@ -42,7 +44,9 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
         _cartItems.RemoveAll(x => x.ProductId == productId);
     }
 
-    public RestResponse<bool> TryCheckoutForUser(Guid userId)
+    public void SetDeliverToAddress(int addressId) => DeliverToAddressId = addressId;
+
+    public RestResponse<bool> AttachToUser(Guid userId)
     {
         if (!CanBeCheckedoutForUser(userId))
             return RestResponse<bool>.BadRequest($"Cart is owned by another user!");

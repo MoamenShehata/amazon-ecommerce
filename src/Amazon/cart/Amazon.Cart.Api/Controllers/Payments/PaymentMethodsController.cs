@@ -9,6 +9,6 @@ public class PaymentMethodsController(PaymentsAppService _paymentsAppService) : 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        return RestResult(await _paymentsAppService.GetAllAsync());
+        return RestResult(await _paymentsAppService.GetPaymentMethodsAsync());
     }
 }

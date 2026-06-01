@@ -43,7 +43,6 @@ public static class ApplicationDependencyRegistrar
             .AddScoped<CartService>()
             .AddScoped<ShoppingCartFactory>()
             .AddScoped<PaymentsService>()
-            .AddScoped<PaymentRequestFactory>()
             .AddScoped<PaymentRequestPayloadFactory>()
             ;
     }

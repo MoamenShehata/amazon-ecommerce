@@ -25,7 +25,6 @@ namespace Amazon.Cart.Infrastructure.Data
         {
             modelBuilder.ApplyConfiguration(new ShoppingCartConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
-            modelBuilder.ApplyConfiguration(new PaymentRequestConfiguration());
 
             modelBuilder.Entity<OutboxMessage>(entity =>
             {

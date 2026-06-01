@@ -1,17 +1,25 @@
 <shopping-cart [style]="'checkout'" />
 
-<customer-profile (onDeliveryAddressSelected)="setDeliveryAddress($event)" />
 
-<div>
-  <label class="form-label">Payment Method</label>
-  <select class="form-control" (change)="onPaymentMethodChange($event)">
-    <option value="" disabled selected>Select</option>
-    <option *ngFor="let method of paymentMethods" [value]="method.id">
-      {{ method.name }}
-    </option>
-  </select>
-</div>
 
-<button class="btn btn-primary" (click)="proceedToPayment()">
-  Proceed to payment
-</button>
+<form [formGroup]="setupForCheckoutForm" (ngSubmit)="proceedToPayment()">
+  <div class="row">
+    <div class="col-6"><customer-profile (onDeliveryAddressSelected)="setDeliveryAddress($event)" /></div>
+    <div class="col-6">
+      <label class="form-label">Payment Method</label>
+      <select class="form-control" formControlName="paymentMethodId">
+        <option value=null disabled selected>Select</option>
+        <option *ngFor="let method of paymentMethods" [value]="method.id">
+          {{ method.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="">
+    <button class="btn btn-primary" type="submit" [disabled]="setupForCheckoutForm.invalid">
+      Proceed to payment
+    </button>
+  </div>
+
+</form>
