@@ -138,7 +138,7 @@ namespace Amazon.Cart.Application
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(Guid.Empty);
 
-            var canPaymentCardSatisfyOrder = await _paymentsService.CanPaymentCardSatisfyAmountAsync(_currentUserId, request.PaymentCardId, request.Cvv, cartResult.Value.TotalAmount);
+            var canPaymentCardSatisfyOrder = await _paymentsService.TryWithdrawFromPaymentCardAsync(_currentUserId, request.PaymentCardId, request.Cvv, cartResult.Value.TotalAmount);
             if (!canPaymentCardSatisfyOrder.IsSuccess)
                 return RestResponse<Guid>.BadRequest(canPaymentCardSatisfyOrder.Error.ToString());
 

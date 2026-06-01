@@ -34,13 +34,15 @@ public class PaymentsService(
         }
     }
 
-    public async Task<RestResponse<string>> CanPaymentCardSatisfyAmountAsync(Guid customerId, int paymentCardId, string cvv, decimal amount)
+    public async Task<RestResponse<string>> TryWithdrawFromPaymentCardAsync(Guid customerId, int paymentCardId, string cvv, decimal amount)
     {
         var paymentCardResult = await _customerService.GetPaymentCardAsync(customerId, paymentCardId);
         if (!paymentCardResult.IsSuccess)
             return paymentCardResult.MapTo(string.Empty);
 
-        var result = await _paymentCardsService.CanSatisfyAmountAsync(paymentCardResult.Value, cvv, amount);
+        // this is very simplified
+        // we should talk to the card provider and acquire a transaction id, then we should asker the customer for the otp then hand both back to the provider to confirm the request then continue with the order
+        var result = await _paymentCardsService.TryChargeAmountAsync(paymentCardResult.Value, cvv, amount);
         if (!result.IsSuccess)
             return RestResponse<string>.BadRequest(result.Error.ToString());
 

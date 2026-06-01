@@ -4,5 +4,5 @@ namespace Amazon.Cart.Domain.Integrations;
 
 public interface IPaymentCardsService
 {
-    Task<RestResponse> CanSatisfyAmountAsync(CustomerPaymentCard value, string cvv, decimal amount);
+    Task<RestResponse> TryChargeAmountAsync(CustomerPaymentCard value, string cvv, decimal amount);
 }

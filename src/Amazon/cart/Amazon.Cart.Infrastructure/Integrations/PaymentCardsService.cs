@@ -5,7 +5,7 @@ namespace Amazon.Cart.Infrastructure.Integrations;
 
 public class PaymentCardsService : IPaymentCardsService
 {
-    public async Task<RestResponse> CanSatisfyAmountAsync(CustomerPaymentCard value, string cvv, decimal amount)
+    public async Task<RestResponse> TryChargeAmountAsync(CustomerPaymentCard value, string cvv, decimal amount)
     {
         // just dummy for now
         return await Task.FromResult(RestResponse.Success());
