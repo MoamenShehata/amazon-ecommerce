@@ -31,7 +31,7 @@ public class ProductMediaService(IHttpClientFactory _httpClientFactory) : IMedia
 
         try
         {
-            var response = await client.PostAsync($"https://localhost:7255/files", new StringContent(requestAsJson, new MediaTypeHeaderValue("application/json")));
+            var response = await client.PostAsync($"http://localhost:5104/files", new StringContent(requestAsJson, new MediaTypeHeaderValue("application/json")));
             response.EnsureSuccessStatusCode();
 
             var responseBody = await response.Content.ReadFromJsonAsync<UploadFileResult>();

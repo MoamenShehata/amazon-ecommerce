@@ -28,7 +28,7 @@ namespace Media.Application
 
             var media = Create(mediaId, ownerId, uploadedFile, isPublic);
 
-            media.RaiseEvent(new MediaCreatedEvent(media.Id, media.OwnerId, $"https://localhost:7255/files/{media.Id}"));
+            media.RaiseEvent(new MediaCreatedEvent(media.Id, media.OwnerId, $"http://localhost:5104/files/{media.Id}"));
 
             _repository.Add(media);
 

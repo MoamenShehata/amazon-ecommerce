@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="Moamen.SDKs.SharedKernel">
-      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.SharedKernel\bin\Release\net9.0\Moamen.SDKs.SharedKernel.dll</HintPath>
+      <HintPath>..\lib\Moamen.SDKs.SharedKernel.dll</HintPath>
     </Reference>
   </ItemGroup>
 
