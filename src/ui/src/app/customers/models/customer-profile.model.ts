@@ -1,6 +1,9 @@
+import { PaymentCardDto } from "../customer.services";
+
 export interface CustomerProfile {
   customerId: string;
   addresses: CustomerProfileAddress[];
+  paymentCards: PaymentCardDto[];
 }
 
 export interface CustomerProfileAddress {

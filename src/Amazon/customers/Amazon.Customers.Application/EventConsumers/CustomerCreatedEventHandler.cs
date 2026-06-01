@@ -1,5 +1,4 @@
-﻿using Amazon.Customers.Application.CustomerProfiles;
-using Amazon.Customers.Domain.Events;
+﻿using Amazon.Customers.Domain.Events;
 using MassTransit;
 
 namespace Amazon.Customers.Application.EventConsumers;

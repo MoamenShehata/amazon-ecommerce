@@ -1,9 +1,12 @@
-﻿namespace Amazon.Customers.Application.CustomerProfiles.Models;
+﻿using Amazon.Customers.Application.Dtos;
+
+namespace Amazon.Customers.Application.CustomerProfiles.Models;
 
 public class CustomerProfile
 {
     public Guid CustomerId { get; set; }
     public ICollection<CustomerProfileAddress> Addresses { get; set; } = new HashSet<CustomerProfileAddress>();
+    public ICollection<PaymentCardDto> PaymentCards { get; set; } = [];
 }
 
 public class CustomerProfileAddress

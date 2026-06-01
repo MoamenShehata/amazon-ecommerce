@@ -2,7 +2,6 @@
 using Amazon.Customers.Application.CustomerProfiles.Models;
 using Amazon.Customers.Application.Dtos;
 using Amazon.Customers.Domain;
-using Amazon.Customers.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Customers.Events;
 using Amazon.SharedKernel.Extensions;
@@ -56,6 +55,17 @@ public class CustomerAppService(
         await _profilesService.UpdateShippingAddressesAsync(customerId, addressesResult.Value);
     }
 
+    public async Task UpdateProfilePaymentCardsAsync(Guid customerId)
+    {
+        var customerResult = await _customerService.GetByIdAsync(customerId);
+        if (!customerResult.IsSuccess) return;
+
+        var existingProfile = await _profilesService.GetByIdAsync(customerId);
+        if (existingProfile is null) return;
+
+        await _profilesService.UpdatePaymentCardsAsync(customerId, customerResult.Value.PaymentCards.Select(x => new PaymentCardDto(x.Id, x.Info.HolderName, x.Info.Number.Value, x.Info.Expiration.ToString())).ToList());
+    }
+
     public async Task<RestResponse<CustomerProfile>> GetCustomerProfileAsync(Guid customerId)
     {
         var profile = await _profilesService.GetByIdAsync(customerId);
@@ -83,13 +93,6 @@ public class CustomerAppService(
 
         await _unitOfWork.CommitAsync();
 
-        var dto = new PaymentCardDto
-        {
-            Id = createResult.Value.Id,
-            NumberMasked = createResult.Value.Info.Number.Value,
-            Expiration = createResult.Value.Info.Expiration.ToString()
-        };
-
-        return RestResponse<PaymentCardDto>.Success(dto);
+        return RestResponse<PaymentCardDto>.Success(new PaymentCardDto(createResult.Value.Id, createResult.Value.Info.HolderName, createResult.Value.Info.Number.Value, createResult.Value.Info.Expiration.ToString()));
     }
 }

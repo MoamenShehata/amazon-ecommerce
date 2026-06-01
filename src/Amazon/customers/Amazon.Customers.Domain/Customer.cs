@@ -55,6 +55,7 @@ public class Customer : AuditableAggregate<Guid>, IEntity<Guid>
         {
             var newCard = new PaymentCard(Id, cardInfo);
             _paymentCards.Add(newCard);
+            RaiseEvent(new CustomerPaymentCardsUpdatedEvent(Id));
             return RestResponse<PaymentCard>.Success(newCard);
         }
         catch (Exception ex)
@@ -70,6 +71,7 @@ public class Customer : AuditableAggregate<Guid>, IEntity<Guid>
             return RestResponse.BadRequest(new BadRequestModel("Payment card not found."));
 
         _paymentCards.Remove(cardToRemove);
+        RaiseEvent(new CustomerPaymentCardsUpdatedEvent(Id));
         return RestResponse<bool>.Success(true);
     }
 

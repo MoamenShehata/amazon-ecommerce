@@ -31,15 +31,7 @@ export class CustomerPaymentCardsComponent extends AppServicesProvider implement
     super();
   }
 
-  ngOnInit(): void {
-    this.loadPaymentCards();
-  }
-
-  loadPaymentCards(): void {
-    this.customerService.getPaymentCards().subscribe({
-      next: (cards) => (this.paymentCards = cards || []),
-      error: () => (this.paymentCards = []),
-    });
+  ngOnInit() {
   }
 
 
@@ -49,17 +41,13 @@ export class CustomerPaymentCardsComponent extends AppServicesProvider implement
       next: (createdCard) => {
         this.paymentCards = [createdCard, ...this.paymentCards];
         this.toastSuccess('Payment card saved successfully.');
-        this.closeCreateModal();
+        this.closeCreateModal()
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Failed to save payment card.';
+        this.closeCreateModal();
+        this.toastError(err.error);
       },
     });
-  }
-
-  maskCardNumber(cardNumber: string): string {
-    const last4 = cardNumber.slice(-4);
-    return `**** **** **** ${last4}`;
   }
 
   formatExpiry(expiresAt: string): string {

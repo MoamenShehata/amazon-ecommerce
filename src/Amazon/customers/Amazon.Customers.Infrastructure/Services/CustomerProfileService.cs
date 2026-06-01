@@ -1,6 +1,6 @@
 ﻿using Amazon.Customers.Application.CustomerProfiles;
 using Amazon.Customers.Application.CustomerProfiles.Models;
-using Amazon.Customers.Domain;
+using Amazon.Customers.Application.Dtos;
 using Amazon.Customers.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +25,15 @@ public class CustomerProfileService(CustomerReadContext _readContext) : ICustome
         if (profile is null) return;
 
         profile.Addresses = newAddresses;
+        await _readContext.SaveChangesAsync();
+    }
+
+    public async Task UpdatePaymentCardsAsync(Guid customerId, ICollection<PaymentCardDto> newCards)
+    {
+        var profile = await _readContext.CustomerProfiles.FirstOrDefaultAsync(x => x.CustomerId == customerId);
+        if (profile is null) return;
+
+        profile.PaymentCards = newCards;
         await _readContext.SaveChangesAsync();
     }
 }

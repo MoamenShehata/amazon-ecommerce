@@ -34,10 +34,6 @@ export class CustomerService {
     );
   }
 
-  getPaymentCards() {
-    return this.http.get<PaymentCardDto[]>(`${this.meUrl}/PaymentCards`);
-  }
-
   createPaymentCard(request: {
     cardHolder: string;
     cardNumber: string;

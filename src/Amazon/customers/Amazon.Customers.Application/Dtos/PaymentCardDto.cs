@@ -1,8 +1,3 @@
 ﻿namespace Amazon.Customers.Application.Dtos;
 
-public class PaymentCardDto
-{
-    public int Id { get; set; }
-    public string NumberMasked { get; set; }
-    public string Expiration { get; set; }
-}
+public record PaymentCardDto(int Id, string CardHolder, string CardNumber, string ExpiresAt);
