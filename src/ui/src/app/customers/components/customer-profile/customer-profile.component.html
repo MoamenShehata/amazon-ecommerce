@@ -6,5 +6,6 @@
 <ng-container *ngIf="!isReadOnly">
   <customer-shipping-addresses *ngIf="myProfile" [addresses]="myProfile.addresses" [style]="'list'" />
 
-  
+  <customer-payment-cards *ngIf="myProfile" />
+
 </ng-container>
