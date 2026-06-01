@@ -53,12 +53,6 @@ export class ShoppingCartService extends AppServicesProvider {
   }
 
   private initCart(cartItem: CartItemCreateModel) {
-    let options = {};
-    if (this.authService.isAuthenticated) {
-      options = {
-        headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
-      };
-    }
 
     return this.http
       .post<CartItemModel>(
@@ -66,8 +60,7 @@ export class ShoppingCartService extends AppServicesProvider {
         {
           customerId: this.customerId,
           cartItem: cartItem,
-        },
-        options,
+        }
       )
       .pipe(
         map((resp: any) => {
@@ -103,9 +96,6 @@ export class ShoppingCartService extends AppServicesProvider {
     return this.http.put<number>(
       `${this.cartsBaseUrl}/${this.activeCartId}`,
       dto,
-      {
-        headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
-      },
     );
   }
 
@@ -114,10 +104,7 @@ export class ShoppingCartService extends AppServicesProvider {
 
     return this.http.post<any>(
       `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp`,
-      { otp },
-      {
-        headers: { "Authorization": `Bearer ${this.authService.accessToken}` },
-      },
+      { otp }
     );
   }
 

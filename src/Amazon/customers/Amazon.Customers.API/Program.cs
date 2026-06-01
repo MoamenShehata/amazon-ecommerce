@@ -8,7 +8,8 @@ builder.Services
     .AddSharedJobs()
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
-    ;
+    .AddJwtAuthentication(builder.Configuration);
+;
 
 builder.Services.AddCors(op =>
 {
@@ -38,6 +39,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("CORS_Policy");
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

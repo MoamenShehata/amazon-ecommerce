@@ -6,7 +6,7 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-// import { RedirectInterceptor } from './core/interceptors/redirect-interceptor';
+import { InjectJwtInterceptor } from './core/interceptors/inject-jwt-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,11 +14,11 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
     ...(ToastrModule.forRoot().providers || []),
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: RedirectInterceptor,
-    //   multi: true
-    // },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InjectJwtInterceptor,
+      multi: true
+    },
     ...(OAuthModule.forRoot({
       resourceServer: {
         allowedUrls: ['https://api.yourapp.com'],

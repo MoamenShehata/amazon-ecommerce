@@ -1,16 +1,18 @@
 using Amazon.Customers.Application;
 using Amazon.SharedKernel.API;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.Customers.API.Controllers;
 
-[Route("api/[controller]/{id}")]
+[Authorize]
+[Route("api/[controller]")]
 public class CustomersController(CustomerAppService _customerAppService) : ApiControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetCustomerProfile(Guid id)
+    public async Task<IActionResult> GetCustomerProfile()
     {
-        var result = await _customerAppService.GetCustomerProfileAsync(id);
+        var result = await _customerAppService.GetCustomerProfileAsync(UserId);
         if (result.IsSuccess)
             return Ok(result.Value);
 

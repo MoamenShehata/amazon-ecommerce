@@ -27,44 +27,4 @@ public static class DependencyRegistrar
 
         return services;
     }
-
-
-    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-            .AddJwtBearer(options =>
-            {
-                options.UseSecurityTokenValidators = false;
-                options.Authority = configuration.GetValue<string>("JwtSettings:Issuer");
-                options.Audience = configuration.GetValue<string>("JwtSettings:Audience");
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration.GetValue<string>("JwtSettings:Issuer"),
-                    ValidAudiences = [configuration.GetValue<string>("JwtSettings:Audience")],
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnAuthenticationFailed = context =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                    OnForbidden = context =>
-                    {
-                        return Task.CompletedTask;
-                    },
-                };
-            });
-
-        return services;
-    }
 }
