@@ -40,7 +40,7 @@ export class CartCheckoutComponent extends AppServicesProvider {
 
   proceedToPayment() {
     if (!this.setupForCheckoutForm.valid) {
-      alert("Please select delivery address and payment method");
+      this.toastError("Please select delivery address and payment method");
       return;
     }
 

@@ -7,11 +7,12 @@ import { BehaviorSubject, catchError, map, Observable, tap } from "rxjs";
 import { CartItemModel, CartItemDto } from "./models/cart-item-model";
 import { HttpClient } from "@angular/common/http";
 import { ShoppingCartState } from "./shopping-cart.state";
+import { AppServicesProvider } from "../core/services/app-services.provider";
 
 @Injectable({
   providedIn: "root",
 })
-export class ShoppingCartService {
+export class ShoppingCartService extends AppServicesProvider {
   private cartsBaseUrl = `${environment.cartBaseUrl}/carts`;
   private get cartItemsBaseUrl() {
     return `${environment.cartBaseUrl}/carts/${this.activeCartId}/items`;
@@ -19,10 +20,11 @@ export class ShoppingCartService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService,
     private storageService: StorageService,
     private shoppingCartState: ShoppingCartState,
-  ) { }
+  ) {
+    super();
+  }
 
   getCart() {
     const activeCartId = this.activeCartId;
@@ -72,7 +74,7 @@ export class ShoppingCartService {
           this.storageService.save("cartId", resp.value.cartId);
 
           if (resp.message) {
-            alert(resp.message);
+            this.toastError(resp.message);
             throw new Error(resp.message);
           }
 

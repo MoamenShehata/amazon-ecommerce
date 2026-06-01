@@ -1,8 +1,8 @@
-import {Component} from "@angular/core";
-import {AppServicesProvider} from "../../../core/services/app-services.provider";
-import {OrdersService} from "../../../orders/orders.services";
-import {CommonModule} from "@angular/common";
-import {OrderDetailsDto} from "../../../orders/models/OrderForListDto";
+import { Component } from "@angular/core";
+import { AppServicesProvider } from "../../../core/services/app-services.provider";
+import { OrdersService } from "../../../orders/orders.services";
+import { CommonModule } from "@angular/common";
+import { OrderDetailsDto } from "../../../orders/models/OrderForListDto";
 
 @Component({
   selector: "app-order-details",
@@ -48,18 +48,18 @@ export class OrderDetailsComponent extends AppServicesProvider {
         this.loadOrderDetails();
       },
       error: (err) => {
-        alert(err.error);
+        this.toastError(err.error);
       },
     });
   }
 
   convertAdditionalInfoToIterable(
     additionalInfo: any,
-  ): {key: string; value: any}[] {
+  ): { key: string; value: any }[] {
     if (!additionalInfo || typeof additionalInfo !== "object") {
       return [];
     }
 
-    return Object.entries(additionalInfo).map(([key, value]) => ({key, value}));
+    return Object.entries(additionalInfo).map(([key, value]) => ({ key, value }));
   }
 }

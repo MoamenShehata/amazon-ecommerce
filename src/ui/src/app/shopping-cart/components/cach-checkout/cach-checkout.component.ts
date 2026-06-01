@@ -27,7 +27,7 @@ export class CachCheckoutComponent extends AppServicesProvider {
         this.router.navigate(["/my/orders", orederId]);
       },
       (err) => {
-        alert(err.error);
+        this.toastError(err.error);
       },
     );
   }

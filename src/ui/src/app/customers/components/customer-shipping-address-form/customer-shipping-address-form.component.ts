@@ -1,12 +1,13 @@
-import {Component} from "@angular/core";
-import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
+import { Component } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
   CityLookup,
   CountryLookup,
 } from "../../../lookups/models/country-lookup.model";
-import {CountriesService} from "../../../lookups/services/countries.service";
-import {CommonModule} from "@angular/common";
-import {CustomerService} from "../../customer.services";
+import { CountriesService } from "../../../lookups/services/countries.service";
+import { CommonModule } from "@angular/common";
+import { CustomerService } from "../../customer.services";
+import { AppServicesProvider } from "../../../core/services/app-services.provider";
 
 @Component({
   selector: "customer-shipping-address-form",
@@ -15,7 +16,7 @@ import {CustomerService} from "../../customer.services";
   templateUrl: "./customer-shipping-address-form.component.html",
   styleUrls: ["./customer-shipping-address-form.component.css"],
 })
-export class CustomerShippingAddressFormComponent {
+export class CustomerShippingAddressFormComponent extends AppServicesProvider {
   countries: CountryLookup[] = [];
   cities: CityLookup[] = [];
 
@@ -37,7 +38,9 @@ export class CustomerShippingAddressFormComponent {
     private fb: FormBuilder,
     private countriesService: CountriesService,
     private customerService: CustomerService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.countriesService.getCountries().subscribe((countries) => {
@@ -54,7 +57,7 @@ export class CustomerShippingAddressFormComponent {
   submit(): void {
     if (!this.shippingAddressForm.valid) {
       this.shippingAddressForm.markAllAsTouched();
-      alert("Please fill all required fields correctly.");
+      this.toastError("Please fill all required fields correctly.");
       return;
     }
 
@@ -63,13 +66,13 @@ export class CustomerShippingAddressFormComponent {
 
     this.customerService.addShippingAddress(model).subscribe({
       next: (res) => {
-        alert("Shipping address added successfully.");
+        this.toastSuccess("Shipping address added successfully.");
         this.shippingAddressForm.reset();
         console.log("Add Shipping Address Response:", res);
       },
       error: (err) => {
         console.error("Error adding shipping address:", err);
-        alert(
+        this.toastError(
           "An error occurred while adding the shipping address. Please try again.",
         );
       },
