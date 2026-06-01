@@ -38,6 +38,15 @@ public class CartService(
         return RestResponse<ShoppingCart>.Success(cart);
     }
 
+    public async Task<RestResponse<ShoppingCart>> GetByIdForUserAsync(Guid cartId, Guid customerId)
+    {
+        var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId && x.CustomerId == customerId);
+        if (cart is null)
+            return RestResponse<ShoppingCart>.NotFound($"Cart with id {cartId} was not found");
+
+        return RestResponse<ShoppingCart>.Success(cart);
+    }
+
     public async Task<RestResponse<CartItem>> TryAddItemToCartAsync(ShoppingCart cart, Guid productId)
     {
         var totalItemsCountRequested = cart.GetItemsCountForProduct(productId) + 1;
@@ -66,7 +75,7 @@ public class CartService(
 
     public async Task<RestResponse<Guid>> TryCheckoutAsync(Guid cartId, Guid userId)
     {
-        var cartResult = await GetByIdAsync(cartId);
+        var cartResult = await GetByIdForUserAsync(cartId, userId);
         if (!cartResult.IsSuccess)
             return cartResult.MapTo(Guid.Empty);
 
