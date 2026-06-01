@@ -1,1 +1,80 @@
-<p>visa-checkout works!</p>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Pay with Card</h5>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+                    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+                    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label class="form-label">Cardholder Name</label>
+                            <input type="text" class="form-control" formControlName="cardHolder"
+                                placeholder="Name on card" />
+                            <div class="invalid-feedback d-block"
+                                *ngIf="f['cardHolder'].touched && f['cardHolder'].invalid">
+                                Cardholder name is required.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Card Number</label>
+                            <input type="text" class="form-control" formControlName="cardNumber" maxlength="19"
+                                placeholder="1234123412341234" />
+                            <div class="invalid-feedback d-block"
+                                *ngIf="f['cardNumber'].touched && f['cardNumber'].invalid">
+                                Enter a valid card number (13-19 digits).
+                            </div>
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label">Expiry Month</label>
+                                <input type="text" class="form-control" formControlName="expiryMonth" placeholder="MM"
+                                    maxlength="2" />
+                                <div class="invalid-feedback d-block"
+                                    *ngIf="f['expiryMonth'].touched && f['expiryMonth'].invalid">Invalid month (01-12).
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Expiry Year</label>
+                                <input type="text" class="form-control" formControlName="expiryYear" placeholder="YYYY"
+                                    maxlength="4" />
+                                <div class="invalid-feedback d-block"
+                                    *ngIf="f['expiryYear'].touched && f['expiryYear'].invalid">Invalid year (e.g. 2026).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 g-2">
+                            <div class="col-6">
+                                <label class="form-label">CVV</label>
+                                <input type="password" class="form-control" formControlName="cvv" maxlength="4"
+                                    placeholder="123" />
+                                <div class="invalid-feedback d-block" *ngIf="f['cvv'].touched && f['cvv'].invalid">
+                                    Invalid
+                                    CVV.</div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Amount</label>
+                                <input type="number" class="form-control" formControlName="amount" step="0.01"
+                                    min="0" />
+                                <div class="invalid-feedback d-block"
+                                    *ngIf="f['amount'].touched && f['amount'].invalid">Enter
+                                    a valid amount.</div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button class="btn btn-primary" type="submit" [disabled]="isSubmitting">{{ isSubmitting ?
+                                'Processing...' : 'Pay now' }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
