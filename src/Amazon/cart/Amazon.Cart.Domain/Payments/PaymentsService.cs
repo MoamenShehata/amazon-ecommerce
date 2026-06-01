@@ -24,8 +24,7 @@ public class PaymentsService(
                 return RestResponse<int>.Success((int)paymentMethod.Type);
 
             case PaymentMehodType.Visa:
-                throw new NotImplementedException();
-                break;
+                return RestResponse<int>.Success((int)paymentMethod.Type);
 
             default:
                 throw new NotSupportedException();
