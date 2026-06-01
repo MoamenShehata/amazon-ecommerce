@@ -25,7 +25,6 @@ export class VisaCheckoutComponent implements OnInit {
       expiryMonth: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])$')]],
       expiryYear: ['', [Validators.required, Validators.pattern('^\\d{4}$')]],
       cvv: ['', [Validators.required, Validators.pattern('^\\d{3,4}$')]],
-      amount: [{ value: 0, disabled: false }, [Validators.required, Validators.min(0.01)]],
     });
   }
 
@@ -49,7 +48,7 @@ export class VisaCheckoutComponent implements OnInit {
     setTimeout(() => {
       this.isSubmitting = false;
       this.successMessage = 'Payment processed successfully (demo).';
-      this.paymentForm.reset({ amount: this.paymentForm.value.amount });
+      this.paymentForm.reset();
     }, 900);
   }
 }
