@@ -1,6 +1,6 @@
 ﻿namespace Amazon.Customers.Domain.ValueObjects;
 
-public class PaymentCardInfo
+public record PaymentCardInfo
 {
     public string HolderName { get; private set; }
     public PaymentCardNumber Number { get; private set; }
@@ -15,6 +15,7 @@ public class PaymentCardInfo
         Number = number;
         Expiration = expiration;
     }
+
     private PaymentCardInfo()
     {
         

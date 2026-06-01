@@ -1,6 +1,6 @@
 ﻿namespace Amazon.Customers.Domain.ValueObjects;
 
-public class PaymentCardExpiration
+public record PaymentCardExpiration
 {
     public int Month { get; private set; }
     public int Year { get; private set; }

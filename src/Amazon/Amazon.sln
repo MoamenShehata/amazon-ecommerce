@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11822.322 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "product-catalog", "product-catalog", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -82,6 +82,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lookups", "lookups", "{DFAABD25-FF3B-4A80-AF5B-96FC80C20009}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Lookups.Api", "lookups\Amazon.Lookups.Api\Amazon.Lookups.Api.csproj", "{6994ED11-5078-4315-A510-D21560D1DE62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Customers.Domain.Tests", "customers\Amazon.Customers.Domain.Tests\Amazon.Customers.Domain.Tests.csproj", "{1CBA53FC-A588-4512-BACD-E33490184053}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -205,6 +207,10 @@ Global
 		{6994ED11-5078-4315-A510-D21560D1DE62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6994ED11-5078-4315-A510-D21560D1DE62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6994ED11-5078-4315-A510-D21560D1DE62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CBA53FC-A588-4512-BACD-E33490184053}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CBA53FC-A588-4512-BACD-E33490184053}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CBA53FC-A588-4512-BACD-E33490184053}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CBA53FC-A588-4512-BACD-E33490184053}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -241,6 +247,7 @@ Global
 		{0BD45C80-AB9C-40F4-8400-D1ADDB236BC1} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 		{01ABA623-1598-4944-B1FD-C85AD34B2BDC} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 		{6994ED11-5078-4315-A510-D21560D1DE62} = {DFAABD25-FF3B-4A80-AF5B-96FC80C20009}
+		{1CBA53FC-A588-4512-BACD-E33490184053} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {854E9683-3600-41BC-A815-52488984E5D7}

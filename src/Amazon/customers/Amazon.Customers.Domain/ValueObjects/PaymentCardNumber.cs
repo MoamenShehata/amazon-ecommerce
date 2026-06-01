@@ -1,6 +1,6 @@
 ﻿namespace Amazon.Customers.Domain.ValueObjects;
 
-public class PaymentCardNumber
+public record PaymentCardNumber
 {
     private const int ValidLength = 16;
     private const int MaskLength = 12;

@@ -47,6 +47,8 @@ public class Customer : AuditableAggregate<Guid>, IEntity<Guid>
         if (_paymentCards.Count == 3)
             return RestResponse<PaymentCard>.BadRequest("A customer cannot have more than 3 payment cards.");
 
+        var existingCard = _paymentCards.FirstOrDefault(c => c.Info == cardInfo);
+
         try
         {
             var newCard = new PaymentCard(Id, cardInfo);
