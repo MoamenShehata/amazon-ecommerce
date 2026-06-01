@@ -3,6 +3,7 @@ import { ShoppingCartComponent } from "./components/shopping-cart/shopping-cart.
 import { CartCheckoutComponent } from "./components/cart-checkout/cart-checkout.component";
 import { authGuard } from "../core/guards/auth-guard";
 import { CachCheckoutComponent } from "./components/cach-checkout/cach-checkout.component";
+import { VisaCheckoutComponent } from "./components/visa-checkout/visa-checkout.component";
 
 export const shoppingCartRoutes: Routes = [
   {
@@ -21,6 +22,6 @@ export const shoppingCartRoutes: Routes = [
   },
   {
     path: "checkout/card",
-    component: CartCheckoutComponent,
+    component: VisaCheckoutComponent,
   },
 ];
