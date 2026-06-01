@@ -14,9 +14,10 @@ export class CustomerService {
   ) { }
 
   private baseUrl = `${environment.customersBaseUrl}/customers`;
+  private meUrl = `${this.baseUrl}/me`;
 
   getMyProfile() {
-    return this.http.get<CustomerProfile>(`${this.baseUrl}`);
+    return this.http.get<CustomerProfile>(this.meUrl);
   }
 
   addShippingAddress(request: any) {

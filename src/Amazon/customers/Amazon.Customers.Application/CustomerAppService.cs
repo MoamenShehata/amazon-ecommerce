@@ -74,4 +74,22 @@ public class CustomerAppService(
         await _unitOfWork.CommitAsync();
         return RestResponse<bool>.Success(true);
     }
+
+    public async Task<RestResponse<PaymentCardDto>> CreatePaymentCardAsync(Guid customerId, CreatePaymentCardRequest request)
+    {
+        var createResult = await _customerService.CreatePaymentCardAsync(customerId, request.CardHolder, request.CardNumber, request.ExpiresAt);
+        if (!createResult.IsSuccess)
+            return createResult.MapTo(null as PaymentCardDto);
+
+        await _unitOfWork.CommitAsync();
+
+        var dto = new PaymentCardDto
+        {
+            Id = createResult.Value.Id,
+            NumberMasked = createResult.Value.Info.Number.Value,
+            Expiration = createResult.Value.Info.Expiration.ToString()
+        };
+
+        return RestResponse<PaymentCardDto>.Success(dto);
+    }
 }

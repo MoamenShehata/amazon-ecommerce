@@ -11,6 +11,8 @@ public class PaymentCardExpiration
         Year = expiresAt.Year;
     }
 
+    public override string ToString() => $"{Month:D2}/{Year}";
+
     private PaymentCardExpiration()
     {
 

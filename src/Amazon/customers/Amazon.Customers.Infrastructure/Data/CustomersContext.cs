@@ -70,19 +70,19 @@ public class CustomersContext : DbContextBase
             entity.ComplexProperty(x => x.Info, b =>
             {
                 b.Property(x => x.HolderName);
-                
+
                 b.ComplexProperty(x => x.Number, bb =>
                 {
-                    bb.Property(x => x.Value).HasColumnName("Number");
+                    bb.Property(x => x.Value).HasColumnName("Number").HasField("_cardNumber");
                 });
-                
+
                 b.ComplexProperty(x => x.Expiration, bb =>
                 {
                     bb.Property(x => x.Month);
                     bb.Property(x => x.Year);
                 });
             });
-            
+
             entity.ComplexProperty(x => x.State, b =>
             {
                 b.Property(x => x.IsActive);

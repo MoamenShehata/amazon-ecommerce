@@ -42,15 +42,21 @@ public class Customer : AuditableAggregate<Guid>, IEntity<Guid>
     private readonly ICollection<PaymentCard> _paymentCards = [];
     public IReadOnlyCollection<PaymentCard> PaymentCards => _paymentCards.ToList().AsReadOnly();
 
-    public RestResponse AddPaymentCard(PaymentCardInfo cardInfo)
+    public RestResponse<PaymentCard> AddPaymentCard(PaymentCardInfo cardInfo)
     {
         if (_paymentCards.Count == 3)
-            return RestResponse.BadRequest(new BadRequestModel("A customer cannot have more than 2 payment cards."));
+            return RestResponse<PaymentCard>.BadRequest("A customer cannot have more than 3 payment cards.");
 
-        var newCard = new PaymentCard(Id, cardInfo);
-        _paymentCards.Add(newCard);
-
-        return RestResponse<bool>.Success(true);
+        try
+        {
+            var newCard = new PaymentCard(Id, cardInfo);
+            _paymentCards.Add(newCard);
+            return RestResponse<PaymentCard>.Success(newCard);
+        }
+        catch (Exception ex)
+        {
+            return RestResponse<PaymentCard>.Failure(ex);
+        }
     }
 
     public RestResponse RemovePaymentCard(int cardId)

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Amazon.Customers.API.Controllers;
 
 [Authorize]
-[Route("api/[controller]")]
+[Route("api/[controller]/me")]
 public class CustomersController(CustomerAppService _customerAppService) : ApiControllerBase
 {
     [HttpGet]

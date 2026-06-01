@@ -1,4 +1,5 @@
-﻿using Amazon.Customers.Domain.Events;
+﻿using Amazon.Customers.Domain.Entities;
+using Amazon.Customers.Domain.Events;
 using Amazon.Customers.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
@@ -11,6 +12,15 @@ public class CustomerService(
     IAddressService _addressService
     )
 {
+    public async Task<RestResponse<Customer>> GetByIdAsync(Guid customerId)
+    {
+        var customer = await _repository.GetInstanceAsync(customerId);
+        if (customer is null)
+            return RestResponse<Customer>.NotFound($"Customer with id {customerId} not found.");
+
+        return RestResponse<Customer>.Success(customer);
+    }
+
     public async Task<RestResponse<Customer>> CreateCustomerAsync(Guid id, string email, string phoneNumber)
     {
         var customerResult = await GetByIdAsync(id);
@@ -22,6 +32,15 @@ public class CustomerService(
 
         _repository.Add(newCustomer);
         return RestResponse<Customer>.Created(newCustomer, newCustomer.Id.ToString());
+    }
+
+    public async Task<RestResponse<PaymentCard>> CreatePaymentCardAsync(Guid customerId, string holderName, string number, DateTime expiresAt)
+    {
+        var customerResult = await GetByIdAsync(customerId);
+        if (!customerResult.IsSuccess)
+            return customerResult.MapTo(null as PaymentCard);
+
+        return customerResult.Value.AddPaymentCard(new PaymentCardInfo(holderName, new PaymentCardNumber(number), new PaymentCardExpiration(expiresAt)));
     }
 
     public async Task<RestResponse<bool>> AddShippingAddressAsync(Guid customerId, CityInfo city, HouseInfo house, bool isDefault)
@@ -41,12 +60,5 @@ public class CustomerService(
         return RestResponse<bool>.Success(true);
     }
 
-    public async Task<RestResponse<Customer>> GetByIdAsync(Guid customerId)
-    {
-        var customer = await _repository.GetInstanceAsync(customerId);
-        if (customer is null)
-            return RestResponse<Customer>.NotFound($"Customer with id {customerId} not found.");
 
-        return RestResponse<Customer>.Success(customer);
-    }
 }
