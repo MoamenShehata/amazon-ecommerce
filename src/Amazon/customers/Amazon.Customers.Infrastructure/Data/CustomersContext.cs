@@ -1,4 +1,5 @@
 ﻿using Amazon.Customers.Domain;
+using Amazon.Customers.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -39,7 +40,7 @@ public class CustomersContext : DbContextBase
                         b.Property(x => x.CityId).IsRequired();
                         b.Property(x => x.PostalCode).IsRequired();
                     });
-                    
+
                     sa.OwnsOne(x => x.House, b =>
                     {
                         b.Property(x => x.Street).IsRequired();
@@ -55,6 +56,37 @@ public class CustomersContext : DbContextBase
         modelBuilder.Entity<OutboxMessage>(entity =>
         {
             entity.ToTable("OutboxMessages");
+        });
+
+        modelBuilder.Entity<PaymentCard>(entity =>
+        {
+            entity.ToTable("PaymentCards");
+
+            entity.HasOne<Customer>()
+                .WithMany(c => c.PaymentCards)
+                .HasForeignKey(pc => pc.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.ComplexProperty(x => x.Info, b =>
+            {
+                b.Property(x => x.HolderName);
+                
+                b.ComplexProperty(x => x.Number, bb =>
+                {
+                    bb.Property(x => x.Value).HasColumnName("Number");
+                });
+                
+                b.ComplexProperty(x => x.Expiration, bb =>
+                {
+                    bb.Property(x => x.Month);
+                    bb.Property(x => x.Year);
+                });
+            });
+            
+            entity.ComplexProperty(x => x.State, b =>
+            {
+                b.Property(x => x.IsActive);
+            });
         });
 
         base.OnModelCreating(modelBuilder);

@@ -5,6 +5,7 @@ using Amazon.Customers.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amazon.Customers.Infrastructure.Migrations
 {
     [DbContext(typeof(CustomersContext))]
-    partial class CustomersContextModelSnapshot : ModelSnapshot
+    [Migration("20260601080352_Add_PaymentCards")]
+    partial class Add_PaymentCards
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
