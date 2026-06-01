@@ -61,7 +61,8 @@
                         </div>
 
                         <div class="d-grid gap-2 mt-4">
-                            <button class="btn btn-primary" type="submit" [disabled]="isSubmitting">{{ isSubmitting ?
+                            <button class="btn btn-primary" type="submit"
+                                [disabled]="isSubmitting || paymentForm.invalid">{{ isSubmitting ?
                                 'Processing...' : 'Pay now' }}</button>
                         </div>
                     </form>
