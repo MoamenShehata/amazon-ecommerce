@@ -44,4 +44,15 @@ public class CartsController(CartAppService _cartService) : ApiControllerBase
 
         return RestResult(result);
     }
+
+    [Authorize(Policy = "CARTS_POLICY")]
+    [HttpPost("{cartId}/checkoutVisa")]
+    public async Task<IActionResult> CheckoutCartUsingVisa(Guid cartId, [FromBody] CheckoutUsingVisaRequest request)
+    {
+        var result = await _cartService.CheckoutCartUsingVisaAsync(cartId, request);
+        if (result.IsSuccess)
+            return Ok(result.Value);
+
+        return RestResult(result);
+    }
 }

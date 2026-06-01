@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.Customers.API.Controllers;
 
-[Authorize]
+[Authorize(Policy = "CUSTOMERS_POLICY")]
+// we also need to check if the user gave consent to share these data
 [Route("api/[controller]/me")]
 public class CustomersController(CustomerAppService _customerAppService) : ApiControllerBase
 {

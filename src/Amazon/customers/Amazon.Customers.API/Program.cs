@@ -22,6 +22,14 @@ builder.Services.AddCors(op =>
     });
 });
 
+builder.Services.AddAuthorization(op =>
+{
+    op.AddPolicy("CUSTOMERS_POLICY", builder =>
+    {
+        builder.RequireClaim("scope", "amazon.customers");
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();

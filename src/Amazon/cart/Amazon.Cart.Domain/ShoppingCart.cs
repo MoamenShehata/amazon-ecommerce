@@ -61,6 +61,7 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     public void Clear() => _cartItems.Clear();
 
+    public decimal TotalAmount => _cartItems.Sum(i => i.Price);
     #region Infra
     private ShoppingCart() : this(Guid.NewGuid(), null)
     {

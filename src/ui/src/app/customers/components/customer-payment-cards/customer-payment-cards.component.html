@@ -1,4 +1,4 @@
-<div class="table-responsive">
+<div class="table-responsive" *ngIf="style === 'list'">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <h3 class="mb-2">Payment Cards</h3>
 
@@ -46,4 +46,17 @@
             </div>
         </div>
     </div>
+</div>
+
+<div *ngIf="paymentCards.length > 0 && style === 'select'">
+    <label class="form-label">Select Payment Card</label>
+    <select class="form-control" (change)="emitSelectedCard($event)">
+        <option value="" disabled selected>Select Payment Card</option>
+        <option *ngFor="let card of paymentCards" [value]="card.id">
+            {{ card.cardHolder }} - {{ card.cardNumber }} -{{ card.expiresAt }}
+        </option>
+    </select>
+
+    <!-- <div class="invalid-feedback d-block" *ngIf="f['paymentCardId'].touched && f['paymentCardId'].invalid">
+        Please select a payment card</div> -->
 </div>

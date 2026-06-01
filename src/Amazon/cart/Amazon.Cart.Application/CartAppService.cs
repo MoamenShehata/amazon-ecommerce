@@ -4,6 +4,7 @@ using Amazon.Cart.Application.Payments;
 using Amazon.Cart.Application.Services;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
+using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Services;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
@@ -20,7 +21,8 @@ namespace Amazon.Cart.Application
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
         IAuthenticationService _authenticationService,
-        PaymentsAppService _paymentsAppService
+        PaymentsAppService _paymentsAppService,
+        PaymentsService _paymentsService
         )
     {
         private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
@@ -123,6 +125,24 @@ namespace Amazon.Cart.Application
                 return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
 
             var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId, new { PaymentMethod = "Cash" });
+            if (!orderCreateResult.IsSuccess)
+                return orderCreateResult.MapTo(Guid.Empty);
+
+            await _unitOfWork.CommitAsync();
+            return RestResponse<Guid>.Success(orderCreateResult.Value);
+        }
+
+        public async Task<RestResponse<Guid>> CheckoutCartUsingVisaAsync(Guid cartId, CheckoutUsingVisaRequest request)
+        {
+            var cartResult = await _cartService.GetByIdAsync(cartId);
+            if (!cartResult.IsSuccess)
+                return cartResult.MapTo(Guid.Empty);
+
+            var canPaymentCardSatisfyOrder = await _paymentsService.CanPaymentCardSatisfyAmountAsync(_currentUserId, request.PaymentCardId, request.Cvv, cartResult.Value.TotalAmount);
+            if (!canPaymentCardSatisfyOrder.IsSuccess)
+                return RestResponse<Guid>.BadRequest(canPaymentCardSatisfyOrder.Error.ToString());
+
+            var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId, new { PaymentMethod = "Visa", CardNumber = canPaymentCardSatisfyOrder.Value });
             if (!orderCreateResult.IsSuccess)
                 return orderCreateResult.MapTo(Guid.Empty);
 

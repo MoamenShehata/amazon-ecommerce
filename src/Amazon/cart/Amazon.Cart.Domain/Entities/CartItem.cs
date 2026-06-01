@@ -16,6 +16,7 @@ public class CartItem : IdentifiedValue<int>
         ProductId = productId;
     }
 
+    public decimal Price => Product?.Info.UnitPrice ?? 0;
 
     #region Infra
     private CartItem() { }

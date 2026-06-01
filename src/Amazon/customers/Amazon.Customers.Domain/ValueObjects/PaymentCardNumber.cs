@@ -19,6 +19,8 @@ public record PaymentCardNumber
         }
     }
 
+    public string OriginalValue => _cardNumber;
+
     public PaymentCardNumber(string value)
     {
         ArgumentException.ThrowIfNullOrEmpty(value, nameof(PaymentCardNumber));

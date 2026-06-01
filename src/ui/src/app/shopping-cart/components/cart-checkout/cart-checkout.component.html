@@ -1,10 +1,12 @@
 <shopping-cart [style]="'checkout'" />
 
-
-
 <form [formGroup]="setupForCheckoutForm" (ngSubmit)="proceedToPayment()">
   <div class="row">
-    <div class="col-6"><customer-profile (onDeliveryAddressSelected)="setDeliveryAddress($event)" /></div>
+    <div class="col-6">
+      <customer-profile (onDeliveryAddressSelected)="setDeliveryAddress($event)" [isReadOnly]="true"
+        [displayPaymentCards]="false" />
+    </div>
+
     <div class="col-6">
       <label class="form-label">Payment Method</label>
       <select class="form-control" formControlName="paymentMethodId">

@@ -1,6 +1,9 @@
 <ng-container *ngIf="isReadOnly">
-  <customer-shipping-addresses *ngIf="myProfile" [addresses]="myProfile.addresses" [style]="'select'"
-    (onDeliveryAddressSelected)="emitOnDeliveryAddressSelected($event)" />
+  <customer-shipping-addresses *ngIf="myProfile && displayDeliveryAddresses" [addresses]="myProfile.addresses"
+    [style]="'select'" (onDeliveryAddressSelected)="emitOnDeliveryAddressSelected($event)" />
+
+  <customer-payment-cards *ngIf="myProfile && displayPaymentCards" [paymentCards]="myProfile.paymentCards"
+    [style]="'select'" (onPaymentCardSelected)="emitOnPaymentCardSelected($event)" />
 </ng-container>
 
 <ng-container *ngIf="!isReadOnly">

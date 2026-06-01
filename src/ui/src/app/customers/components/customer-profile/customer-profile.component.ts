@@ -17,8 +17,11 @@ export class CustomerProfileComponent extends AppServicesProvider {
   myProfile: CustomerProfile;
 
   @Input() isReadOnly = false;
+  @Input() displayDeliveryAddresses = true;
+  @Input() displayPaymentCards = true;
 
   @Output() onDeliveryAddressSelected = new EventEmitter<number>();
+  @Output() onPaymentCardSelected = new EventEmitter<number>();
 
   constructor(private customerService: CustomerService) {
     super();
@@ -33,5 +36,10 @@ export class CustomerProfileComponent extends AppServicesProvider {
   emitOnDeliveryAddressSelected(event: any) {
     const addressId = parseInt(event);
     this.onDeliveryAddressSelected.emit(addressId);
+  }
+
+  emitOnPaymentCardSelected(event: any) {
+    const cardId = parseInt(event);
+    this.onPaymentCardSelected.emit(cardId);
   }
 }

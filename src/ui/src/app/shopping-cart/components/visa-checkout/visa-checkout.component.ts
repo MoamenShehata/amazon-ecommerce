@@ -2,29 +2,30 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CustomerProfileComponent } from '../../../customers/components/customer-profile/customer-profile.component';
+import { AppServicesProvider } from '../../../core/services/app-services.provider';
+import { ShoppingCartService } from '../../shopping-cart.services';
 
 @Component({
   selector: 'app-visa-checkout',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CustomerProfileComponent],
   templateUrl: './visa-checkout.component.html',
   styleUrl: './visa-checkout.component.css'
 })
-export class VisaCheckoutComponent implements OnInit {
+export class VisaCheckoutComponent extends AppServicesProvider implements OnInit {
   paymentForm!: FormGroup;
-  isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,
+    private cartService: ShoppingCartService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.paymentForm = this.fb.group({
-      cardHolder: ['', [Validators.required, Validators.minLength(2)]],
-      cardNumber: ['', [Validators.required, Validators.pattern('^\\d{13,19}$')]],
-      expiryMonth: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])$')]],
-      expiryYear: ['', [Validators.required, Validators.pattern('^\\d{4}$')]],
-      cvv: ['', [Validators.required, Validators.pattern('^\\d{3,4}$')]],
+      paymentCardId: [null, [Validators.required]],
+      cvv: ['', [Validators.required, Validators.pattern('^\\d{3}$')]],
     });
   }
 
@@ -32,23 +33,28 @@ export class VisaCheckoutComponent implements OnInit {
     return this.paymentForm.controls;
   }
 
+  isSubmitting = false;
+
   onSubmit(): void {
-    this.successMessage = '';
-    this.errorMessage = '';
+    this.isSubmitting = true;
 
     if (this.paymentForm.invalid) {
       this.paymentForm.markAllAsTouched();
-      this.errorMessage = 'Please fix the errors in the form.';
+      this.toastError('Please fix the errors in the form.');
       return;
     }
 
-    this.isSubmitting = true;
+    this.cartService.checkoutUsingVisa(this.paymentForm.value).subscribe(
+      (orederId) => {
+        this.cartService.clearInMemoryCart();
+        this.router.navigate(["/my/orders", orederId]);
+      },
+      (err) => {
+        this.toastError(err.error);
+      },);
+  }
 
-    // Simulate payment processing
-    setTimeout(() => {
-      this.isSubmitting = false;
-      this.successMessage = 'Payment processed successfully (demo).';
-      this.paymentForm.reset();
-    }, 900);
+  setPaymentCard(cardId: number) {
+    this.paymentForm.patchValue({ paymentCardId: cardId });
   }
 }

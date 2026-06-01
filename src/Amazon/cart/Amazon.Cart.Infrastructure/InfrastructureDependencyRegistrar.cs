@@ -21,13 +21,16 @@ public static class InfrastructureDependencyRegistrar
             .AddBaseContext<ShoppingCartContext>(o => o.UseSqlServer(configuration.GetConnectionString("Default")));
         ;
 
-        services.AddHttpClient();
+        services.AddHttpClient()
+            .AddHttpContextAccessor()
+            ;
 
         services
             .AddScoped<IInventoryService, InventoryService>()
             .AddScoped<IOrderService, OrderService>()
             .AddScoped<ICustomerService, CustomerService>()
             .AddScoped<IUserClaimsStore, CartUserClaimsStore>()
+            .AddScoped<IPaymentCardsService, PaymentCardsService>()
             ;
 
         return services;

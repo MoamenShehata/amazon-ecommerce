@@ -17,7 +17,7 @@ namespace Amazon.SharedKernel.API
             Exception = exception;
         }
 
-        public static RestResponse Success() => new(default, HttpStatusCode.OK);
+        public static RestResponse Success() => new(HttpStatusCode.OK);
         public static RestResponse BadRequest(BadRequestModel error) => new RestResponse(HttpStatusCode.BadRequest, error);
         public static RestResponse NotFound(object error) => new RestResponse(HttpStatusCode.NotFound, error);
         public static RestResponse Failure(Exception exception) => new RestResponse(HttpStatusCode.InternalServerError, null, exception);

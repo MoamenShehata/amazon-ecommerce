@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CustomerService, PaymentCardDto } from '../../customer.services';
 import { PaymentCardFormComponent } from '../../../core/components/payment-card-form/payment-card-form.component';
@@ -13,6 +13,8 @@ import { AppServicesProvider } from '../../../core/services/app-services.provide
 })
 export class CustomerPaymentCardsComponent extends AppServicesProvider implements OnInit {
   @Input() paymentCards: PaymentCardDto[] = [];
+
+  @Input() style: "select" | "list" = "list";
 
   showModal = false;
   openCreateModal() {
@@ -36,7 +38,6 @@ export class CustomerPaymentCardsComponent extends AppServicesProvider implement
 
 
   onCardSaved(cardRequest: { cardHolder: string; cardNumber: string; expiresAt: Date }) {
-
     this.customerService.createPaymentCard(cardRequest).subscribe({
       next: (createdCard) => {
         this.paymentCards = [createdCard, ...this.paymentCards];
@@ -50,13 +51,10 @@ export class CustomerPaymentCardsComponent extends AppServicesProvider implement
     });
   }
 
-  formatExpiry(expiresAt: string): string {
-    const date = new Date(expiresAt);
-    if (isNaN(date.getTime())) {
-      return expiresAt;
-    }
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const year = date.getFullYear();
-    return `${month}/${year}`;
+
+  @Output() onPaymentCardSelected = new EventEmitter<number>();
+  emitSelectedCard(event: any) {
+    const cardId = parseInt(event.target.value);
+    this.onPaymentCardSelected.emit(cardId);
   }
 }

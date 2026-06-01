@@ -1,6 +1,7 @@
 ﻿using Amazon.Cart.Domain.Integrations;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
+using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.Cart.Domain.Payments;
@@ -8,7 +9,9 @@ namespace Amazon.Cart.Domain.Payments;
 public class PaymentsService(
     IRepository<PaymentMethod, Guid> _repository,
     IOtpService _otpService,
-    ISmsService _smsService)
+    ISmsService _smsService,
+    ICustomerService _customerService,
+    IPaymentCardsService _paymentCardsService)
 {
     public async Task<RestResponse<int>> UsePaymentMethodAsync(Guid paymentMethodId, Guid userId, CustomerDeliveryAddress customerDeliveryAddress)
     {
@@ -29,5 +32,18 @@ public class PaymentsService(
             default:
                 throw new NotSupportedException();
         }
+    }
+
+    public async Task<RestResponse<string>> CanPaymentCardSatisfyAmountAsync(Guid customerId, int paymentCardId, string cvv, decimal amount)
+    {
+        var paymentCardResult = await _customerService.GetPaymentCardAsync(customerId, paymentCardId);
+        if (!paymentCardResult.IsSuccess)
+            return paymentCardResult.MapTo(string.Empty);
+
+        var result = await _paymentCardsService.CanSatisfyAmountAsync(paymentCardResult.Value, cvv, amount);
+        if (!result.IsSuccess)
+            return RestResponse<string>.BadRequest(result.Error.ToString());
+
+        return RestResponse<string>.Success(paymentCardResult.Value.MaskedNumber);
     }
 }

@@ -60,5 +60,16 @@ public class CustomerService(
         return RestResponse<bool>.Success(true);
     }
 
+    public async Task<RestResponse<PaymentCard>> GetPaymentCardAsync(Guid customerId, int cardId)
+    {
+        var customerResult = await GetByIdAsync(customerId);
+        if (!customerResult.IsSuccess)
+            return customerResult.MapTo(null as PaymentCard);
 
+        var card = customerResult.Value.PaymentCards.FirstOrDefault(c => c.Id == cardId);
+        if (card is null)
+            return RestResponse<PaymentCard>.NotFound($"Payment card with id {cardId} not found.");
+
+        return RestResponse<PaymentCard>.Success(card);
+    }
 }

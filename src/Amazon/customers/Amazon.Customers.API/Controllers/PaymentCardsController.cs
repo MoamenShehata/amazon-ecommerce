@@ -19,4 +19,11 @@ public class PaymentCardsController(CustomerAppService _customerAppService) : Ap
 
         return RestResult(result);
     }
+
+
+    [HttpGet("{cardId}")]
+    public async Task<IActionResult> GetById(int cardId)
+    {
+        return RestResult(await _customerAppService.GetPaymentCardAsync(UserId, cardId));
+    }
 }
