@@ -48,6 +48,8 @@ public class Customer : AuditableAggregate<Guid>, IEntity<Guid>
             return RestResponse<PaymentCard>.BadRequest("A customer cannot have more than 3 payment cards.");
 
         var existingCard = _paymentCards.FirstOrDefault(c => c.Info == cardInfo);
+        if (existingCard is not null)
+            return RestResponse<PaymentCard>.Conflict("An existing card exits exactly with the sepcified information");
 
         try
         {
