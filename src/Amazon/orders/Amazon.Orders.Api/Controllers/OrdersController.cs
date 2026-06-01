@@ -1,5 +1,7 @@
 ﻿using Amazon.Orders.Application.Orders;
 using Amazon.Orders.Application.Orders.Dtos;
+using Amazon.SharedKernel.API;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.Orders.Api.Controllers;
@@ -8,11 +10,11 @@ namespace Amazon.Orders.Api.Controllers;
 [Route("api/[controller]")]
 public class OrdersController(OrdersAppService _service) : ApiControllerBase
 {
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetCustomerOrdersPage([FromQuery] SearchOrdersRequest pageRequest)
     {
-        var userId = Guid.Parse("5b32881f-dac9-4f88-ac0c-6e770afc85ce"); // should come from jwt
-        return Ok(await _service.GetCustomerOrdersPageAsync(userId, pageRequest));
+        return Ok(await _service.GetCustomerOrdersPageAsync(UserId, pageRequest));
     }
 
     [HttpGet("{id}", Name = "GetOrderById")]
@@ -34,10 +36,10 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
 
     [HttpPut("{id}/process")]
     public async Task<IActionResult> StartProcessingOrder(Guid id) => RestResult(await _service.StartProcessingAsync(id));
-    
+
     [HttpPut("{id}/startShipping")]
     public async Task<IActionResult> StartShippingOrder(Guid id) => RestResult(await _service.StartShippingAsync(id));
-    
+
     [HttpPut("{id}/shipped")]
     public async Task<IActionResult> ShippingCompleted(Guid id) => RestResult(await _service.ShippingCompletedAsync(id));
 
