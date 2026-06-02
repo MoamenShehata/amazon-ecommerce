@@ -17,4 +17,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("007bca90-f20b-46d8-9726-362b2633affe")]
 
+[assembly: InternalsVisibleTo("Amazon.ProductCatalog.Infrastructure")]
 [assembly: InternalsVisibleTo("Amazon.ProductCatalog.Domain.Tests")]

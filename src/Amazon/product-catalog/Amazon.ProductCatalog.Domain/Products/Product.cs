@@ -11,6 +11,7 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
 
     private HashSet<ProductProperty> _properties { get; set; } = new(new ProductPropertyComparer());
     public List<ProductProperty> Properties { get; private set; }
+
     public ProductPrice Price { get; private set; }
     private ICollection<ProductPriceChange> _priceChanges { get; } = new List<ProductPriceChange>();
     public void UpdatePrice(decimal newPrice)
@@ -42,11 +43,18 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
     public string ImageUrl { get; private set; }
     public void UpdateImageUrl(string imageUrl) => ImageUrl = imageUrl;
 
-    internal Product(Guid categoryId, string name, ProductPrice price, string imageUrl, List<ProductProperty> properties) : base(Guid.NewGuid())
+    internal int InStockCount { get; private set; }
+    public void UpdateStockCount(int newCount) => InStockCount = newCount;
+    public bool IsAvailableInInventory => InStockCount > 0;
+
+    internal Product(Guid categoryId, string name, ProductPrice price, int inStockCount, string imageUrl, List<ProductProperty> properties) : base(Guid.NewGuid())
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(inStockCount, 1, nameof(inStockCount));
+
         CategoryId = categoryId;
         Name = name;
         Price = price;
+        InStockCount = inStockCount;
         ImageUrl = imageUrl;
         Properties = properties;
     }

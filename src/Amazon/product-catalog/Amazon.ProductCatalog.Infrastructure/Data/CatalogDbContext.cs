@@ -53,6 +53,8 @@ public class CatalogDbContext : DbContextBase
 
             entity.Property(e => e.Name).IsRequired().HasMaxLength(300);
 
+            entity.Property(e => e.InStockCount);
+
             entity.ComplexProperty(e => e.Price, builder =>
             {
                 builder.Property(x => x.Amount);

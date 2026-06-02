@@ -33,9 +33,9 @@ namespace Amazon.Orders.Application.Orders
             return new PagedResult<OrderForListDto, DateTime>(page.Items.Select(o => o.ToForListDto()), page.TotalCount, page.LastSeenValue);
         }
 
-        public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(Guid customerId, OrderCreateDto request)
+        public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(Guid customerId, string customerEmail, OrderCreateDto request)
         {
-            var result = await _ordersService.PlaceOrderAsync(new CustomerInfo(customerId, "<dummy>"), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
+            var result = await _ordersService.PlaceOrderAsync(new CustomerInfo(customerId, customerEmail), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
             if (result.IsSuccess)
             {
                 await _unitOfWork.CommitAsync();

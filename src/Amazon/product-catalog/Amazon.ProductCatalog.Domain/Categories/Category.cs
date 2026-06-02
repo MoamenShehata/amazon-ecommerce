@@ -41,7 +41,7 @@ public class Category : AuditableAggregate<Guid>, IEntity<Guid>
         ParentCategoryId = newParentCategory.Id;
     }
 
-    public Product NewProduct(string name, string imageUrl, ProductPrice price, List<ProductProperty> properties) => new(Id, name, price, imageUrl, properties);
+    public Product NewProduct(string name, string imageUrl, ProductPrice price, int inStockCount, List<ProductProperty> properties) => new(Id, name, price, inStockCount, imageUrl, properties);
 
     public void Update(string name, Category? newParentCategory)
     {

@@ -23,7 +23,7 @@ public class ProductsService(
 
 
         var imageUrl = await _mediaService.UploadFileAsync(mediaUploadRequest);
-        var product = categoryResult.Value.NewProduct(name, imageUrl, price, properties);
+        var product = categoryResult.Value.NewProduct(name, imageUrl, price, inStockCount, properties);
 
         product.RaiseEvent(new ProductCreatedEvent(categoryId, product.Id, product.Name, inStockCount, product.Price.Amount, categoryResult.Value.FullName, imageUrl));
         product.RaiseEvent(new MediaCreateRequestedEvent(product.Id, product.Id, mediaUploadRequest, true));

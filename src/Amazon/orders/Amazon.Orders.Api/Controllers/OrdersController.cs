@@ -24,7 +24,7 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
     public async Task<IActionResult> CreateOrder(
         [FromBody] OrderCreateDto request)
     {
-        var result = await _service.PlaceAsync(UserId, request);
+        var result = await _service.PlaceAsync(UserId, UserEmail, request);
         if (result.IsSuccess)
             return CreatedAtRoute("GetOrderById", new { id = result.Value.Id }, result.Value);
 

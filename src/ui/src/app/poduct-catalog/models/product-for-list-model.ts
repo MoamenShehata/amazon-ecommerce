@@ -4,4 +4,5 @@ export interface ProductForListModel {
   categories: string;
   unitPrice: number;
   imageUrl?: string;
+  isAvailable?: boolean;
 }

@@ -1,31 +1,17 @@
 <div class="card">
-  <img
-    *ngIf="product.imageUrl"
-    src="{{ product.imageUrl }}"
-    class="card-img-top"
-    alt="..."
-    style="padding: 40px"
-  />
-  <img
-    *ngIf="!product.imageUrl"
-    src="assets/images/cubes.png"
-    class="card-img-top"
-    alt="..."
-    style="padding: 40px"
-  />
+  <img *ngIf="product.imageUrl" src="{{ product.imageUrl }}" class="card-img-top" alt="..." style="padding: 40px" />
+  <img *ngIf="!product.imageUrl" src="assets/images/cubes.png" class="card-img-top" alt="..." style="padding: 40px" />
   <h5 class="card-header">{{ product.name }}</h5>
   <div class="card-body">
     <p class="card-text mb-3">
       <strong>Unit Price:</strong> ${{ product.unitPrice.toFixed(2) }}
     </p>
-    <span
-      class="btn btn-primary mx-1"
-      *ngFor="let cat of product.categories.split(',')"
-    >
+    <span class="btn btn-primary mx-1" *ngFor="let cat of product.categories.split(',')">
       {{ cat }}
     </span>
   </div>
   <div class="card-footer">
-    <product-cart-control [cartItem]="productForModel" />
+    <product-cart-control [cartItem]="productForModel" *ngIf="product.isAvailable" />
+    <h4 *ngIf="!product.isAvailable" class="text-danger">Currently Unavailable</h4>
   </div>
 </div>

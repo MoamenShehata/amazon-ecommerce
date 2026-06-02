@@ -30,4 +30,5 @@ public abstract class ApiControllerBase : ControllerBase
     }
 
     public Guid UserId => Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+    public string UserEmail => User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
 }
