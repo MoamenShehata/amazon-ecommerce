@@ -1,6 +1,9 @@
 ﻿using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Factories;
 using Amazon.Cart.Domain.Integrations.Customers;
+using Amazon.Cart.Domain.Integrations.Customers.Dtos;
+using Amazon.Cart.Domain.Integrations.Orders;
+using Amazon.Cart.Domain.Integrations.Orders.Dtos;
 using Amazon.Cart.Domain.Payments;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
@@ -13,7 +16,7 @@ public class CartService(
         IRepository<ShoppingCart, Guid> _cartsRepo,
         IInventoryService _inventoryService,
         ICustomersIntegration _customerIntegration,
-        IOrderService _orderService,
+        IOrdersIntegration _ordersIntegration,
         PaymentsService _paymentsService
         )
 {
@@ -85,11 +88,16 @@ public class CartService(
 
         var deliveryAddressResult = await _customerIntegration.GetDeliveryAddressOrDefaultAsync(cartResult.Value.DeliverToAddressId);
 
-        var orderIdCreated = await _orderService.CreateOrderAsync(userId, "should be queried from CART", [.. cartResult.Value.Items.GroupBy(x => x.ProductId).Select(x => new KeyValuePair<Guid, int>(x.Key, x.Count()))], PaymentInfo, deliveryAddressResult.Value);
+        var createdOrder = await _ordersIntegration.CreateAsync(ConstructOrderRequest(cartResult, PaymentInfo, deliveryAddressResult));
 
         _cartsRepo.Remove(cartResult.Value);
 
-        return RestResponse<Guid>.Success(orderIdCreated);
+        return RestResponse<Guid>.Success(createdOrder.Id);
+    }
+
+    private OrderCreateDto ConstructOrderRequest(ShoppingCart cart, object paymentInfo, CustomerDeliveryAddress deliverToAddressInfo)
+    {
+        return new OrderCreateDto(cart.AggregatToProducts, paymentInfo, deliverToAddressInfo);
     }
 
     private async Task<RestResponse<bool>> CanOrderBeSatisifiedForCartAsync(ShoppingCart cart)

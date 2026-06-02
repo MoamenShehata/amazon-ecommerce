@@ -1,9 +1,11 @@
 ﻿using Amazon.Cart.Domain.Integrations;
 using Amazon.Cart.Domain.Integrations.Customers;
+using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Infrastructure.Data;
 using Amazon.Cart.Infrastructure.Integrations;
 using Amazon.Cart.Infrastructure.Integrations.Customers;
+using Amazon.Cart.Infrastructure.Integrations.Orders;
 using Amazon.Cart.Infrastructure.Services;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Http;
@@ -33,9 +35,14 @@ public static class InfrastructureDependencyRegistrar
             .AddHttpMessageHandler<InjectJwtFromCurrentSessionHandler>()
             ;
 
+        services.AddHttpClient<OrdersIntegrationClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Orders")))
+            .AddHttpMessageHandler<HttpClientErrorHandler>()
+            .AddHttpMessageHandler<InjectJwtFromCurrentSessionHandler>()
+            ;
+
         services
             .AddScoped<IInventoryService, InventoryService>()
-            .AddScoped<IOrderService, OrderService>()
+            .AddScoped<IOrdersIntegration, OrderIntegration>()
             .AddScoped<ICustomersIntegration, CustomersIntegration>()
             .AddScoped<IUserClaimsStore, CartUserClaimsStore>()
             .AddScoped<IPaymentCardsService, PaymentCardsService>()
