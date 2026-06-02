@@ -1,16 +1,11 @@
-﻿using Amazon.Cart.Domain.Integrations;
-using Amazon.Cart.Infrastructure.Integrations.Customers;
+﻿using Amazon.Cart.Domain.Integrations.Customers;
+using Amazon.Cart.Domain.Integrations.Customers.Dtos;
+using Amazon.Cart.Infrastructure.Integrations.Customers.Adapters;
 using Amazon.SharedKernel.API;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http.Json;
 
-namespace Amazon.Cart.Infrastructure.Integrations;
-
-internal class GetCustomerProfileResponse
-{
-    public Guid CustomerId { get; set; }
-    public List<CustomerDeliveryAddress> Addresses { get; set; }
-}
+namespace Amazon.Cart.Infrastructure.Integrations.Customers;
 
 public record PaymentCardDto(int Id, string CardHolder, string OriginalNumber, string MaskedNumber, int ExpiryMonth, int ExpiryYear);
 
@@ -22,9 +17,7 @@ public class CustomersIntegration(ICustomersIntegrationClient _customersClient) 
          {
              var jsonResponse = await _customersClient.GetCurrentLoggedInCustomerProfileAsync();
 
-             var customerProfile = await jsonResponse.ReadFromJsonAsync<GetCustomerProfileResponse>();
-
-             var address = customerProfile.Addresses.FirstOrDefault(a => (addressId.HasValue && a.Id == addressId) || true);
+             var address = await CustomerAddressAdapter.FromProfileResponseAsync(jsonResponse, addressId);
 
              return address is null
                 ? RestResponse<CustomerDeliveryAddress>.NotFound("Address was not found")

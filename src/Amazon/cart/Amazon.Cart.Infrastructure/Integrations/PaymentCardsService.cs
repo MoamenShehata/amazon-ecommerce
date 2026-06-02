@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Domain.Integrations;
+using Amazon.Cart.Domain.Integrations.Customers.Dtos;
 using Amazon.SharedKernel.API;
 
 namespace Amazon.Cart.Infrastructure.Integrations;

@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Domain.Integrations;
+using Amazon.Cart.Domain.Integrations.Customers;
 using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Infrastructure.Data;
 using Amazon.Cart.Infrastructure.Integrations;

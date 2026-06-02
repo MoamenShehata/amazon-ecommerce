@@ -1,6 +1,6 @@
 ﻿using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Factories;
-using Amazon.Cart.Domain.Integrations;
+using Amazon.Cart.Domain.Integrations.Customers;
 using Amazon.Cart.Domain.Payments;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
