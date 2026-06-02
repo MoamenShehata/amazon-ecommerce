@@ -1,4 +1,5 @@
 ﻿using Amazon.SharedKernel.Common.Services;
+using Amazon.SharedKernel.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,8 @@ namespace Amazon.SharedKernel.Extensions
                 .AddScoped<ISmsService, SmsService>()
                 .AddScoped<ITextGenerator, TextGenerator>()
                 ;
+
+            services.RegisterHttpClientServices();
 
             return services;
         }
@@ -56,6 +59,14 @@ namespace Amazon.SharedKernel.Extensions
                 });
 
             return services;
+        }
+
+        private static void RegisterHttpClientServices(this IServiceCollection services)
+        {
+            services
+                .AddTransient<InjectJwtFromCurrentSessionHandler>()
+                .AddTransient<HttpClientErrorHandler>()
+                ;
         }
     }
 }

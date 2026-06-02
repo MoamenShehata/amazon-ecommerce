@@ -12,7 +12,7 @@ public class CartService(
         ShoppingCartFactory _cartFactory,
         IRepository<ShoppingCart, Guid> _cartsRepo,
         IInventoryService _inventoryService,
-        ICustomerService _customerService,
+        ICustomersIntegration _customerIntegration,
         IOrderService _orderService,
         PaymentsService _paymentsService
         )
@@ -64,7 +64,7 @@ public class CartService(
         if (!attachResult.IsSuccess)
             return attachResult.MapTo(-1);
 
-        var deliveryAddressResult = await _customerService.GetCustomerDeliveryAddressOrDefaultAsync(userId, deliverToAddressId);
+        var deliveryAddressResult = await _customerIntegration.GetDeliveryAddressOrDefaultAsync(deliverToAddressId);
         if (!deliveryAddressResult.IsSuccess)
             return deliveryAddressResult.MapTo(-1);
 
@@ -83,7 +83,7 @@ public class CartService(
         if (!orderAvailabilityResult.IsSuccess)
             return orderAvailabilityResult.MapTo(Guid.Empty);
 
-        var deliveryAddressResult = await _customerService.GetCustomerDeliveryAddressOrDefaultAsync(userId, cartResult.Value.DeliverToAddressId);
+        var deliveryAddressResult = await _customerIntegration.GetDeliveryAddressOrDefaultAsync(cartResult.Value.DeliverToAddressId);
 
         var orderIdCreated = await _orderService.CreateOrderAsync(userId, "should be queried from CART", [.. cartResult.Value.Items.GroupBy(x => x.ProductId).Select(x => new KeyValuePair<Guid, int>(x.Key, x.Count()))], PaymentInfo, deliveryAddressResult.Value);
 

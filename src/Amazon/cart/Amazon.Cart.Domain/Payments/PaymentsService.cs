@@ -10,7 +10,7 @@ public class PaymentsService(
     IRepository<PaymentMethod, Guid> _repository,
     IOtpService _otpService,
     ISmsService _smsService,
-    ICustomerService _customerService,
+    ICustomersIntegration _customerService,
     IPaymentCardsService _paymentCardsService)
 {
     public async Task<RestResponse<int>> UsePaymentMethodAsync(Guid paymentMethodId, Guid userId, CustomerDeliveryAddress customerDeliveryAddress)
@@ -36,7 +36,7 @@ public class PaymentsService(
 
     public async Task<RestResponse<string>> TryWithdrawFromPaymentCardAsync(Guid customerId, int paymentCardId, string cvv, decimal amount)
     {
-        var paymentCardResult = await _customerService.GetPaymentCardAsync(customerId, paymentCardId);
+        var paymentCardResult = await _customerService.GetPaymentCardAsync(paymentCardId);
         if (!paymentCardResult.IsSuccess)
             return paymentCardResult.MapTo(string.Empty);
 
