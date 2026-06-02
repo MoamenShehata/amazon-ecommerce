@@ -3,11 +3,12 @@ import { AppServicesProvider } from "../../../core/services/app-services.provide
 import { OrdersService } from "../../../orders/orders.services";
 import { CommonModule } from "@angular/common";
 import { OrderDetailsDto } from "../../../orders/models/OrderForListDto";
+import { JsonToListComponent } from "../../../core/components/json-to-list/json-to-list.component";
 
 @Component({
   selector: "app-order-details",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, JsonToListComponent],
   templateUrl: "./order-details.component.html",
   styleUrl: "./order-details.component.css",
 })
@@ -51,15 +52,5 @@ export class OrderDetailsComponent extends AppServicesProvider {
         this.toastError(err.error);
       },
     });
-  }
-
-  convertAdditionalInfoToIterable(
-    additionalInfo: any,
-  ): { key: string; value: any }[] {
-    if (!additionalInfo || typeof additionalInfo !== "object") {
-      return [];
-    }
-
-    return Object.entries(additionalInfo).map(([key, value]) => ({ key, value }));
   }
 }

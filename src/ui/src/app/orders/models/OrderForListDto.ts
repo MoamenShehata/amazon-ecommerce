@@ -14,6 +14,6 @@ export interface OrderDetailsDto {
   createdAt: Date;
   canBeCanceled: boolean;
   items: OrderItemDto[];
-  deliveryAddress: string;
-  paymentInfo: string;
+  deliveryAddress: any;
+  paymentInfo: any;
 }

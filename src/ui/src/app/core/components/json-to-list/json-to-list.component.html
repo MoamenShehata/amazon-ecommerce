@@ -1,0 +1,5 @@
+<ul *ngIf="_entries.length>0">
+    <li *ngFor="let entry of _entries">
+        <strong>{{ entry.key }}:</strong> {{ entry.value }}
+    </li>
+</ul>

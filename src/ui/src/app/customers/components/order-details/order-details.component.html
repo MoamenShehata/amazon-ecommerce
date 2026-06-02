@@ -21,15 +21,7 @@
 
     <div class="card-text" *ngIf="orderDetails.statusAdditionalInfo">
       <strong>Additional Info:</strong>
-      <ul>
-        <li *ngFor="
-            let info of convertAdditionalInfoToIterable(
-              orderDetails.statusAdditionalInfo
-            )
-          ">
-          {{ info.key }}: {{ info.value }}
-        </li>
-      </ul>
+      <json-to-list [value]="orderDetails.statusAdditionalInfo" />
     </div>
 
     <h6>Items:</h6>
@@ -42,18 +34,11 @@
     </ul>
 
     <h6>Payment Information:</h6>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
-        {{ orderDetails.paymentInfo}}
-      </li>
-    </ul>
+    <json-to-list [value]="orderDetails.paymentInfo" />
 
-    <h6>Address:</h6>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
-        {{ orderDetails.deliveryAddress}}
-      </li>
-    </ul>
+    <h6>Deliver to Address:</h6>
+    <json-to-list [value]="orderDetails.deliveryAddress" />
+
 
     <button class="btn btn-danger" (click)="cancelOrder()" *ngIf="orderDetails.canBeCanceled">
       Cancel Order

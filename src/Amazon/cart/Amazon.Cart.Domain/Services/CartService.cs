@@ -97,7 +97,7 @@ public class CartService(
 
     private OrderCreateDto ConstructOrderRequest(ShoppingCart cart, object paymentInfo, CustomerDeliveryAddress deliverToAddressInfo)
     {
-        return new OrderCreateDto(cart.AggregatToProducts, paymentInfo, deliverToAddressInfo);
+        return new OrderCreateDto(cart.AggregatToProducts, paymentInfo, deliverToAddressInfo.AsOrderDeliveryAddress);
     }
 
     private async Task<RestResponse<bool>> CanOrderBeSatisifiedForCartAsync(ShoppingCart cart)

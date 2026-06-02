@@ -8,6 +8,6 @@
         decimal TotalAmount,
         bool CanBeCanceled,
         List<OrderItemDto> Items,
-        string PaymentInfo,
-        string DeliveryAddress);
+        object PaymentInfo,
+        object DeliveryAddress);
 }
