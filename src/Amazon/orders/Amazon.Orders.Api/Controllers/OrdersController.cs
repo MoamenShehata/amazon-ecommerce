@@ -28,4 +28,8 @@ public class OrdersController(OrdersAppService _service) : ApiControllerBase
 
         return RestResult(result);
     }
+
+
+    [HttpDelete("{orderId}")]
+    public async Task<IActionResult> CancelOrder(Guid orderId) => RestResult(await _service.CancelAsync(UserId, orderId));
 }

@@ -45,7 +45,4 @@ public class StatusesController(OrdersAppService _ordersAppService) : ApiControl
 
         return RestResult(await _ordersAppService.UpdateStatusAsync(UserId, orderId, request));
     }
-
-    //[HttpPut("{orderId}/cancel")]
-    //public async Task<IActionResult> CancelOrder(Guid orderId) => RestResult(await _service.CancelAsync(UserId, orderId));
 }

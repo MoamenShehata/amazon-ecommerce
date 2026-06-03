@@ -20,7 +20,7 @@ namespace Amazon.Orders.Application.Orders
     {
         public async Task<RestResponse<OrderDetailsDto>> GetByUserAsync(Guid requesterUserId, Guid orderId)
         {
-            var orderResult = await _ordersService.GetByUserAsync(requesterUserId, orderId);
+            var orderResult = await _ordersService.GetByUserForReadAsync(requesterUserId, orderId);
             if (!orderResult.IsSuccess)
                 return orderResult.MapTo(null as OrderDetailsDto);
 

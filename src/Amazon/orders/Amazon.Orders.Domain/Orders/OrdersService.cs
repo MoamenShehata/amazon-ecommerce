@@ -30,7 +30,7 @@ public class OrdersService(
         return RestResponse<Order>.Created(order, order.Id.ToString());
     }
 
-    public async Task<RestResponse<Order>> GetByUserAsync(Guid requesterUserId, Guid orderId)
+    public async Task<RestResponse<Order>> GetByUserForReadAsync(Guid requesterUserId, Guid orderId)
     {
         var order = await _ordersRepo.GetInstanceAsync(orderId);
         if (order is null)
@@ -45,7 +45,7 @@ public class OrdersService(
 
     public async Task<RestResponse<bool>> UpdateStatusAsync(Guid requesterUserId, Guid orderId, UpdateOrderStatusRequest request)
     {
-        var orderResult = await GetByUserAsync(requesterUserId, orderId);
+        var orderResult = await GetByUserForReadAsync(requesterUserId, orderId);
         if (!orderResult.IsSuccess)
             return orderResult.MapTo(false);
 
@@ -54,11 +54,19 @@ public class OrdersService(
 
     public async Task<RestResponse<bool>> CancelAsync(Guid requesterUserId, Guid orderId)
     {
-        var orderResult = await GetByUserAsync(requesterUserId, orderId);
-        if (!orderResult.IsSuccess)
-            return orderResult.MapTo(false);
+        var order = await _ordersRepo.GetInstanceAsync(orderId);
+        if (order is null)
+            return RestResponse<bool>.NotFound($"Order ({orderId}) was not found");
 
-        return TryCancelOrder(orderResult);
+        var stakeHolder = await _stakeHolders.GetInstanceAsync(requesterUserId);
+        if (stakeHolder is null)
+            return RestResponse<bool>.NotFound($"User was not found");
+
+        var canUserCancelOrder = stakeHolder.CanCancelOrder(order);
+        if (!canUserCancelOrder.IsSuccess)
+            return canUserCancelOrder.MapTo(false);
+
+        return TryCancelOrder(order);
     }
 
     private RestResponse<bool> TryCancelOrder(Order order)
