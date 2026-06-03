@@ -1,5 +1,7 @@
 ﻿using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
+using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.Orders.Events;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
@@ -30,8 +32,25 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 
 
     private readonly ICollection<OrderStatusChange> _history = new HashSet<OrderStatusChange>();
-    internal void UpdateStatus(OrderStatusChange newStatus) => _history.Add(newStatus);
+    internal void UpdateStatus(OrderStatusChange newStatus)
+    {
+        _history.Add(newStatus);
+
+        if (newStatus.State == OrderState.CustomerDelivered)
+            RaiseEvent(new OrderCompletedEvent(Id));
+    }
+
     public OrderStatusChange Status => _history.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+
+    public RestResponse<bool> TryUpdateTo(OrderState state, object withPayload)
+    {
+        var canUpdateStatusResult = Status.CanUpdateTo(state, withPayload);
+        if (!canUpdateStatusResult.IsSuccess)
+            return canUpdateStatusResult.MapTo(false);
+
+        UpdateStatus(canUpdateStatusResult.Value);
+        return RestResponse<bool>.Success(true);
+    }
 
     public void Cancel()
     {
@@ -40,28 +59,20 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
         RaiseEvent(new OrderCancelledEvent(Id));
     }
 
-    public void StartShipping(string trackingId, ShippingCompanyInfo shippingCompanyInfo)
-    {
-        UpdateStatus(new OrderShippingStartedStatus(Id, trackingId, shippingCompanyInfo));
+    //public void StartShipping(string trackingId, ShippingCompanyInfo shippingCompanyInfo)
+    //{
+    //    UpdateStatus(new OrderShippingStartedStatus(Id, trackingId, shippingCompanyInfo));
 
-        RaiseEvent(new OrderShippingStartedEvent(Id));
-    }
+    //    RaiseEvent(new OrderShippingStartedEvent(Id));
+    //}
 
-    public void DeliveryAccepted(DeliveryMember deliveryMember)
-    {
-        UpdateStatus(new OrderDeliveryRecievedStatus(Id, deliveryMember));
+    //public void DeliveryAccepted(DeliveryMember deliveryMember)
+    //{
+    //    UpdateStatus(new OrderDeliveryRecievedStatus(Id, deliveryMember));
 
-        RaiseEvent(new OrderRecievedByDeliveryGuyEvent(Id, deliveryMember.Name, deliveryMember.PhoneNumber));
-        // to send sms to the customer
-    }
-
-    public void Complete()
-    {
-        UpdateStatus(new OrderDeliveredStatus(Id));
-
-        RaiseEvent(new OrderCompletedEvent(Id));
-        // to send sms to the customer
-    }
+    //    RaiseEvent(new OrderRecievedByDeliveryGuyEvent(Id, deliveryMember.Name, deliveryMember.PhoneNumber));
+    //    // to send sms to the customer
+    //}
 
 
     #region Infra

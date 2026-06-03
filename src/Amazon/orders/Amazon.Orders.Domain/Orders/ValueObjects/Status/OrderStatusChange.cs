@@ -1,4 +1,5 @@
-﻿using Moamen.SDKs.SharedKernel.DDD.Definitions;
+﻿using Amazon.SharedKernel.API;
+using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
 namespace Amazon.Orders.Domain.Orders.ValueObjects.Status;
 
@@ -20,6 +21,24 @@ public abstract class OrderStatusChange : IdentifiedValue<int>
 
     public abstract bool CanBeCancelled { get; }
 
+    internal RestResponse<OrderStatusChange> CanUpdateTo(OrderState state, object withPayload)
+    {
+        if (state == OrderState.Cancelled)
+            throw new InvalidOperationException("Order cancellation is a seperate process and should be handled indepednetly");
+
+        var nextCandidateStatusResult = CreateNextStatus(withPayload);
+
+        if (nextCandidateStatusResult.Value is null || nextCandidateStatusResult.Value.State != state)
+            return RestResponse<OrderStatusChange>.BadRequest($"Order status cannot be updated to {state}");
+
+        if (!nextCandidateStatusResult.IsSuccess)
+            return nextCandidateStatusResult;
+
+        return RestResponse<OrderStatusChange>.Success(nextCandidateStatusResult);
+    }
+
+    protected abstract RestResponse<OrderStatusChange> CreateNextStatus(object payload);
+
     #region Infrastucture
     private OrderStatusChange() { }
 
@@ -30,44 +49,70 @@ public class OrderCreatedStatus(Guid orderId) : OrderStatusChange(orderId, Order
 {
     private OrderCreatedStatus() : this(Guid.Empty) { }
     public override bool CanBeCancelled => true;
+
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload) => RestResponse<OrderStatusChange>.Success(new OrderProcessingStatus(OrderId));
 }
 
 public class OrderCancelledStatus(Guid orderId) : OrderStatusChange(orderId, OrderState.Cancelled)
 {
     private OrderCancelledStatus() : this(Guid.Empty) { }
     public override bool CanBeCancelled => false;
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload) => RestResponse<OrderStatusChange>.BadRequest("Order is canncelled and cannot be handled in anyway!");
 }
 
 public class OrderProcessingStatus(Guid orderId) : OrderStatusChange(orderId, OrderState.Processing)
 {
     private OrderProcessingStatus() : this(Guid.Empty) { }
     public override bool CanBeCancelled => false;
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload)
+    {
+        if (payload is not ShippingCompanyInfo shippingInfo)
+            return RestResponse<OrderStatusChange>.BadRequest("Shipping Info payload is invalid!");
+
+        return RestResponse<OrderStatusChange>.Success(new OrderShippingStartedStatus(OrderId, shippingInfo));
+    }
 }
 
 public class OrderShippingStartedStatus : OrderStatusChange
 {
     public ShippingCompanyInfo CompanyInfo { get; private set; }
-    public string TrackingId { get; private set; }
-    public OrderShippingStartedStatus(Guid orderId, string trackingId, ShippingCompanyInfo companyInfo) : base(orderId, OrderState.ShippingStarted)
+    public OrderShippingStartedStatus(Guid orderId, ShippingCompanyInfo companyInfo) : base(orderId, OrderState.ShippingStarted)
     {
-        TrackingId = trackingId;
         CompanyInfo = companyInfo;
     }
 
     public override object AdditionalInfo => CompanyInfo;
     public override bool CanBeCancelled => false;
 
-    private OrderShippingStartedStatus() : this(Guid.Empty, null, null) { }
+    private OrderShippingStartedStatus() : this(Guid.Empty, null) { }
+
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload)
+    {
+        //if payload is not valid tracking number string
+        //return RestResponse<OrderStatusChange>.BadRequest("Invalid tracking id!");
+
+        return RestResponse<OrderStatusChange>.Success(new OrderShippedStatus(OrderId, payload.ToString()));
+    }
 }
 
 public class OrderShippedStatus : OrderStatusChange
 {
-    public OrderShippedStatus(Guid orderId) : base(orderId, OrderState.Shipped)
+    public string TrackingId { get; private set; }
+    public OrderShippedStatus(Guid orderId, string trackingId) : base(orderId, OrderState.Shipped)
     {
+        TrackingId = trackingId;
     }
 
     public override bool CanBeCancelled => false;
-    private OrderShippedStatus() : this(Guid.Empty) { }
+    private OrderShippedStatus() : this(Guid.Empty, null) { }
+
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload)
+    {
+        if (payload is not DeliveryMember deliveryMemberInfo)
+            return RestResponse<OrderStatusChange>.BadRequest("Delivery Member payload is invalid!");
+
+        return RestResponse<OrderStatusChange>.Success(new OrderDeliveryRecievedStatus(OrderId, deliveryMemberInfo));
+    }
 }
 
 public class OrderDeliveryRecievedStatus : OrderStatusChange
@@ -82,6 +127,11 @@ public class OrderDeliveryRecievedStatus : OrderStatusChange
     public override object AdditionalInfo => DeliveryMember;
     public override bool CanBeCancelled => false;
     private OrderDeliveryRecievedStatus() : this(Guid.Empty, null) { }
+
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload)
+    {
+        return RestResponse<OrderStatusChange>.Success(new OrderDeliveredStatus(OrderId));
+    }
 }
 
 public class OrderDeliveredStatus(Guid orderId) : OrderStatusChange(orderId, OrderState.CustomerDelivered)
@@ -89,4 +139,5 @@ public class OrderDeliveredStatus(Guid orderId) : OrderStatusChange(orderId, Ord
     public override bool CanBeCancelled => false;
 
     private OrderDeliveredStatus() : this(Guid.Empty) { }
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload) => RestResponse<OrderStatusChange>.BadRequest("Order is completed and cannot be updated to any status!");
 }

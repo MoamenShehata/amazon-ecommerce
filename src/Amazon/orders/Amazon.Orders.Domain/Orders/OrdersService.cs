@@ -43,6 +43,15 @@ public class OrdersService(
         return stakeHolder.CanAccessOrder(order);
     }
 
+    public async Task<RestResponse<bool>> UpdateStatusAsync(Guid requesterUserId, Guid orderId, UpdateOrderStatusRequest request)
+    {
+        var orderResult = await GetByUserAsync(requesterUserId, orderId);
+        if (!orderResult.IsSuccess)
+            return orderResult.MapTo(false);
+
+        return orderResult.Value.TryUpdateTo(request.To, request.Payload);
+    }
+
     public async Task<RestResponse<bool>> CancelAsync(Guid requesterUserId, Guid orderId)
     {
         var orderResult = await GetByUserAsync(requesterUserId, orderId);
@@ -52,102 +61,12 @@ public class OrdersService(
         return TryCancelOrder(orderResult);
     }
 
-    public async Task<RestResponse<bool>> StartProcessingAsync(Guid requesterUserId, Guid orderId)
-    {
-        var orderResult = await GetByUserAsync(requesterUserId, orderId);
-        if (!orderResult.IsSuccess)
-            return orderResult.MapTo(false);
-
-        return TryStartProcessingAsync(orderResult);
-    }
-
-    public async Task<RestResponse<bool>> StartShippingAsync(Guid requesterUserId, Guid orderId)
-    {
-        var orderResult = await GetByUserAsync(requesterUserId, orderId);
-        if (!orderResult.IsSuccess)
-            return orderResult.MapTo(false);
-
-        return TryStartShippingAsync(orderResult);
-    }
-
-    public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid requesterUserId, Guid orderId)
-    {
-        var orderResult = await GetByUserAsync(requesterUserId, orderId);
-        if (!orderResult.IsSuccess)
-            return orderResult.MapTo(false);
-
-        return TryCompleteShippingAsync(orderResult);
-    }
-
-    public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid requesterUserId, Guid orderId)
-    {
-        var orderResult = await GetByUserAsync(requesterUserId, orderId);
-        if (!orderResult.IsSuccess)
-            return orderResult.MapTo(false);
-
-        return TryDeliveryAcceptedAsync(orderResult);
-    }
-
-    public async Task<RestResponse<bool>> CompletedAsync(Guid requesterUserId, Guid orderId)
-    {
-        var orderResult = await GetByUserAsync(requesterUserId, orderId);
-        if (!orderResult.IsSuccess)
-            return orderResult.MapTo(false);
-
-        return TryCompleteAsync(orderResult);
-    }
-
     private RestResponse<bool> TryCancelOrder(Order order)
     {
         if (!order.Status.CanBeCancelled)
             return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be cancelled!");
 
         order.Cancel();
-        return RestResponse<bool>.Success(true);
-    }
-
-    private RestResponse<bool> TryStartProcessingAsync(Order order)
-    {
-        if (order.Status.State != OrderState.Created)
-            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be started to process!");
-
-        order.UpdateStatus(new OrderProcessingStatus(order.Id));
-        return RestResponse<bool>.Success(true);
-    }
-
-    private RestResponse<bool> TryStartShippingAsync(Order order)
-    {
-        if (order.Status.State != OrderState.Processing)
-            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be started to shipp!");
-
-        order.StartShipping("95874ab-87", new ShippingCompanyInfo("Egypt, Sharqia, 75, 10th of Ramdan Ordnia road", " + 201645454", "Bosta", "https//www.google.com"));
-        return RestResponse<bool>.Success(true);
-    }
-
-    private RestResponse<bool> TryCompleteShippingAsync(Order order)
-    {
-        if (order.Status.State != OrderState.ShippingStarted)
-            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be updated to ship completed!");
-
-        order.UpdateStatus(new OrderShippedStatus(order.Id));
-        return RestResponse<bool>.Success(true);
-    }
-
-    private RestResponse<bool> TryDeliveryAcceptedAsync(Order order)
-    {
-        if (order.Status.State != OrderState.Shipped)
-            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot be updated to delivery accepted!");
-
-        order.DeliveryAccepted(new DeliveryMember("Mohsen abady", "01127970304"));
-        return RestResponse<bool>.Success(true);
-    }
-
-    private RestResponse<bool> TryCompleteAsync(Order order)
-    {
-        if (order.Status.State != OrderState.DeliveryRecieved)
-            return RestResponse<bool>.BadRequest($"Order of id {order.Id} cannot close and complete the order!");
-
-        order.Complete();
         return RestResponse<bool>.Success(true);
     }
 }

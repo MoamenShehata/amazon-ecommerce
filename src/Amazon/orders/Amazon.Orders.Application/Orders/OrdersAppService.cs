@@ -1,12 +1,15 @@
 ﻿using Amazon.Orders.Application.Orders.Dtos;
 using Amazon.Orders.Application.Orders.Mappers;
+using Amazon.Orders.Application.Orders.Validators;
 using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
+using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.Repository.Pagination;
 using Moamen.SDKs.SharedKernel;
+using System.Text.Json;
 
 namespace Amazon.Orders.Application.Orders
 {
@@ -45,69 +48,19 @@ namespace Amazon.Orders.Application.Orders
             return result.MapTo((OrderCreatedDto)null);
         }
 
+        public async Task<RestResponse<bool>> UpdateStatusAsync(Guid requesterUserId, Guid orderId, UpdateOrderStatusRequest request)
+        {
+            var result = await _ordersService.UpdateStatusAsync(requesterUserId, orderId, request);
+            if (!result.IsSuccess)
+                return result;
+
+            await _unitOfWork.CommitAsync();
+            return RestResponse<bool>.Success(true);
+        }
+
         public async Task<RestResponse<bool>> CancelAsync(Guid requesterUserId, Guid orderId)
         {
             var result = await _ordersService.CancelAsync(requesterUserId, orderId);
-            if (!result.IsSuccess)
-                return result;
-
-            await _unitOfWork.CommitAsync();
-            return RestResponse<bool>.Success(true);
-        }
-
-        public async Task<RestResponse<bool>> StartProcessingAsync(Guid requesterUserId, Guid orderId)
-        {
-            // validate user permissions
-
-            var result = await _ordersService.StartProcessingAsync(requesterUserId, orderId);
-            if (!result.IsSuccess)
-                return result;
-
-            await _unitOfWork.CommitAsync();
-            return RestResponse<bool>.Success(true);
-        }
-
-        public async Task<RestResponse<bool>> StartShippingAsync(Guid requesterUserId, Guid orderId)
-        {
-            // validate user permissions
-
-            var result = await _ordersService.StartShippingAsync(requesterUserId, orderId);
-            if (!result.IsSuccess)
-                return result;
-
-            await _unitOfWork.CommitAsync();
-            return RestResponse<bool>.Success(true);
-        }
-
-        public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid requesterUserId, Guid orderId)
-        {
-            // validate user permissions
-
-            var result = await _ordersService.ShippingCompletedAsync(requesterUserId, orderId);
-            if (!result.IsSuccess)
-                return result;
-
-            await _unitOfWork.CommitAsync();
-            return RestResponse<bool>.Success(true);
-        }
-
-        public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid requesterUserId, Guid orderId)
-        {
-            // validate user permissions
-
-            var result = await _ordersService.DeliveryAcceptedAsync(requesterUserId, orderId);
-            if (!result.IsSuccess)
-                return result;
-
-            await _unitOfWork.CommitAsync();
-            return RestResponse<bool>.Success(true);
-        }
-
-        public async Task<RestResponse<bool>> CompletedAsync(Guid requesterUserId, Guid orderId)
-        {
-            // validate user permissions
-
-            var result = await _ordersService.CompletedAsync(requesterUserId, orderId);
             if (!result.IsSuccess)
                 return result;
 
