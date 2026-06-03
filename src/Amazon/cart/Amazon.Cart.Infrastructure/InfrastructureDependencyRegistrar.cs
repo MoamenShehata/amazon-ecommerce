@@ -5,6 +5,7 @@ using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Infrastructure.Data;
 using Amazon.Cart.Infrastructure.Integrations;
 using Amazon.Cart.Infrastructure.Integrations.Customers;
+using Amazon.Cart.Infrastructure.Integrations.Customers.Adapters;
 using Amazon.Cart.Infrastructure.Integrations.Orders;
 using Amazon.Cart.Infrastructure.Services;
 using Amazon.SharedKernel.Common.Services;
@@ -46,6 +47,7 @@ public static class InfrastructureDependencyRegistrar
             .AddScoped<ICustomersIntegration, CustomersIntegration>()
             .AddScoped<IUserClaimsStore, CartUserClaimsStore>()
             .AddScoped<IPaymentCardsService, PaymentCardsService>()
+            .AddScoped<PaymentCardAdapter>()
             ;
 
         return services;

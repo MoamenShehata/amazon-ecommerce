@@ -37,7 +37,8 @@ public class CustomersContext : DbContextBase
 
                     b.OwnsOne(x => x.Number, bb =>
                     {
-                        bb.Property(x => x.Value).HasColumnName("Number").HasField("_cardNumber").IsRequired();
+                        bb.Property(x => x.Value).HasColumnName("Number").IsRequired();
+                        bb.Property(x => x.Masked);
                     });
 
                     b.OwnsOne(x => x.Expiration, bb =>

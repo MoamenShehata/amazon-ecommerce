@@ -2,6 +2,7 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using static Amazon.Customers.Domain.ValueObjects.PaymentCardNumber;
 
 namespace Amazon.Customers.Application;
 
@@ -40,6 +41,7 @@ public static class ApplicationDependencyRegistrar
     {
         services
             .AddScoped<CustomerService>()
+            .AddScoped<PaymentCardNumberFactory>()
             ;
 
         return services;

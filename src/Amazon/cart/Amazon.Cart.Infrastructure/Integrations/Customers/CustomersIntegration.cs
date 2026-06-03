@@ -9,7 +9,9 @@ namespace Amazon.Cart.Infrastructure.Integrations.Customers;
 
 public record PaymentCardDto(int Id, string CardHolder, string OriginalNumber, string MaskedNumber, int ExpiryMonth, int ExpiryYear);
 
-public class CustomersIntegration(ICustomersIntegrationClient _customersClient) : ICustomersIntegration
+public class CustomersIntegration(
+    ICustomersIntegrationClient _customersClient,
+    PaymentCardAdapter _paymentCardAdapter) : ICustomersIntegration
 {
     public async Task<RestResponse<CustomerDeliveryAddress>> GetDeliveryAddressOrDefaultAsync(int? addressId)
     {
@@ -31,7 +33,7 @@ public class CustomersIntegration(ICustomersIntegrationClient _customersClient) 
         {
             var jsonResponse = await _customersClient.GetCurrentLoggedInCustomerPaymentCardAsync(cardId);
 
-            var paymentCard = await jsonResponse.ReadFromJsonAsync<PaymentCardDto>();
+            var paymentCard = await _paymentCardAdapter.FromResponseAsync(jsonResponse);
 
             return paymentCard is null
                 ? RestResponse<CustomerPaymentCard>.NotFound("Payment card not found")

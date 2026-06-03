@@ -4,12 +4,14 @@ using Amazon.Customers.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
+using static Amazon.Customers.Domain.ValueObjects.PaymentCardNumber;
 
 namespace Amazon.Customers.Domain;
 
 public class CustomerService(
     IRepository<Customer, Guid> _repository,
-    IAddressService _addressService
+    IAddressService _addressService,
+    PaymentCardNumberFactory _cardNumberFactory
     )
 {
     public async Task<RestResponse<Customer>> GetByIdAsync(Guid customerId)
@@ -40,7 +42,9 @@ public class CustomerService(
         if (!customerResult.IsSuccess)
             return customerResult.MapTo(null as PaymentCard);
 
-        return customerResult.Value.AddPaymentCard(new PaymentCardInfo(holderName, new PaymentCardNumber(number), new PaymentCardExpiration(expiresAt)));
+        var cardNumber = await _cardNumberFactory.CreateSecuredAsync(number);
+
+        return customerResult.Value.AddPaymentCard(new PaymentCardInfo(holderName, cardNumber, new PaymentCardExpiration(expiresAt)));
     }
 
     public async Task<RestResponse<bool>> AddShippingAddressAsync(Guid customerId, CityInfo city, HouseInfo house, bool isDefault)

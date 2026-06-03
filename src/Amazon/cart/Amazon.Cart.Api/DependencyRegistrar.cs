@@ -4,8 +4,6 @@ using Amazon.Cart.Application;
 using Amazon.Cart.Application.Services;
 using Amazon.Cart.Infrastructure;
 using Amazon.SharedKernel.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Amazon.Cart.Api;
 
@@ -16,6 +14,7 @@ public static class DependencyRegistrar
         services
             .AddSharedJobs()
             .RegisterSharedServices()
+            .RegisterOtpServices()
             .AddJob<PurgeExpiredCartsJob>()
             .AddScoped<IAuthenticationService, AuthenticationService>()
             .AddHttpContextAccessor()

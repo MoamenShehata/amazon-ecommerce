@@ -63,7 +63,7 @@ public class CustomerAppService(
         var existingProfile = await _profilesService.GetByIdAsync(customerId);
         if (existingProfile is null) return;
 
-        await _profilesService.UpdatePaymentCardsAsync(customerId, customerResult.Value.PaymentCards.Select(x => new PaymentCardDto(x.Id, x.Info.HolderName, x.Info.Number.Value, x.Info.Expiration.ToString())).ToList());
+        await _profilesService.UpdatePaymentCardsAsync(customerId, customerResult.Value.PaymentCards.Select(x => new PaymentCardDto(x.Id, x.Info.HolderName, x.Info.Number.Masked, x.Info.Expiration.ToString())).ToList());
     }
 
     public async Task<RestResponse<CustomerProfile>> GetCustomerProfileAsync(Guid customerId)
@@ -93,7 +93,7 @@ public class CustomerAppService(
 
         await _unitOfWork.CommitAsync();
 
-        return RestResponse<PaymentCardDto>.Success(new PaymentCardDto(createResult.Value.Id, createResult.Value.Info.HolderName, createResult.Value.Info.Number.Value, createResult.Value.Info.Expiration.ToString()));
+        return RestResponse<PaymentCardDto>.Success(new PaymentCardDto(createResult.Value.Id, createResult.Value.Info.HolderName, createResult.Value.Info.Number.Masked, createResult.Value.Info.Expiration.ToString()));
     }
 
     public async Task<RestResponse<PaymentCardForIntegrationDto>> GetPaymentCardAsync(Guid customerId, int cardId)
@@ -102,6 +102,6 @@ public class CustomerAppService(
         if (!cardResult.IsSuccess)
             return cardResult.MapTo(null as PaymentCardForIntegrationDto);
 
-        return RestResponse<PaymentCardForIntegrationDto>.Success(new PaymentCardForIntegrationDto(cardResult.Value.Id, cardResult.Value.Info.HolderName, cardResult.Value.Info.Number.OriginalValue, cardResult.Value.Info.Number.Value, cardResult.Value.Info.Expiration.Month, cardResult.Value.Info.Expiration.Year));
+        return RestResponse<PaymentCardForIntegrationDto>.Success(new PaymentCardForIntegrationDto(cardResult.Value.Id, cardResult.Value.Info.HolderName, cardResult.Value.Info.Number.Value, cardResult.Value.Info.Number.Masked, cardResult.Value.Info.Expiration.Month, cardResult.Value.Info.Expiration.Year));
     }
 }

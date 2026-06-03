@@ -12,12 +12,21 @@ namespace Amazon.SharedKernel.Extensions
         public static IServiceCollection RegisterSharedServices(this IServiceCollection services)
         {
             services
-                .AddScoped<IOtpService, OtpService>()
                 .AddScoped<ISmsService, SmsService>()
                 .AddScoped<ITextGenerator, TextGenerator>()
+                .AddScoped<ITextServices, TextServices>()
                 ;
 
             services.RegisterHttpClientServices();
+
+            return services;
+        }
+        
+        public static IServiceCollection RegisterOtpServices(this IServiceCollection services)
+        {
+            services
+                .AddScoped<IOtpService, OtpService>()
+                ;
 
             return services;
         }
@@ -63,6 +72,8 @@ namespace Amazon.SharedKernel.Extensions
 
         private static void RegisterHttpClientServices(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+
             services
                 .AddTransient<InjectJwtFromCurrentSessionHandler>()
                 .AddTransient<HttpClientErrorHandler>()
