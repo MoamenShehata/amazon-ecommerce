@@ -8,7 +8,7 @@ namespace Amazon.Orders.Domain.Orders;
 
 public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 {
-    public CustomerInfo Customer { get; private set; }
+    public CustomerInfo Owner { get; private set; }
     public string PaymentInfo { get; private set; }
     public string DeliveryAddress { get; private set; }
 
@@ -18,7 +18,7 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 
     public Order(Guid orderId, CustomerInfo customer, List<OrderItem> orderItems, string paymentInfo, string deliveryAddress) : base(orderId)
     {
-        Customer = customer;
+        Owner = customer;
         _orderItems = orderItems;
         PaymentInfo = paymentInfo;
         DeliveryAddress = deliveryAddress;

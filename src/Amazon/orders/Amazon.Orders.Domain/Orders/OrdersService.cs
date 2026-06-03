@@ -2,6 +2,7 @@
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.Orders.Domain.Products;
+using Amazon.Orders.Domain.Stakeholders;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
@@ -10,6 +11,7 @@ namespace Amazon.Orders.Domain.Orders;
 
 public class OrdersService(
     IRepository<Order, Guid> _ordersRepo,
+    IRepository<StakeHolder, Guid> _stakeHolders,
     ProductsService _productsService,
     OrderFactory _orderFactory
     )
@@ -28,63 +30,71 @@ public class OrdersService(
         return RestResponse<Order>.Created(order, order.Id.ToString());
     }
 
-    public async Task<RestResponse<Order>> GetByIdAsync(Guid id)
+    public async Task<RestResponse<Order>> GetByUserAsync(Guid requesterUserId, Guid orderId)
     {
-        var order = await _ordersRepo.GetInstanceAsync(id);
+        var order = await _ordersRepo.GetInstanceAsync(orderId);
         if (order is null)
-            return RestResponse<Order>.NotFound($"Order ({id}) was not found");
+            return RestResponse<Order>.NotFound($"Order ({orderId}) was not found");
+
+        var stakeHolder = await _stakeHolders.GetInstanceAsync(requesterUserId);
+        if (stakeHolder is null)
+            return RestResponse<Order>.NotFound($"User was not found");
+
+        var canUserAccessOrderResult = stakeHolder.CanAccessOrder(order);
+        if (!canUserAccessOrderResult.IsSuccess)
+            return canUserAccessOrderResult;
 
         return RestResponse<Order>.Success(order);
     }
 
-    public async Task<RestResponse<bool>> CancelAsync(Guid orderId)
+    public async Task<RestResponse<bool>> CancelAsync(Guid requesterUserId, Guid orderId)
     {
-        var orderResult = await GetByIdAsync(orderId);
+        var orderResult = await GetByUserAsync(requesterUserId, orderId);
         if (!orderResult.IsSuccess)
             return orderResult.MapTo(false);
 
         return TryCancelOrder(orderResult);
     }
 
-    public async Task<RestResponse<bool>> StartProcessingAsync(Guid orderId)
+    public async Task<RestResponse<bool>> StartProcessingAsync(Guid requesterUserId, Guid orderId)
     {
-        var orderResult = await GetByIdAsync(orderId);
+        var orderResult = await GetByUserAsync(requesterUserId, orderId);
         if (!orderResult.IsSuccess)
             return orderResult.MapTo(false);
 
         return TryStartProcessingAsync(orderResult);
     }
 
-    public async Task<RestResponse<bool>> StartShippingAsync(Guid orderId)
+    public async Task<RestResponse<bool>> StartShippingAsync(Guid requesterUserId, Guid orderId)
     {
-        var orderResult = await GetByIdAsync(orderId);
+        var orderResult = await GetByUserAsync(requesterUserId, orderId);
         if (!orderResult.IsSuccess)
             return orderResult.MapTo(false);
 
         return TryStartShippingAsync(orderResult);
     }
 
-    public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid orderId)
+    public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid requesterUserId, Guid orderId)
     {
-        var orderResult = await GetByIdAsync(orderId);
+        var orderResult = await GetByUserAsync(requesterUserId, orderId);
         if (!orderResult.IsSuccess)
             return orderResult.MapTo(false);
 
         return TryCompleteShippingAsync(orderResult);
     }
 
-    public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid orderId)
+    public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid requesterUserId, Guid orderId)
     {
-        var orderResult = await GetByIdAsync(orderId);
+        var orderResult = await GetByUserAsync(requesterUserId, orderId);
         if (!orderResult.IsSuccess)
             return orderResult.MapTo(false);
 
         return TryDeliveryAcceptedAsync(orderResult);
     }
 
-    public async Task<RestResponse<bool>> CompletedAsync(Guid orderId)
+    public async Task<RestResponse<bool>> CompletedAsync(Guid requesterUserId, Guid orderId)
     {
-        var orderResult = await GetByIdAsync(orderId);
+        var orderResult = await GetByUserAsync(requesterUserId, orderId);
         if (!orderResult.IsSuccess)
             return orderResult.MapTo(false);
 

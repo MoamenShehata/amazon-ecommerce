@@ -1,8 +1,9 @@
-﻿using System.Net;
-using Amazon.Orders.Domain.Orders;
+﻿using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.Factories;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Products;
+using Amazon.Orders.Domain.Stakeholders;
+using System.Net;
 
 namespace Amazon.Orders.Domain.Tests.Orders
 {
@@ -21,6 +22,7 @@ namespace Amazon.Orders.Domain.Tests.Orders
 
             return new OrdersService(
                 RepoFactory.Create<Order, Guid>(),
+                RepoFactory.Create<StakeHolder, Guid>(),
                 productService,
                 orderFactory
                 );

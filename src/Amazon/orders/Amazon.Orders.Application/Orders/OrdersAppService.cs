@@ -15,9 +15,9 @@ namespace Amazon.Orders.Application.Orders
         OrdersService _ordersService,
         IUnitOfWork _unitOfWork)
     {
-        public async Task<RestResponse<OrderDetailsDto>> GetByIdAsync(Guid id)
+        public async Task<RestResponse<OrderDetailsDto>> GetByUserAsync(Guid requesterUserId, Guid orderId)
         {
-            var orderResult = await _ordersService.GetByIdAsync(id);
+            var orderResult = await _ordersService.GetByUserAsync(requesterUserId, orderId);
             if (!orderResult.IsSuccess)
                 return orderResult.MapTo(null as OrderDetailsDto);
 
@@ -27,8 +27,8 @@ namespace Amazon.Orders.Application.Orders
         public async Task<PagedResult<OrderForListDto, DateTime>> GetCustomerOrdersPageAsync(Guid customerId, SearchOrdersRequest pageRequest)
         {
             var page = pageRequest.PageNumber == 1
-            ? await _ordersRepo.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn, [x => x.Customer.Id == customerId])
-            : await _ordersRepo.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue), [x => x.Customer.Id == customerId]);
+            ? await _ordersRepo.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn, [x => x.Owner.Id == customerId])
+            : await _ordersRepo.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue), [x => x.Owner.Id == customerId]);
 
             return new PagedResult<OrderForListDto, DateTime>(page.Items.Select(o => o.ToForListDto()), page.TotalCount, page.LastSeenValue);
         }
@@ -45,9 +45,9 @@ namespace Amazon.Orders.Application.Orders
             return result.MapTo((OrderCreatedDto)null);
         }
 
-        public async Task<RestResponse<bool>> CancelAsync(Guid orderId)
+        public async Task<RestResponse<bool>> CancelAsync(Guid requesterUserId, Guid orderId)
         {
-            var result = await _ordersService.CancelAsync(orderId);
+            var result = await _ordersService.CancelAsync(requesterUserId, orderId);
             if (!result.IsSuccess)
                 return result;
 
@@ -55,11 +55,11 @@ namespace Amazon.Orders.Application.Orders
             return RestResponse<bool>.Success(true);
         }
 
-        public async Task<RestResponse<bool>> StartProcessingAsync(Guid orderId)
+        public async Task<RestResponse<bool>> StartProcessingAsync(Guid requesterUserId, Guid orderId)
         {
             // validate user permissions
 
-            var result = await _ordersService.StartProcessingAsync(orderId);
+            var result = await _ordersService.StartProcessingAsync(requesterUserId, orderId);
             if (!result.IsSuccess)
                 return result;
 
@@ -67,11 +67,11 @@ namespace Amazon.Orders.Application.Orders
             return RestResponse<bool>.Success(true);
         }
 
-        public async Task<RestResponse<bool>> StartShippingAsync(Guid orderId)
+        public async Task<RestResponse<bool>> StartShippingAsync(Guid requesterUserId, Guid orderId)
         {
             // validate user permissions
 
-            var result = await _ordersService.StartShippingAsync(orderId);
+            var result = await _ordersService.StartShippingAsync(requesterUserId, orderId);
             if (!result.IsSuccess)
                 return result;
 
@@ -79,11 +79,11 @@ namespace Amazon.Orders.Application.Orders
             return RestResponse<bool>.Success(true);
         }
 
-        public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid orderId)
+        public async Task<RestResponse<bool>> ShippingCompletedAsync(Guid requesterUserId, Guid orderId)
         {
             // validate user permissions
 
-            var result = await _ordersService.ShippingCompletedAsync(orderId);
+            var result = await _ordersService.ShippingCompletedAsync(requesterUserId, orderId);
             if (!result.IsSuccess)
                 return result;
 
@@ -91,11 +91,11 @@ namespace Amazon.Orders.Application.Orders
             return RestResponse<bool>.Success(true);
         }
 
-        public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid orderId)
+        public async Task<RestResponse<bool>> DeliveryAcceptedAsync(Guid requesterUserId, Guid orderId)
         {
             // validate user permissions
 
-            var result = await _ordersService.DeliveryAcceptedAsync(orderId);
+            var result = await _ordersService.DeliveryAcceptedAsync(requesterUserId, orderId);
             if (!result.IsSuccess)
                 return result;
 
@@ -103,11 +103,11 @@ namespace Amazon.Orders.Application.Orders
             return RestResponse<bool>.Success(true);
         }
 
-        public async Task<RestResponse<bool>> CompletedAsync(Guid orderId)
+        public async Task<RestResponse<bool>> CompletedAsync(Guid requesterUserId, Guid orderId)
         {
             // validate user permissions
 
-            var result = await _ordersService.CompletedAsync(orderId);
+            var result = await _ordersService.CompletedAsync(requesterUserId, orderId);
             if (!result.IsSuccess)
                 return result;
 

@@ -5,6 +5,7 @@ using Amazon.Orders.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amazon.Orders.Infrastructure.Migrations
 {
     [DbContext(typeof(OrdersContext))]
-    partial class OrdersContextModelSnapshot : ModelSnapshot
+    [Migration("20260603055115_Add_Stakeholders")]
+    partial class Add_Stakeholders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,11 +153,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -165,8 +163,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StakeHolder");
-
-                    b.HasDiscriminator().HasValue("StakeHolder");
 
                     b.UseTphMappingStrategy();
                 });
@@ -252,27 +248,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("OrderShippingStartedStatus");
-                });
-
-            modelBuilder.Entity("Amazon.Orders.Domain.Stakeholders.AdminUser", b =>
-                {
-                    b.HasBaseType("Amazon.Orders.Domain.Stakeholders.StakeHolder");
-
-                    b.HasDiscriminator().HasValue("AdminUser");
-                });
-
-            modelBuilder.Entity("Amazon.Orders.Domain.Stakeholders.Customer", b =>
-                {
-                    b.HasBaseType("Amazon.Orders.Domain.Stakeholders.StakeHolder");
-
-                    b.HasDiscriminator().HasValue("Customer");
-                });
-
-            modelBuilder.Entity("Amazon.Orders.Domain.Stakeholders.DeliveryUser", b =>
-                {
-                    b.HasBaseType("Amazon.Orders.Domain.Stakeholders.StakeHolder");
-
-                    b.HasDiscriminator().HasValue("DeliveryUser");
                 });
 
             modelBuilder.Entity("Amazon.Orders.Domain.Orders.Order", b =>

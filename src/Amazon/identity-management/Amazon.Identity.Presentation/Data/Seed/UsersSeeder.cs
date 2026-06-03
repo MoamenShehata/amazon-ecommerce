@@ -1,4 +1,6 @@
 ﻿using Amazon.Identity.Presentation.Models;
+using Amazon.SharedKernel.Customers.Events;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 
 namespace Amazon.Identity.Presentation.Data.Seed;
@@ -10,6 +12,7 @@ public static class UsersSeeder
         using var scope = serviceProvider.CreateScope();
 
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
 
         var adminDefaultEmail = "admin@amazon.com";
         var adminDefaultPassword = "a@A123456789";
@@ -22,6 +25,7 @@ public static class UsersSeeder
                 Email = adminDefaultEmail,
                 UserName = adminDefaultEmail,
                 EmailConfirmed = true,
+                PhoneNumber = "01007168536"
             };
 
             var adminUserCreationResult = await userManager.CreateAsync(adminUserToCreate, adminDefaultPassword);
@@ -30,6 +34,8 @@ public static class UsersSeeder
                     adminUserCreationResult.Errors.Select(e => e.Description)));
 
             await userManager.AddToRoleAsync(adminUserToCreate, "Admin");
+
+            await publishEndpoint.Publish(new AdminUserAddedEvent(Guid.Parse(adminUserToCreate.Id), adminUserToCreate.Email, adminUserToCreate.PhoneNumber));
         }
     }
 }

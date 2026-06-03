@@ -3,6 +3,7 @@ using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.Orders.Domain.Products;
+using Amazon.Orders.Domain.Stakeholders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -48,6 +49,10 @@ public class OrdersContext : DbContextBase
         });
 
         modelBuilder.Entity<OrderDeliveredStatus>();
+
+        modelBuilder.Entity<AdminUser>();
+        modelBuilder.Entity<Customer>();
+        modelBuilder.Entity<DeliveryUser>();
 
         base.OnModelCreating(modelBuilder);
     }

@@ -27,8 +27,9 @@ export class CustomerShippingAddressFormComponent extends AppServicesProvider {
       postalCode: ["", Validators.required],
     }),
     house: this.fb.group({
-      street: ["", Validators.required],
+      street: ["", [Validators.required]],
       buildingNumber: [null, [Validators.required, Validators.min(1)]],
+      phoneNumber: [null, [Validators.required]],
       apartmentNumber: [null],
     }),
     isDefault: [false],

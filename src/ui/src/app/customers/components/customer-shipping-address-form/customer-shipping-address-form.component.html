@@ -1,8 +1,4 @@
-<form
-  [formGroup]="shippingAddressForm"
-  (ngSubmit)="submit()"
-  class="container mt-3"
->
+<form [formGroup]="shippingAddressForm" (ngSubmit)="submit()" class="container mt-3">
   <div class="row">
     <div class="col-12 mb-3">
       <h4>Shipping Address</h4>
@@ -12,141 +8,98 @@
   <div formGroupName="city" class="row g-3 mb-3">
     <div class="col-md-4">
       <label for="countryId" class="form-label">Country</label>
-      <select
-        id="countryId"
-        class="form-select"
-        formControlName="countryId"
-        (change)="onCountrySelected($event)"
-      >
+      <select id="countryId" class="form-select" formControlName="countryId" (change)="onCountrySelected($event)">
         <option value="null" disabled selected>Select Country</option>
         <option *ngFor="let country of countries" [value]="country.id">
           {{ country.name }}
         </option>
       </select>
 
-      <div
-        class="invalid-feedback d-block"
-        *ngIf="
+      <div class="invalid-feedback d-block" *ngIf="
           shippingAddressForm.get('city.countryId')?.touched &&
           shippingAddressForm.get('city.countryId')?.invalid
-        "
-      >
+        ">
         Country is required.
       </div>
     </div>
 
     <div class="col-md-4">
       <label for="cityId" class="form-label">City</label>
-      <select
-        id="cityId"
-        class="form-select"
-        formControlName="cityId"
-        [disabled]="cities.length == 0"
-      >
+      <select id="cityId" class="form-select" formControlName="cityId" [disabled]="cities.length == 0">
         <option value="null" disabled selected>Select City</option>
         <option *ngFor="let city of cities" [value]="city.id">
           {{ city.name }}
         </option>
       </select>
 
-      <div
-        class="invalid-feedback d-block"
-        *ngIf="
+      <div class="invalid-feedback d-block" *ngIf="
           shippingAddressForm.get('city.cityId')?.touched &&
           shippingAddressForm.get('city.cityId')?.invalid
-        "
-      >
+        ">
         City is required.
       </div>
     </div>
 
     <div class="col-md-4">
       <label for="postalCode" class="form-label">Postal Code</label>
-      <input
-        id="postalCode"
-        type="text"
-        class="form-control"
-        formControlName="postalCode"
-      />
-      <div
-        class="invalid-feedback d-block"
-        *ngIf="
+      <input id="postalCode" type="text" class="form-control" formControlName="postalCode" />
+      <div class="invalid-feedback d-block" *ngIf="
           shippingAddressForm.get('city.postalCode')?.touched &&
           shippingAddressForm.get('city.postalCode')?.invalid
-        "
-      >
+        ">
         Postal Code is required.
       </div>
     </div>
   </div>
 
   <div formGroupName="house" class="row g-3 mb-3">
-    <div class="col-md-6">
+    <div class="col-md-3">
       <label for="street" class="form-label">Street</label>
-      <input
-        id="street"
-        type="text"
-        class="form-control"
-        formControlName="street"
-      />
-      <div
-        class="invalid-feedback d-block"
-        *ngIf="
+      <input id="street" type="text" class="form-control" formControlName="street" />
+      <div class="invalid-feedback d-block" *ngIf="
           shippingAddressForm.get('house.street')?.touched &&
           shippingAddressForm.get('house.street')?.invalid
-        "
-      >
+        ">
         Street is required.
       </div>
     </div>
 
     <div class="col-md-3">
+      <label for="street" class="form-label">Phone number</label>
+      <input id="phoneNumber" type="text" class="form-control" formControlName="phoneNumber" />
+      <div class="invalid-feedback d-block" *ngIf="
+          shippingAddressForm.get('house.phoneNumber')?.touched &&
+          shippingAddressForm.get('house.phoneNumber')?.invalid
+        ">
+        Phone number is required.
+      </div>
+    </div>
+
+    <div class="col-md-3">
       <label for="buildingNumber" class="form-label">Building Number</label>
-      <input
-        id="buildingNumber"
-        type="number"
-        class="form-control"
-        formControlName="buildingNumber"
-      />
-      <div
-        class="invalid-feedback d-block"
-        *ngIf="
+      <input id="buildingNumber" type="number" class="form-control" formControlName="buildingNumber" />
+      <div class="invalid-feedback d-block" *ngIf="
           shippingAddressForm.get('house.buildingNumber')?.touched &&
           shippingAddressForm.get('house.buildingNumber')?.invalid
-        "
-      >
+        ">
         Building Number is required and must be greater than zero.
       </div>
     </div>
 
     <div class="col-md-3">
       <label for="apartmentNumber" class="form-label">Apartment Number</label>
-      <input
-        id="apartmentNumber"
-        type="number"
-        class="form-control"
-        formControlName="apartmentNumber"
-      />
+      <input id="apartmentNumber" type="number" class="form-control" formControlName="apartmentNumber" />
     </div>
   </div>
 
   <div class="form-check mb-3">
-    <input
-      id="isDefault"
-      type="checkbox"
-      class="form-check-input"
-      formControlName="isDefault"
-    />
+    <input id="isDefault" type="checkbox" class="form-check-input" formControlName="isDefault" />
     <label for="isDefault" class="form-check-label">
       Set as default address
     </label>
   </div>
 
-  <button
-    type="submit"
-    class="btn btn-primary"
-    [disabled]="shippingAddressForm.invalid"
-  >
+  <button type="submit" class="btn btn-primary" [disabled]="shippingAddressForm.invalid">
     Save Address
   </button>
 </form>

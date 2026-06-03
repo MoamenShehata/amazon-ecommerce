@@ -29,7 +29,7 @@ export class CustomerService {
 
   addShippingAddress(request: any) {
     return this.http.post<CustomerProfile>(
-      `${this.baseUrl}/ShippingAddresses`,
+      `${this.meUrl}/ShippingAddresses`,
       request,
     );
   }

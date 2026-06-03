@@ -13,7 +13,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.ToTable("orders", "orders");
 
-        builder.ComplexProperty(x => x.Customer, b =>
+        builder.ComplexProperty(x => x.Owner, b =>
         {
             b.Property(d => d.Id);
             b.Property(d => d.Email);
