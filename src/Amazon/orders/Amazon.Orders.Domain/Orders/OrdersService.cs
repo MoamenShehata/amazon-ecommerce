@@ -40,11 +40,7 @@ public class OrdersService(
         if (stakeHolder is null)
             return RestResponse<Order>.NotFound($"User was not found");
 
-        var canUserAccessOrderResult = stakeHolder.CanAccessOrder(order);
-        if (!canUserAccessOrderResult.IsSuccess)
-            return canUserAccessOrderResult;
-
-        return RestResponse<Order>.Success(order);
+        return stakeHolder.CanAccessOrder(order);
     }
 
     public async Task<RestResponse<bool>> CancelAsync(Guid requesterUserId, Guid orderId)

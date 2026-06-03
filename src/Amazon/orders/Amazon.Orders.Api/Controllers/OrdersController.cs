@@ -6,16 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.Orders.Api.Controllers;
 
+[Authorize]
 public class OrdersController(OrdersAppService _service) : ApiControllerBase
 {
-    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetCustomerOrdersPage([FromQuery] SearchOrdersRequest pageRequest)
     {
         return Ok(await _service.GetCustomerOrdersPageAsync(UserId, pageRequest));
     }
 
-    [Authorize]
     [HttpGet("{id}", Name = "GetOrderById")]
     public async Task<IActionResult> GetOrderDetails(Guid id) => RestResult(await _service.GetByUserAsync(UserId, id));
 

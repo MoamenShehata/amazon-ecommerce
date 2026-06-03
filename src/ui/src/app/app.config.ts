@@ -7,6 +7,7 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptor
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { InjectJwtInterceptor } from './core/interceptors/inject-jwt-interceptor';
+import { BadRequestInterceptor } from './core/interceptors/bad-request-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +18,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: InjectJwtInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: BadRequestInterceptor,
       multi: true
     },
     ...(OAuthModule.forRoot({

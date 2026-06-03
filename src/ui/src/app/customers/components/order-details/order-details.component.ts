@@ -36,10 +36,7 @@ export class OrderDetailsComponent extends AppServicesProvider {
       next: (details) => {
         this.orderDetails = details;
         this.isLoading = false;
-      },
-      error: (err) => {
-        console.error("Error loading order details:", err);
-      },
+      }
     });
   }
 
