@@ -1,2 +1,30 @@
 - customer service
     1- for CustomerReadContext => use NoSQL
+
+- categories CRUDs for admin
+
+- http client for imediaservice in catalog
+
+- validate payment card when added from customer service
+
+- new payment method, payment gateway
+
+- search,filter in catalog
+
+- api gateway
+
+- customer adding payment cards, can be handled better using EConsistency, so we can encrypt(maybe) it in the background and validate it with it`s provider also
+
+- check what happens to httpClient.Response httpcontent, as i am passing it around, is it a stream that i need to be carefull with??
+
+- scan all security issues (like authorization for all end points, can current request be satisifed?)
+
+- getorderbyid domain service, we should handle a list of stakeholders/users and this service orchestrate two objects a user and order to check if this user can access that order
+
+- we must purge/clean app services and domain services(like if we really dont need that app service method, get rid of it)
+
+- enable hot reload for auth-docker
+
+- payment cards should be unique globally
+
+- put validation on order update status
