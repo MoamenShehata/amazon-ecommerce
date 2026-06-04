@@ -2,7 +2,9 @@
 using Amazon.Customers.Domain;
 using Amazon.Customers.Infrastructure.Data;
 using Amazon.Customers.Infrastructure.Integrations;
+using Amazon.Customers.Infrastructure.Integrations.Lookups;
 using Amazon.Customers.Infrastructure.Services;
+using Amazon.SharedKernel.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,7 @@ public static class InfrastructureDependencyRegistrar
         IConfiguration configuration)
     {
         services
+            .AddMemoryCache()
             .AddGenericRepos()
             .AddBaseContext<CustomersContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
             .AddDbContext<CustomerReadContext>(op => op.UseSqlServer(configuration.GetConnectionString("Customers")))
@@ -24,6 +27,11 @@ public static class InfrastructureDependencyRegistrar
         services
             .AddScoped<ICustomerProfileService, CustomerProfileService>()
             .AddScoped<IAddressService, AddressService>()
+            ;
+
+        services
+            .AddHttpClient<ILookupsIntegrationClient, LookupsRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Lookups")))
+            .AddHttpMessageHandler<HttpClientErrorHandler>()
             ;
 
         return services;
