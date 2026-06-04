@@ -13,7 +13,7 @@ public static class DependencyRegistrar
     {
         services
             .AddSharedJobs()
-            .RegisterSharedServices()
+            .RegisterSharedServices(configuration)
             .RegisterOtpServices()
             .AddJob<PurgeExpiredCartsJob>()
             .AddScoped<IAuthenticationService, AuthenticationService>()

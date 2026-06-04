@@ -10,11 +10,9 @@ namespace Amazon.Orders.Domain.Orders.Factories
         IRepository<Product, Guid> _productsRepo
         )
     {
-        public async Task<Order> CreateAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, object deliveryAddress)
+        public async Task<Order> CreateAsync(Guid orderId, CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, object deliveryAddress)
         {
             var products = await _productsRepo.GetAllAsync(p => cartItems.Select(x => x.Key).Distinct().Contains(p.Id));
-
-            var orderId = Guid.NewGuid();
 
             Func<Product, OrderItem> orderItemFactory = p => p.CreateOrderItem(orderId, cartItems.Where(x => x.Key == p.Id).Sum(x => x.Value));
 

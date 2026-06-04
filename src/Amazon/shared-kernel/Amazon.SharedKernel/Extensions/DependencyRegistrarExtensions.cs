@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace Amazon.SharedKernel.Extensions
 {
     public static class DependencyRegistrarExtensions
     {
-        public static IServiceCollection RegisterSharedServices(this IServiceCollection services)
+        public static IServiceCollection RegisterSharedServices(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddScoped<ISmsService, SmsService>()
@@ -17,11 +18,18 @@ namespace Amazon.SharedKernel.Extensions
                 .AddScoped<ITextServices, TextServices>()
                 ;
 
+            services
+                .AddSerilog((services, lc) =>
+                {
+                    lc.Enrich.FromLogContext();
+                    lc.ReadFrom.Configuration(configuration);
+                });
+
             services.RegisterHttpClientServices();
 
             return services;
         }
-        
+
         public static IServiceCollection RegisterOtpServices(this IServiceCollection services)
         {
             services

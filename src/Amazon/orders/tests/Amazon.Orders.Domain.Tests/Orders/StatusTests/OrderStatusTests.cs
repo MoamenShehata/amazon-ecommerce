@@ -13,7 +13,7 @@ public class OrderStatusTests
     {
         _orderFactory = new OrderFactory(RepoFactory.Create<Product, Guid>());
     }
-    private async Task<Order> PlaceNewOrderAsync() => await _orderFactory.CreateAsync(new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), new List<KeyValuePair<Guid, int>>(), "", "");
+    private async Task<Order> PlaceNewOrderAsync() => await _orderFactory.CreateAsync(Guid.NewGuid(), new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), new List<KeyValuePair<Guid, int>>(), "", "");
 
     [Fact]
     public async Task New_Order_CannotBeCancelled_UsingNormaStatus_Flow()

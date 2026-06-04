@@ -1,22 +1,21 @@
 ﻿using Amazon.Orders.Application.Orders.Dtos;
 using Amazon.Orders.Application.Orders.Mappers;
-using Amazon.Orders.Application.Orders.Validators;
 using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
-using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using Microsoft.Extensions.Logging;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.Repository.Pagination;
 using Moamen.SDKs.SharedKernel;
-using System.Text.Json;
 
 namespace Amazon.Orders.Application.Orders
 {
     public class OrdersAppService(
         IEfCoreRepository<Order, Guid> _ordersRepo,
         OrdersService _ordersService,
-        IUnitOfWork _unitOfWork)
+        IUnitOfWork _unitOfWork,
+        ILogger<OrdersAppService> _logger)
     {
         public async Task<RestResponse<OrderDetailsDto>> GetByUserAsync(Guid requesterUserId, Guid orderId)
         {
@@ -29,6 +28,8 @@ namespace Amazon.Orders.Application.Orders
 
         public async Task<PagedResult<OrderForListDto, DateTime>> GetCustomerOrdersPageAsync(Guid customerId, SearchOrdersRequest pageRequest)
         {
+            _logger.LogDebug("Loading apdo for customer {customerId}", customerId);
+
             var page = pageRequest.PageNumber == 1
             ? await _ordersRepo.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn, [x => x.Owner.Id == customerId])
             : await _ordersRepo.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue), [x => x.Owner.Id == customerId]);
@@ -38,7 +39,7 @@ namespace Amazon.Orders.Application.Orders
 
         public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(Guid customerId, string customerEmail, OrderCreateDto request)
         {
-            var result = await _ordersService.PlaceOrderAsync(new CustomerInfo(customerId, customerEmail), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
+            var result = await _ordersService.PlaceOrderAsync(request.OrderId, new CustomerInfo(customerId, customerEmail), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
             if (result.IsSuccess)
             {
                 await _unitOfWork.CommitAsync();

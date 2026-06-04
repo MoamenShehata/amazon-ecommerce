@@ -7,7 +7,9 @@ using Amazon.Cart.Domain.Integrations.Orders.Dtos;
 using Amazon.Cart.Domain.Payments;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using Microsoft.Extensions.Logging;
 using Moamen.SDKs.Repository;
+using Serilog.Context;
 
 namespace Amazon.Cart.Domain.Services;
 
@@ -17,7 +19,8 @@ public class CartService(
         IInventoryService _inventoryService,
         ICustomersIntegration _customerIntegration,
         IOrdersIntegration _ordersIntegration,
-        PaymentsService _paymentsService
+        PaymentsService _paymentsService,
+        ILogger<CartService> _logger
         )
 {
     public async Task<RestResponse<ShoppingCart>> CreateCartAsync(Guid? customerId)
@@ -78,6 +81,12 @@ public class CartService(
 
     public async Task<RestResponse<Guid>> TryCheckoutAsync(Guid cartId, Guid userId, object PaymentInfo)
     {
+        var orderId = Guid.NewGuid();
+
+        var scope = _logger.BeginScope(new Dictionary<string, object>
+        {
+            ["correlationId"] = orderId,
+        });
         var cartResult = await GetByIdForUserAsync(cartId, userId);
         if (!cartResult.IsSuccess)
             return cartResult.MapTo(Guid.Empty);
@@ -88,16 +97,16 @@ public class CartService(
 
         var deliveryAddressResult = await _customerIntegration.GetDeliveryAddressOrDefaultAsync(cartResult.Value.DeliverToAddressId);
 
-        var createdOrder = await _ordersIntegration.CreateAsync(ConstructOrderRequest(cartResult, PaymentInfo, deliveryAddressResult));
+        var createdOrder = await _ordersIntegration.CreateAsync(ConstructOrderRequest(orderId, cartResult, PaymentInfo, deliveryAddressResult));
 
         _cartsRepo.Remove(cartResult.Value);
-
+        scope.Dispose();
         return RestResponse<Guid>.Success(createdOrder.Id);
     }
 
-    private OrderCreateDto ConstructOrderRequest(ShoppingCart cart, object paymentInfo, CustomerDeliveryAddress deliverToAddressInfo)
+    private OrderCreateDto ConstructOrderRequest(Guid orderId, ShoppingCart cart, object paymentInfo, CustomerDeliveryAddress deliverToAddressInfo)
     {
-        return new OrderCreateDto(cart.AggregatToProducts, paymentInfo, deliverToAddressInfo.AsOrderDeliveryAddress);
+        return new OrderCreateDto(orderId, cart.AggregatToProducts, paymentInfo, deliverToAddressInfo.AsOrderDeliveryAddress);
     }
 
     private async Task<RestResponse<bool>> CanOrderBeSatisifiedForCartAsync(ShoppingCart cart)

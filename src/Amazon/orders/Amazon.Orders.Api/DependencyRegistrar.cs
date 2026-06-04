@@ -1,6 +1,5 @@
-﻿using Amazon.SharedKernel.Jobs.RabbitMq;
+﻿using Amazon.Orders.Application;
 using Amazon.Orders.Infrastructure;
-using Amazon.Orders.Application;
 using Amazon.SharedKernel.Extensions;
 
 namespace Amazon.Orders.Api;
@@ -13,6 +12,7 @@ public static class DependencyRegistrar
         builder.Services.AddOpenApi();
 
         builder.Services
+            .RegisterSharedServices(builder.Configuration)
             .RegisterApplicationDependencies(builder.Configuration)
             .RegisterInfrastructureDependencies(builder.Configuration)
             .AddJwtAuthentication(builder.Configuration)

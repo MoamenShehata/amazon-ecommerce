@@ -15,11 +15,11 @@ public class OrdersService(
     OrderFactory _orderFactory
     )
 {
-    public async Task<RestResponse<Order>> PlaceOrderAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, object deliveryAddress)
+    public async Task<RestResponse<Order>> PlaceOrderAsync(Guid orderId, CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, object deliveryAddress)
     {
         //validate customer data
 
-        var order = await _orderFactory.CreateAsync(customerInfo, cartItems, paymentInfo, deliveryAddress);
+        var order = await _orderFactory.CreateAsync(orderId, customerInfo, cartItems, paymentInfo, deliveryAddress);
         _ordersRepo.Add(order);
 
         return RestResponse<Order>.Created(order, order.Id.ToString());

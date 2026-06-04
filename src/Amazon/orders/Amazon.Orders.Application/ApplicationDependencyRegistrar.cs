@@ -5,6 +5,8 @@ using Amazon.Orders.Domain.Products;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Events;
 
 namespace Amazon.Orders.Application
 {
@@ -13,10 +15,12 @@ namespace Amazon.Orders.Application
         public static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services,
             IConfiguration configuration)
         {
-            //services.AddMediatR(config =>
-            //{
-            //    config.RegisterServicesFromAssembly(typeof(ApplicationDependencyRegistrar).Assembly);
-            //});
+            services
+                .AddSerilog((services, lc) =>
+                {
+                    lc.ReadFrom.Configuration(configuration);
+                    //lc.WriteTo.Seq("http://localhost:5341/",);
+                });
 
             services.AddMassTransit(config =>
             {

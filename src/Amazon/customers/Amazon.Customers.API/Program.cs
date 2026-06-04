@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddSharedJobs()
-    .RegisterSharedServices()
+    .RegisterSharedServices(builder.Configuration)
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
     .AddJwtAuthentication(builder.Configuration);
