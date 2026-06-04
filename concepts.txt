@@ -1,10 +1,31 @@
 - my list
-    - grpc
-    - message broker/async communication
-    - SAGAs
+    - grpc => 10%
+        - just implemented one rpc
+
+    - message broker/async communication => 30%
+        - i am just a user
+
+    - SAGAs => 50%
+        - understood it
+        - implemented order creation orchestrator
+
     - api gateway
-    - CQRS
-    - REST
+
+    - CQRS => 10%
+        - i just used it to return customer profile data without joins(coded payment cards,addresses as two json columns)
+
+    - REST => 20%
+        - using Http methods
+        - using URIs
+
+
+
+
+
+
+
+        
+
     - Consistency
         - Transactional
         - Eventual  => DONE
@@ -16,8 +37,9 @@
                             - which aligns perfectly with the business
                                 - like a store owner totally ends an era of selling some kind of products(android)
 
-    - Event sourcing
-    - 
+    - Event sourcing => 5%
+        - used for persisting order status(history not current state)
+
     - 
 
 ///////////////////////////////////////////////////////////////
@@ -26,19 +48,11 @@
     - Service Communication
 Synchronous
 
-REST (HTTP/JSON)
-
-gRPC (protobuf, streaming, deadlines)
-
 Service-to-service authentication
 
 Versioning APIs (backward compatibility)
 
 Idempotency
-
-Asynchronous
-
-Message broker concepts
 
 Queues vs Topics
 
@@ -54,24 +68,10 @@ Poison messages / Dead letter queues
 
 Outbox pattern  => DONE
     - implemented in product-catalog to handle the events Asynchronously
-
-✅ Practice outcome:
-One request-response flow and one event-driven flow between services.
+________________________________________________
 
 2️⃣ Data & Consistency (VERY IMPORTANT)
 Data Ownership
-
-Database per service
-
-No shared database anti-pattern
-
-Read models vs write models
-
-Consistency Models
-
-Transactional consistency (local only)
-
-Eventual consistency
 
 Compensating actions
 
@@ -79,17 +79,9 @@ Distributed Transactions
 
 Why 2PC is bad in microservices
 
-SAGA patterns
-
-Choreography
-
-Orchestration
-
 Retry & compensation logic
 
 Event-Driven Data
-
-Event sourcing
 
 Event replay
 
@@ -99,10 +91,9 @@ Temporal coupling problems
 
 ✅ Practice outcome:
 A workflow that fails halfway and still ends in a correct state.
+________________________________________________
 
 3️⃣ API Layer & Edge Concerns
-
-API Gateway responsibilities
 
 Routing
 
@@ -120,16 +111,13 @@ GraphQL (optional but useful)
 
 ✅ Practice outcome:
 Clients talk to one endpoint, not many services.
+________________________________________________
 
 4️⃣ Architecture Patterns
-
-CQRS
 
 Event-driven architecture
 
 Hexagonal / Clean Architecture per service
-
-Anti-corruption layer
 
 Strangler pattern
 
@@ -141,6 +129,7 @@ By subdomain (DDD)
 
 ✅ Practice outcome:
 Each service has clear boundaries and rules.
+________________________________________________
 
 5️⃣ Domain-Driven Design (Microservices-Specific)
 
@@ -152,12 +141,13 @@ Aggregate boundaries
 
 Domain events vs integration events
 
-Anemic vs rich domain models
+Anemic vs rich domain models => Done
 
 Shared Kernel (when it’s justified)
 
 ✅ Practice outcome:
 You can explain why a service boundary exists — not just that it does.
+________________________________________________
 
 6️⃣ Resilience & Fault Tolerance
 
@@ -177,6 +167,7 @@ Partial failure handling
 
 ✅ Practice outcome:
 Kill a service → system degrades, not dies.
+________________________________________________
 
 7️⃣ Observability (NON-NEGOTIABLE)
 
@@ -194,8 +185,8 @@ Readiness vs liveness probes
 
 ✅ Practice outcome:
 You can answer:
-
 “Why did request X fail across 6 services?”
+________________________________________________
 
 8️⃣ Security
 
@@ -213,10 +204,11 @@ Zero trust principles
 
 ✅ Practice outcome:
 No service blindly trusts another.
+________________________________________________
 
 9️⃣ Deployment & Infrastructure
 
-Containerization (Docker)
+Containerization (Docker) => 10%
 
 Kubernetes basics
 
@@ -230,6 +222,7 @@ Blue-green / Canary deployments
 
 ✅ Practice outcome:
 Deploy services independently without breaking others.
+________________________________________________
 
 🔟 Data & Performance
 
@@ -249,6 +242,7 @@ Event-driven cache updates
 
 ✅ Practice outcome:
 System scales without hammering databases.
+________________________________________________
 
 1️⃣1️⃣ Testing Strategies (Often Ignored)
 
@@ -264,6 +258,7 @@ Test data management
 
 ✅ Practice outcome:
 Deploy with confidence without full E2E tests.
+________________________________________________
 
 1️⃣2️⃣ Versioning & Evolution
 
@@ -277,6 +272,7 @@ Schema migration without downtime
 
 ✅ Practice outcome:
 You can evolve services without coordinated deployments.
+________________________________________________
 
 1️⃣3️⃣ Operational Concerns
 
@@ -292,6 +288,7 @@ Graceful shutdown
 
 ✅ Practice outcome:
 Operations can control behavior without redeploying.
+________________________________________________
 
 1️⃣4️⃣ Anti-Patterns (You MUST experience these)
 
@@ -311,6 +308,7 @@ God API Gateway
 
 ✅ Practice outcome:
 You feel why they are bad — not just know it.
+________________________________________________
 
 🧭 Suggested Coding Order (Very Important)
 
