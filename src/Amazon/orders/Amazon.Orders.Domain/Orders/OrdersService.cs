@@ -1,6 +1,5 @@
 ﻿using Amazon.Orders.Domain.Orders.Factories;
 using Amazon.Orders.Domain.Orders.ValueObjects;
-using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.Orders.Domain.Products;
 using Amazon.Orders.Domain.Stakeholders;
 using Amazon.SharedKernel.API;
@@ -18,10 +17,6 @@ public class OrdersService(
 {
     public async Task<RestResponse<Order>> PlaceOrderAsync(CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, object deliveryAddress)
     {
-        var productsValidationResult = await _productsService.ValidateProducts(cartItems);
-        if (!productsValidationResult.IsSuccess)
-            return productsValidationResult.MapTo((Order)null);
-
         //validate customer data
 
         var order = await _orderFactory.CreateAsync(customerInfo, cartItems, paymentInfo, deliveryAddress);
