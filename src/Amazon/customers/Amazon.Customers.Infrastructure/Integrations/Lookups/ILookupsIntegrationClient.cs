@@ -18,9 +18,11 @@ public class LookupsRestClient(
     {
         return await _memoryCache.GetOrCreateAsync("countries", async (x) =>
         {
-            var json = await _httpClient.GetAsync("countries");
+            var json = await _httpClient.GetAsync("countries?pageNumber=1&pageSize=300");
 
-            return await json.Content.ReadFromJsonAsync<List<Country>>();
+            var page = await json.Content.ReadFromJsonAsync<GetCountriesPageDto>();
+
+            return page.Items;
         });
     }
 
