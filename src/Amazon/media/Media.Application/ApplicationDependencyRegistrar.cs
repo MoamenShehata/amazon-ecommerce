@@ -2,6 +2,7 @@
 using Media.Domain.Factories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Media.Application
 {
@@ -33,6 +34,11 @@ namespace Media.Application
                 .AddScoped<MediaAccessibilityFactory>()
                 .AddScoped<MediaAuthenticationKeyFactory>()
                 ;
+
+            services.AddSingleton<IConnectionMultiplexer>(_ =>
+            {
+                return ConnectionMultiplexer.Connect("host.docker.internal:32768");
+            });
 
             return services;
         }
