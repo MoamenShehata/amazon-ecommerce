@@ -8,17 +8,21 @@ import { CountriesService } from "../../../lookups/services/countries.service";
 import { CommonModule } from "@angular/common";
 import { CustomerService } from "../../customer.services";
 import { AppServicesProvider } from "../../../core/services/app-services.provider";
+import { NgSelectComponent } from "@ng-select/ng-select";
+import { PagedResult } from "../../../core/models/paged-result.models";
 
 @Component({
   selector: "customer-shipping-address-form",
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, NgSelectComponent],
   templateUrl: "./customer-shipping-address-form.component.html",
   styleUrls: ["./customer-shipping-address-form.component.css"],
 })
 export class CustomerShippingAddressFormComponent extends AppServicesProvider {
   countries: CountryLookup[] = [];
   cities: CityLookup[] = [];
+
+  isLoading = true;
 
   shippingAddressForm = this.fb.group({
     city: this.fb.group({
@@ -43,19 +47,29 @@ export class CustomerShippingAddressFormComponent extends AppServicesProvider {
     super();
   }
 
-  pageNumber = 1;
+  currentPageNumber = 1;
   lastSeenValue: any;
+  totalCountryRecords = 0;
 
   ngOnInit() {
-    this.countriesService.getCountries(this.pageNumber, this.lastSeenValue).subscribe((page) => {
-      this.countries = page.items;
+    this.loadCountriesPage(this.currentPageNumber);
+  }
+
+  loadCountriesPage(pageNumber: number) {
+    if (this.countries.length == this.totalCountryRecords && this.totalCountryRecords > 0)
+      return;
+
+    this.countriesService.getCountries(pageNumber, this.lastSeenValue).subscribe((page) => {
+      this.isLoading = false;
+      this.countries = [...this.countries, ...page.items];
+      this.totalCountryRecords = page.totalCount;
+
+      this.currentPageNumber = pageNumber;
       this.lastSeenValue = page.lastSeenValue;
     });
   }
 
-  onCountrySelected(event: any) {
-    const countryId = event.target.value;
-
+  onCountrySelected(countryId: any) {
     this.cities = this.countries.find((c) => c.id == countryId)?.cities ?? [];
   }
 

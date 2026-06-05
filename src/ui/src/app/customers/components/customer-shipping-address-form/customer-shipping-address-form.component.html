@@ -8,12 +8,12 @@
   <div formGroupName="city" class="row g-3 mb-3">
     <div class="col-md-4">
       <label for="countryId" class="form-label">Country</label>
-      <select id="countryId" class="form-select" formControlName="countryId" (change)="onCountrySelected($event)">
-        <option value="null" disabled selected>Select Country</option>
-        <option *ngFor="let country of countries" [value]="country.id">
-          {{ country.name }}
-        </option>
-      </select>
+
+      <ng-select formControlName="countryId" [items]="countries" bindLabel="name" bindValue="id" [virtualScroll]="true"
+        [loading]="isLoading" (scrollToEnd)="loadCountriesPage(currentPageNumber+1)"
+        (change)="onCountrySelected($event.id)" placeholder="Select Country">
+      </ng-select>
+
 
       <div class="invalid-feedback d-block" *ngIf="
           shippingAddressForm.get('city.countryId')?.touched &&

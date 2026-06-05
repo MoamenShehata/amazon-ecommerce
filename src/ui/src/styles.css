@@ -1,3 +1,5 @@
+@import "../node_modules/@ng-select/ng-select/themes/default.theme.css";
+
 .flx-row {
   display: flex;
   flex-direction: row;
@@ -14,6 +16,6 @@
   justify-content: space-between;
 }
 
-.flx-row > * {
+.flx-row>* {
   flex: 1;
 }
