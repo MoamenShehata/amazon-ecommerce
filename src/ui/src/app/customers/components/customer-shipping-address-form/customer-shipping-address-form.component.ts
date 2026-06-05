@@ -43,9 +43,13 @@ export class CustomerShippingAddressFormComponent extends AppServicesProvider {
     super();
   }
 
+  pageNumber = 1;
+  lastSeenValue: any;
+
   ngOnInit() {
-    this.countriesService.getCountries().subscribe((countries) => {
-      this.countries = countries;
+    this.countriesService.getCountries(this.pageNumber, this.lastSeenValue).subscribe((page) => {
+      this.countries = page.items;
+      this.lastSeenValue = page.lastSeenValue;
     });
   }
 
