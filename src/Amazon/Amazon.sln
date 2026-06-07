@@ -85,6 +85,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Cart.Infrastructure.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cart.MongoClient", "cart\Cart.MongoClient\Cart.MongoClient.csproj", "{889C5D5B-4597-46DC-B102-9426C7DABBF7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gateway", "gateway", "{CEAA1603-A770-476C-87F3-23E6AA2063AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Apis.Gateway", "gateway\Amazon.Apis.Gateway\Amazon.Apis.Gateway.csproj", "{AB2A50FF-7546-455E-AB35-F51A00B44CEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -215,6 +219,10 @@ Global
 		{889C5D5B-4597-46DC-B102-9426C7DABBF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{889C5D5B-4597-46DC-B102-9426C7DABBF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{889C5D5B-4597-46DC-B102-9426C7DABBF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB2A50FF-7546-455E-AB35-F51A00B44CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB2A50FF-7546-455E-AB35-F51A00B44CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB2A50FF-7546-455E-AB35-F51A00B44CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB2A50FF-7546-455E-AB35-F51A00B44CEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -253,6 +261,7 @@ Global
 		{1CBA53FC-A588-4512-BACD-E33490184053} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 		{B25DCB03-BC74-4E08-A159-2061DD694D05} = {0EFDEEDE-9164-4B72-A3AF-33B44C100D10}
 		{889C5D5B-4597-46DC-B102-9426C7DABBF7} = {0EFDEEDE-9164-4B72-A3AF-33B44C100D10}
+		{AB2A50FF-7546-455E-AB35-F51A00B44CEB} = {CEAA1603-A770-476C-87F3-23E6AA2063AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {854E9683-3600-41BC-A815-52488984E5D7}

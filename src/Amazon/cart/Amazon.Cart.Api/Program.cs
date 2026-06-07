@@ -1,15 +1,11 @@
 using Amazon.Cart.Api;
-using Amazon.Cart.Api.TokenHandlers;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Payments;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 

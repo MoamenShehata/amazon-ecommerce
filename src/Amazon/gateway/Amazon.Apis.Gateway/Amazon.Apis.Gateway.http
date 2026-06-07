@@ -1,0 +1,6 @@
+@Amazon.Apis.Gateway_HostAddress = http://localhost:5123
+
+GET {{Amazon.Apis.Gateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

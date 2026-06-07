@@ -52,7 +52,7 @@ public static class InfrastructureDependencyRegistrar
             .AddHttpContextAccessor()
             ;
 
-        services.AddHttpClient<ICustomersIntegrationClient, CustomersRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Customers")))
+        services.AddHttpClient<ICustomersIntegrationClient, CustomersRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
             .AddHttpMessageHandler<HttpClientErrorHandler>()
             .AddHttpMessageHandler<InjectJwtFromCurrentSessionHandler>()
             ;
