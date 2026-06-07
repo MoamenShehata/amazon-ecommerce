@@ -30,7 +30,7 @@ public static class InfrastructureDependencyRegistrar
             ;
 
         services
-            .AddHttpClient<ILookupsIntegrationClient, LookupsRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Lookups")))
+            .AddHttpClient<ILookupsIntegrationClient, LookupsRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
             .AddHttpMessageHandler<HttpClientErrorHandler>()
             ;
 

@@ -57,7 +57,7 @@ public static class InfrastructureDependencyRegistrar
             .AddHttpMessageHandler<InjectJwtFromCurrentSessionHandler>()
             ;
 
-        services.AddHttpClient<OrdersIntegrationClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Orders")))
+        services.AddHttpClient<OrdersIntegrationClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
             .AddHttpMessageHandler<HttpClientErrorHandler>()
             .AddHttpMessageHandler<InjectJwtFromCurrentSessionHandler>()
             ;

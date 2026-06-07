@@ -1,5 +1,6 @@
 ﻿using Amazon.ProductCatalog.Domain.Products;
 using Amazon.SharedKernel.Media;
+using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -11,8 +12,13 @@ internal class UploadFileResult
     public string Url { get; set; }
 }
 
-public class ProductMediaService(IHttpClientFactory _httpClientFactory) : IMediaService
+public class ProductMediaService(
+    IHttpClientFactory _httpClientFactory,
+    IConfiguration _configuration
+    ) : IMediaService
 {
+    private readonly string basePath = $"{_configuration.GetValue<string>("Services:Gateway")}files";
+
     public async Task<string> UploadFileAsync(MediaContent uploadRequest)
     {
         // call the actual media service
@@ -31,7 +37,7 @@ public class ProductMediaService(IHttpClientFactory _httpClientFactory) : IMedia
 
         try
         {
-            var response = await client.PostAsync($"http://localhost:5104/files", new StringContent(requestAsJson, new MediaTypeHeaderValue("application/json")));
+            var response = await client.PostAsync(basePath, new StringContent(requestAsJson, new MediaTypeHeaderValue("application/json")));
             response.EnsureSuccessStatusCode();
 
             var responseBody = await response.Content.ReadFromJsonAsync<UploadFileResult>();

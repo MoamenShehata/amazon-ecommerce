@@ -14,11 +14,13 @@ public class LookupsRestClient(
     HttpClient _httpClient,
     IMemoryCache _memoryCache) : ILookupsIntegrationClient
 {
+    private const string basePath = "lookups/countries";
+
     public async Task<List<Country>> GetCountriesAsync()
     {
         return await _memoryCache.GetOrCreateAsync("countries", async (x) =>
         {
-            var json = await _httpClient.GetAsync("countries?pageNumber=1&pageSize=300");
+            var json = await _httpClient.GetAsync($"{basePath}?pageNumber=1&pageSize=300");
 
             var page = await json.Content.ReadFromJsonAsync<GetCountriesPageDto>();
 
@@ -26,5 +28,5 @@ public class LookupsRestClient(
         });
     }
 
-    public async Task<HttpContent> GetCountryAsync(int countryId) => (await _httpClient.GetAsync($"countries/{countryId}")).Content;
+    public async Task<HttpContent> GetCountryAsync(int countryId) => (await _httpClient.GetAsync($"{basePath}/{countryId}")).Content;
 }
