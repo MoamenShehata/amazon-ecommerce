@@ -37,7 +37,7 @@ namespace Media.Application
 
             services.AddSingleton<IConnectionMultiplexer>(_ =>
             {
-                return ConnectionMultiplexer.Connect("host.docker.internal:32768");
+                return ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis"));
             });
 
             return services;
