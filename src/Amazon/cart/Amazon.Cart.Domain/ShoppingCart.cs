@@ -61,7 +61,7 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     public void Clear() => _cartItems.Clear();
 
-    public decimal TotalAmount => _cartItems.Sum(i => i.Price);
+    public decimal TotalAmount => _cartItems.Sum(i => 0);
 
     public List<KeyValuePair<Guid, int>> AggregatToProducts => _cartItems.GroupBy(i => i.ProductId)
             .Select(g => new KeyValuePair<Guid, int>(g.Key, g.Count()))
