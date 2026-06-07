@@ -20,7 +20,7 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
         Expiration = expiration;
     }
 
-    private readonly List<CartItem> _cartItems = new();
+    private List<CartItem> _cartItems = new();
     public IReadOnlyCollection<CartItem> Items => _cartItems;
 
 
@@ -31,9 +31,9 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
         return item;
     }
 
-    public void RemoveItem(int itemId)
+    public void RemoveItem(Guid productId)
     {
-        var cartItem = _cartItems.FirstOrDefault(x => x.Id == itemId);
+        var cartItem = _cartItems.FirstOrDefault(x => x.ProductId == productId);
         if (cartItem == null) return;
 
         _cartItems.Remove(cartItem);

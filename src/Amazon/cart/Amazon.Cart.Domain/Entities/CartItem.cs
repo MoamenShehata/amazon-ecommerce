@@ -3,7 +3,7 @@ using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
 namespace Amazon.Cart.Domain.Entities;
 
-public class CartItem : IdentifiedValue<int>
+public class CartItem //: IdentifiedValue<int>
 {
     public Guid ShoppingCartId { get; private set; }
 

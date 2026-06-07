@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="3.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Amazon.Cart.Domain\Amazon.Cart.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Moamen.SDKs.Repository">
+      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.SharedKernel\bin\Debug\net9.0\Moamen.SDKs.Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="Moamen.SDKs.SharedKernel">
+      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.SharedKernel\bin\Debug\net9.0\Moamen.SDKs.SharedKernel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

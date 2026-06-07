@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.8" />
+    <PackageReference Include="MongoDB.Driver" Version="3.9.0" />
     <PackageReference Include="Serilog" Version="4.3.1" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
@@ -20,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Moamen.SDKs.Repository">
+      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.Repository\bin\Release\net9.0\Moamen.SDKs.Repository.dll</HintPath>
+    </Reference>
     <Reference Include="Moamen.SDKs.SharedKernel">
       <HintPath>..\lib\Moamen.SDKs.SharedKernel.dll</HintPath>
     </Reference>

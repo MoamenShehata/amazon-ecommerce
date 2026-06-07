@@ -81,6 +81,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Customers.Applicatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Customers.Domain.Tests", "customers\Amazon.Customers.Domain.Tests\Amazon.Customers.Domain.Tests.csproj", "{1CBA53FC-A588-4512-BACD-E33490184053}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Cart.Infrastructure.MongoDb", "cart\Amazon.Cart.Infrastructure.MongoDb\Amazon.Cart.Infrastructure.MongoDb.csproj", "{B25DCB03-BC74-4E08-A159-2061DD694D05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cart.MongoClient", "cart\Cart.MongoClient\Cart.MongoClient.csproj", "{889C5D5B-4597-46DC-B102-9426C7DABBF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -203,6 +207,14 @@ Global
 		{1CBA53FC-A588-4512-BACD-E33490184053}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CBA53FC-A588-4512-BACD-E33490184053}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CBA53FC-A588-4512-BACD-E33490184053}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B25DCB03-BC74-4E08-A159-2061DD694D05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B25DCB03-BC74-4E08-A159-2061DD694D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B25DCB03-BC74-4E08-A159-2061DD694D05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B25DCB03-BC74-4E08-A159-2061DD694D05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{889C5D5B-4597-46DC-B102-9426C7DABBF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{889C5D5B-4597-46DC-B102-9426C7DABBF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{889C5D5B-4597-46DC-B102-9426C7DABBF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{889C5D5B-4597-46DC-B102-9426C7DABBF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -239,6 +251,8 @@ Global
 		{0BD45C80-AB9C-40F4-8400-D1ADDB236BC1} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 		{01ABA623-1598-4944-B1FD-C85AD34B2BDC} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
 		{1CBA53FC-A588-4512-BACD-E33490184053} = {76D774E4-37CD-4E6F-8EBE-CD33E9986730}
+		{B25DCB03-BC74-4E08-A159-2061DD694D05} = {0EFDEEDE-9164-4B72-A3AF-33B44C100D10}
+		{889C5D5B-4597-46DC-B102-9426C7DABBF7} = {0EFDEEDE-9164-4B72-A3AF-33B44C100D10}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {854E9683-3600-41BC-A815-52488984E5D7}

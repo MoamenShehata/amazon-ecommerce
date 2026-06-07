@@ -31,10 +31,11 @@ export class ShoppingCartState {
     this._source.next([...currentItems]);
   }
 
-  remove(itemId: number) {
+  remove(productId: string) {
     const currentItems = this._source.value;
+
     currentItems.forEach((i) => {
-      i.itemIds = i.itemIds.filter((id) => id != itemId);
+      i.itemIds = i.itemIds.slice(0, -1);
     });
 
     this._source.next(currentItems);

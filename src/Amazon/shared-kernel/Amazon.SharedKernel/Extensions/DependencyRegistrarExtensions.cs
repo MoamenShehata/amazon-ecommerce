@@ -1,9 +1,13 @@
 ﻿using Amazon.SharedKernel.Common.Services;
+using Amazon.SharedKernel.Data.NoSql;
 using Amazon.SharedKernel.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Moamen.SDKs.Repository;
+using Moamen.SDKs.SharedKernel;
+using MongoDB.Driver;
 using Serilog;
 
 namespace Amazon.SharedKernel.Extensions
@@ -29,6 +33,34 @@ namespace Amazon.SharedKernel.Extensions
 
             return services;
         }
+
+        public static IServiceCollection AddMongoDb(this IServiceCollection services, string connectionString, string dataBaseName)
+        {
+            services
+                .AddSingleton<IMongoClient>(sp =>
+                {
+                    return new MongoClient(connectionString);
+                })
+                .AddSingleton(sp =>
+                {
+                    var client = sp.GetRequiredService<IMongoClient>();
+
+                    return client.GetDatabase(dataBaseName);
+                });
+
+            return services;
+        }
+
+        public static IServiceCollection AddMongoRepo<TCollection, TKey>(this IServiceCollection services, string collectionName)
+            where TCollection : class, IEntity<TKey> where TKey : IEquatable<TKey>
+        {
+            services.AddScoped(sp => new MongoDbRepository<TCollection, TKey>(sp.GetRequiredService<IMongoDatabase>(), collectionName));
+
+            services.AddScoped<IRepository<TCollection, TKey>>(sp => sp.GetRequiredService<MongoDbRepository<TCollection, TKey>>());
+
+            return services;
+        }
+
 
         public static IServiceCollection RegisterOtpServices(this IServiceCollection services)
         {

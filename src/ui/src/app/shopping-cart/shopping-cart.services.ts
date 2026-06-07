@@ -80,8 +80,8 @@ export class ShoppingCartService extends AppServicesProvider {
     return this.http.post<any>(this.cartItemsBaseUrl, cartItem);
   }
 
-  removeCartItem(cartItemId: number) {
-    return this.http.delete<any>(`${this.cartItemsBaseUrl}/${cartItemId}`);
+  removeCartItem(productId: string) {
+    return this.http.delete<any>(`${this.cartItemsBaseUrl}/${productId}`);
   }
 
   RemoveAllProductItems(productId: string) {

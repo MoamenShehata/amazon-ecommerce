@@ -5,6 +5,7 @@ using Amazon.Cart.Application.Services;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Payments;
+using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
@@ -18,6 +19,7 @@ namespace Amazon.Cart.Application
     public class CartAppService(
         CartService _cartService,
         IRepository<ShoppingCart, Guid> _cartsRepo,
+        IRepository<Product, Guid> _products,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
         IAuthenticationService _authenticationService,
@@ -34,7 +36,8 @@ namespace Amazon.Cart.Application
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(null as List<CartItemDto>);
 
-            return RestResponse<List<CartItemDto>>.Success(cartResult.Value.ToItemsDto());
+            var products = await _products.GetAllAsync(x => cartResult.Value.AggregatToProducts.Select(x => x.Key).Contains(x.Id));
+            return RestResponse<List<CartItemDto>>.Success(cartResult.Value.ToItemsDto(products));
         }
 
         public async Task<RestResponse<CartCreateResultDto>> CreateCartAsync(CartCreateDto createDto)
@@ -46,7 +49,7 @@ namespace Amazon.Cart.Application
             var result = await AddItemToCartAsync(cartCreateResult, createDto.CartItem);
             await _unitOfWork.CommitAsync();
 
-            var response = RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, result.Value?.Id ?? 0));
+            var response = RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, 0));
 
             if (!result.IsSuccess)
                 response.WithMessage(result.Error.ToString()!);
@@ -65,16 +68,16 @@ namespace Amazon.Cart.Application
                 return result.MapTo((int)0);
 
             await _unitOfWork.CommitAsync();
-            return RestResponse<int>.Success(result.Value.Id);
+            return RestResponse<int>.Success(0);
         }
 
-        public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, int cartItemId)
+        public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, Guid productId)
         {
             var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId);
             if (cart is null)
                 return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
 
-            cart.RemoveItem(cartItemId);
+            cart.RemoveItem(productId);
             await _unitOfWork.CommitAsync();
 
             return RestResponse<bool>.Success(true);

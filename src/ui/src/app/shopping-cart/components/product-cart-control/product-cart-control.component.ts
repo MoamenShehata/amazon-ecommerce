@@ -55,11 +55,9 @@ export class ProductCartControlComponent {
       return;
     }
 
-    const itemIdToRemove = this.productItemIds[this.productItemIds.length - 1];
-
-    this.shoppingCartService.removeCartItem(itemIdToRemove)?.subscribe(() => {
+    this.shoppingCartService.removeCartItem(this.cartItem.productId)?.subscribe(() => {
       this.productItemIds = this.productItemIds.slice(0, -1);
-      this.shoppingCartState.remove(itemIdToRemove);
+      this.shoppingCartState.remove(this.cartItem.productId);
     });
   }
 
