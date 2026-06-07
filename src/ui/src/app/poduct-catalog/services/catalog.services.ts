@@ -15,7 +15,7 @@ export class CatalogService {
   private categoriesBaseUrl = `${environment.catalogBaseUrl}/categories`;
   private productsBaseUrl = `${environment.catalogBaseUrl}/products`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getCategoriesPage(pageRequest: PageRequest) {
     return this.http.get<PagedResult<CategoryForListModel>>(
@@ -54,5 +54,9 @@ export class CatalogService {
     }
 
     return this.http.post<{ id: string }>(this.productsBaseUrl, formData);
+  }
+
+  deleteProduct(id: string) {
+    return this.http.delete(`${this.productsBaseUrl}/${id}`)
   }
 }

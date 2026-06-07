@@ -12,6 +12,7 @@ public static class DependencyRegistrar
     {
         builder.Services.AddControllers();
 
+
         builder.Services
             .AddSharedJobs()
             .AddJob<CategoriesSoftDeleteJob>()

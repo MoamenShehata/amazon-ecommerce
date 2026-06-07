@@ -7,8 +7,10 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServices();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -29,6 +31,7 @@ app.UseCors("CORS_Policy");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

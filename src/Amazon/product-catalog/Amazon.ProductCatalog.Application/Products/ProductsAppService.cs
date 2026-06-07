@@ -89,7 +89,7 @@ public class ProductsAppService(
 
     public async Task<RestResponse<bool>> DeleteAsync(Guid productId, bool isSoftDelete = true)
     {
-        var result = await _productsService.DeleteAsync(productId, isSoftDelete);
+        var result = await _productsService.DeleteAsync(productId, false);
         if (result.IsSuccess)
             await _unitOfWork.CommitAsync();
 

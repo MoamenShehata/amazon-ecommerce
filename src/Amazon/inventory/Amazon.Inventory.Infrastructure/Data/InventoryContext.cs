@@ -34,6 +34,8 @@ namespace Amazon.Inventory.Infrastructure.Data
                     });
                 });
 
+                entity.Property(x => x.IsDeleted);
+
                 entity.OwnsMany<ProductInventoryChange>("_inventoryChanges", b =>
                 {
                     b.ToTable("inventoryChanges");

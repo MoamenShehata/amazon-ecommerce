@@ -45,6 +45,10 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         RaiseEvent(new ProductInventoryUpdatedEvent(Id, newQuantity));
     }
 
+    internal bool IsDeleted { get; private set; }
+    public void SoftDelete() => IsDeleted = true; // we should hanlde current linked to order products
+
+
     #region Infra
     private Product() : base(Guid.Empty) { }
     #endregion

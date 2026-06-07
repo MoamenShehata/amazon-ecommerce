@@ -2,6 +2,7 @@ using Amazon.ProductCatalog.Application.Products;
 using Amazon.ProductCatalog.Application.Products.Dtos;
 using Amazon.SharedKernel.Common;
 using Amazon.SharedKernel.Media;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amazon.ProductCatalog.Api.Controllers;
@@ -16,6 +17,7 @@ public class ProductsController(ProductsAppService _productsAppService) : ApiCon
         return Ok(await _productsAppService.GetProductsPageAsync(pageRequest));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> CreateProduct(
         [FromForm] CreateProductDto request)
@@ -42,6 +44,7 @@ public class ProductsController(ProductsAppService _productsAppService) : ApiCon
         return RestResult(product);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(
         Guid id,
@@ -51,6 +54,7 @@ public class ProductsController(ProductsAppService _productsAppService) : ApiCon
         return RestResult(result);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(
         Guid id,

@@ -12,6 +12,7 @@
   </div>
   <div class="card-footer">
     <product-cart-control [cartItem]="productForModel" *ngIf="product.isAvailable" />
+    <button class="btn btn-danger" *ngIf="isAdmin" (click)="deleteProduct()">Delete</button>
     <h4 *ngIf="!product.isAvailable" class="text-danger">Currently Unavailable</h4>
   </div>
 </div>

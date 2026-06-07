@@ -36,4 +36,8 @@ export class AppServicesProvider {
       console.error('Error:', title ? title + ': ' : '', message);
     }
   }
+
+  get isAdmin() {
+    return this.authService.isAdmin
+  }
 }

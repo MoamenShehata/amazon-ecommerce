@@ -1,11 +1,11 @@
-import {Injectable} from "@angular/core";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
-import {OAuthService} from "angular-oauth2-oidc";
-import {AuthenticatedUser} from "../models/authenticated-user.model";
-import {authConfig} from "../constants/oidc-config";
-import {UserClaimTypes} from "../constants/custom-claim.constants";
-import {StorageService} from "../../core/services/storage-service";
-import {ActivatedRoute, Router} from "@angular/router";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { OAuthService } from "angular-oauth2-oidc";
+import { AuthenticatedUser } from "../models/authenticated-user.model";
+import { authConfig } from "../constants/oidc-config";
+import { UserClaimTypes } from "../constants/custom-claim.constants";
+import { StorageService } from "../../core/services/storage-service";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
@@ -96,5 +96,9 @@ export class AuthService {
 
   get isAuthenticated() {
     return this.userSubject.value !== null;
+  }
+
+  get isAdmin() {
+    return this.isAuthenticated && this.getAuthenticatedUser()?.isAdmin;
   }
 }

@@ -64,6 +64,8 @@ public class ProductsService(
 
     private RestResponse<bool> HandleDelete(Product product, bool isSoftDelete)
     {
+        product.RaiseEvent(new ProductDeletedEvent(product.Id));
+
         if (isSoftDelete)
             product.SoftDelete();
         else

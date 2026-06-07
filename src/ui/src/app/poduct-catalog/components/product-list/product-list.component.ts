@@ -40,7 +40,7 @@ export class ProductListComponent extends AppServicesProvider {
     return (
       this.productsPage &&
       this.pageRequest.pageNumber <
-        Math.ceil(this.productsPage.totalCount / this.pageRequest.pageSize)
+      Math.ceil(this.productsPage.totalCount / this.pageRequest.pageSize)
     );
   }
 
@@ -86,7 +86,7 @@ export class ProductListComponent extends AppServicesProvider {
     if (
       pageNumber >= 1 &&
       pageNumber <=
-        Math.ceil(this.productsPage.totalCount / this.pageRequest.pageSize)
+      Math.ceil(this.productsPage.totalCount / this.pageRequest.pageSize)
     ) {
       this.loadProductsPage(pageNumber);
     }
@@ -136,5 +136,8 @@ export class ProductListComponent extends AppServicesProvider {
     return pages;
   }
 
+  onProductDeleted(product: ProductForListModel) {
+    this.productsPage.items = this.productsPage.items.filter(x => x.id != product.id);
+  }
   Math = Math;
 }
