@@ -26,7 +26,7 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     public CartItem AddItem(Guid productId)
     {
-        var item = new CartItem(Id, productId);
+        var item = new CartItem(productId);
         _cartItems.Add(item);
         return item;
     }
