@@ -9,6 +9,7 @@ namespace Media.Api.Controllers;
 [Route("files")]
 public class MediaController(MediaService _mediaService) : ControllerBase
 {
+    [ResponseCache(Duration = 600, Location = ResponseCacheLocation.Any)]
     [HttpGet("{id}")]
     public async Task<ActionResult> GetMedia(Guid id)
     {
