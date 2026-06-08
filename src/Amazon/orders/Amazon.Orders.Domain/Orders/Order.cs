@@ -1,6 +1,7 @@
 ﻿using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Customers;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.Orders.Events;
 using Moamen.SDKs.Repository;

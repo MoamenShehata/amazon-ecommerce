@@ -26,7 +26,7 @@ public class OrderCreationProcess(
     public async Task Consume(ConsumeContext<InventoryReservedEvent> context)
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        order.RaiseEvent(new CreateShipmentCommand(context.Message.OrderId));
+        order.RaiseEvent(new CreateShipmentCommand(order.Id, order.Owner.Id, order.Owner.Email, "phoneNumber", order.DeliveryAddress));
 
         await _unitOfWork.CommitAsync();
     }
@@ -35,9 +35,9 @@ public class OrderCreationProcess(
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
         // depends how wer gonna handle it
-            // maybe serve the customer his products somehwre else
-            // or maybe update the ui to mark what items are not available and tell the customer they can contnue but with lack of some products
-            // or maybe cancel the request as a whole
+        // maybe serve the customer his products somehwre else
+        // or maybe update the ui to mark what items are not available and tell the customer they can contnue but with lack of some products
+        // or maybe cancel the request as a whole
         //order.RaiseEvent(new ReserveInventoryCommand(context.Message.OrderId, context.Message.OrderItems));
 
         await _unitOfWork.CommitAsync();
