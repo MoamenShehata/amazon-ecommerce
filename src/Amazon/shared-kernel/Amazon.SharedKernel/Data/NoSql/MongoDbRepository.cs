@@ -1,7 +1,9 @@
 ﻿using Moamen.SDKs.Repository;
 using Moamen.SDKs.Repository.Pagination;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Definitions;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System.Linq.Expressions;
 
 namespace Amazon.SharedKernel.Data.NoSql;
@@ -51,24 +53,60 @@ public class MongoDbRepository<TCollection, TKey>(IMongoDatabase _database, stri
     public async Task<TCollection> GetInstanceAsync(TKey id) => await GetInstanceAsync(id, x => x);
 
 
-    public Task<PagedResult<TCollection, TOrderBy>> GetPageAsync<TOrderBy>(PagedRequest pagedRequest, Expression<Func<TCollection, TOrderBy>> orderByKey)
+    public async Task<PagedResult<TCollection, TOrderBy>> GetPageAsync<TOrderBy>(PagedRequest pagedRequest, Expression<Func<TCollection, TOrderBy>> orderByKey) => await GetPageAsync(pagedRequest, orderByKey, [x => true]);
+
+    public async Task<PagedResult<TCollection, TOrderBy>> GetPageAsync<TOrderBy>(PagedRequest pagedRequest, Expression<Func<TCollection, TOrderBy>> orderByKey, List<Expression<Func<TCollection, bool>>> filters)
     {
-        throw new NotImplementedException();
+        var queryBase = _collection.AsQueryable();
+
+        foreach (var filter in filters)
+            queryBase = queryBase.Where(filter);
+
+        var entities = await queryBase
+            .OrderBy(orderByKey)
+            .Skip((pagedRequest.PageNumber - 1) * pagedRequest.PageSize)
+            .Take(pagedRequest.PageSize)
+            .ToListAsync();
+
+        var totalCount = await queryBase.CountAsync();
+
+        var lastSeenRecord = entities.LastOrDefault()!;
+        var lastSeen = lastSeenRecord != null ? orderByKey.Compile()(lastSeenRecord) : default;
+
+        return new PagedResult<TCollection, TOrderBy>(entities, totalCount, lastSeen);
     }
 
-    public Task<PagedResult<TCollection, TOrderBy>> GetPageAsync<TOrderBy>(PagedRequest pagedRequest, Expression<Func<TCollection, TOrderBy>> orderByKey, List<Expression<Func<TCollection, bool>>> filters)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<PagedResult<TCollection, TKeySet>> GetPageAsync<TKeySet>(int pageSize, Expression<Func<TCollection, TKeySet>> keySetSelector, TKeySet lastSeenValue) where TKeySet : IComparable<TKeySet> => await GetPageAsync(pageSize, keySetSelector, lastSeenValue, [x => true]);
 
-    public Task<PagedResult<TCollection, TKeySet>> GetPageAsync<TKeySet>(int pageSize, Expression<Func<TCollection, TKeySet>> keySetSelector, TKeySet lastSeenValue) where TKeySet : IComparable<TKeySet>
+    public async Task<PagedResult<TCollection, TKeySet>> GetPageAsync<TKeySet>(int pageSize, Expression<Func<TCollection, TKeySet>> keySetSelector, TKeySet lastSeenValue, List<Expression<Func<TCollection, bool>>> filters)
+        where TKeySet : IComparable<TKeySet>
     {
-        throw new NotImplementedException();
-    }
+        pageSize = Math.Clamp(pageSize, 10, 100);
 
-    public Task<PagedResult<TCollection, TKeySet>> GetPageAsync<TKeySet>(int pageSize, Expression<Func<TCollection, TKeySet>> keySetSelector, TKeySet lastSeenValue, List<Expression<Func<TCollection, bool>>> filters) where TKeySet : IComparable<TKeySet>
-    {
-        throw new NotImplementedException();
+        var parameter = keySetSelector.Parameters[0];
+        var body = Expression.GreaterThan(
+            keySetSelector.Body,
+            Expression.Constant(lastSeenValue)
+        );
+
+        var keySelectorPredicate = Expression.Lambda<Func<TCollection, bool>>(body, parameter);
+
+        IQueryable<TCollection> queryBase = _collection.AsQueryable();
+        foreach (var filter in filters)
+            queryBase = queryBase.Where(filter);
+
+        var entities = await queryBase
+            .Where(keySelectorPredicate)
+            .OrderBy(keySetSelector)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var totalCount = await queryBase.CountAsync();
+
+        var lastSeenRecord = entities.LastOrDefault()!;
+        var lastSeen = lastSeenRecord != null ? keySetSelector.Compile()(lastSeenRecord) : default;
+
+        return new PagedResult<TCollection, TKeySet>(entities, totalCount, lastSeen);
     }
 
 
