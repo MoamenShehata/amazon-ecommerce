@@ -1,16 +1,24 @@
-﻿using Amazon.SharedKernel.Orders.Commands;
+﻿using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Orders.Commands;
 using Moamen.SDKs.Repository;
-using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.Inventory.Domain.Products;
 
 public class ProductService(
     IRepository<Product, Guid> _products,
-    EventStoreService _eventStore,
-    IUnitOfWork _unitOfWork
+    EventStoreService _eventStore
     )
 {
+    public async Task<RestResponse<Product>> IsProductInStockAsync(Guid productId)
+    {
+        var product = await _products.GetInstanceAsync(x => x.Id == productId && !x.IsDeleted);
+        if (product == null)
+            return RestResponse<Product>.NotFound($"Product with ID {productId} not found.");
+
+        return RestResponse<Product>.Success(product);
+    }
+
     public async Task ReserveProductItemsForOrderAsync(Guid orderId, List<KeyValuePair<Guid, int>> productsWithQuantities)
     {
         var products = await _products.GetAllAsync(x => productsWithQuantities.Select(d => d.Key).Contains(x.Id));

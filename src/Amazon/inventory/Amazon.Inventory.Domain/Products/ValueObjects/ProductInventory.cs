@@ -77,6 +77,7 @@ public class ProductInventory
             item.Release();
     }
 
+    public bool HasReservedItems => _items.Any(i => i.ReservedForOrder.HasValue);
 
     private ProductInventory() { }
 }

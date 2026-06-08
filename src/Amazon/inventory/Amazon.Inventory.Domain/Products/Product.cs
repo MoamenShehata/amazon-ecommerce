@@ -1,4 +1,5 @@
-﻿using Amazon.Inventory.Domain.Products.ValueObjects;
+﻿using Amazon.Inventory.Domain.Products.Events;
+using Amazon.Inventory.Domain.Products.ValueObjects;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Products.Events;
 using Moamen.SDKs.Repository;
@@ -23,7 +24,14 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         UpdateInventory(Inventory.InStockCount, Inventory.InStockCount + quantity);
     }
 
-    public RestResponse<bool> ReserveQuantityForOrder(Guid orderId, int quantity) => Inventory.ReserveQuantityForOrder(orderId, quantity);
+    public RestResponse<bool> ReserveQuantityForOrder(Guid orderId, int quantity)
+    {
+        if (IsDeleted)
+            return RestResponse<bool>.BadRequest("product was not found");
+
+        return Inventory.ReserveQuantityForOrder(orderId, quantity);
+    }
+
     public void ReleaseReservedItems() => Inventory.ReleaseReservedItems();
 
     public RestResponse<bool> ConsumeForOrder(Guid orderId)
@@ -46,7 +54,13 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
     }
 
     internal bool IsDeleted { get; private set; }
-    public void SoftDelete() => IsDeleted = true; // we should hanlde current linked to order products
+    public void SoftDelete()
+    {
+        if (Inventory.HasReservedItems)
+            RaiseEvent(new ProductWithReservedInventoryDeletedEvent(Id));
+
+        IsDeleted = true;
+    }
 
 
     #region Infra

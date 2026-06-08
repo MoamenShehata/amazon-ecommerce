@@ -12,11 +12,7 @@ public class ProductAppService(
 {
     public async Task<RestResponse<Product>> GetByIdAsync(Guid productId)
     {
-        var product = await _repository.GetInstanceAsync(productId);
-        if (product == null)
-            return RestResponse<Product>.NotFound($"Product with ID {productId} not found.");
-
-        return RestResponse<Product>.Success(product);
+        return await _productsService.IsProductInStockAsync(productId);
     }
 
     public async Task ReserveProductItemsForOrderAsync(Guid orderId, List<KeyValuePair<Guid, int>> orderItems)
