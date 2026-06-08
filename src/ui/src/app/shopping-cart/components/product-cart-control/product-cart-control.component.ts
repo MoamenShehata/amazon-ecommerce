@@ -46,6 +46,7 @@ export class ProductCartControlComponent {
           productImageUrl: this.cartItem.productImageUrl,
           itemIds: this.productItemIds,
           unitPrice: this.cartItem.unitPrice,
+          isAvailable: this.cartItem.isAvailable
         });
       });
   }

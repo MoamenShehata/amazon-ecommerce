@@ -1,4 +1,5 @@
-﻿using Amazon.Cart.Domain.Products.ValueObjects;
+﻿using Amazon.Cart.Domain.Entities;
+using Amazon.Cart.Domain.Products.ValueObjects;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
@@ -13,11 +14,17 @@ public class Product : AuditableAggregate<Guid>, IEntity<Guid>
         Info = productInfo;
     }
 
+    public CartItem CreateCartItem() => new(Id);
+    public bool Satisfies(CartItem cartItem) => cartItem.ProductId == Id;
+
+    public bool IsDeleted { get; private set; }
+    public void SoftDelete() => IsDeleted = true;
+
     #region Infra
 
     private Product() : base(Guid.Empty)
     {
-        
+
     }
     #endregion
 }

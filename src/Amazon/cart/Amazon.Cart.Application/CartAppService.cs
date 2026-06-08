@@ -7,10 +7,12 @@ using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
+using Amazon.Cart.Domain.Specifications;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
+using MassTransit;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 
@@ -24,7 +26,8 @@ namespace Amazon.Cart.Application
         IOtpService _otpService,
         IAuthenticationService _authenticationService,
         PaymentsAppService _paymentsAppService,
-        PaymentsService _paymentsService
+        PaymentsService _paymentsService,
+        ShoppingCartSpecification _specification
         )
     {
         private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
@@ -46,14 +49,14 @@ namespace Amazon.Cart.Application
             if (!cartCreateResult.IsSuccess)
                 return cartCreateResult.MapTo((CartCreateResultDto)null);
 
-            var result = await AddItemToCartAsync(cartCreateResult, createDto.CartItem);
-            await _unitOfWork.CommitAsync();
+            var result = await _cartService.TryAddItemToCartAsync(cartCreateResult, createDto.CartItem.ProductId);
 
             var response = RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, 0));
 
             if (!result.IsSuccess)
                 response.WithMessage(result.Error.ToString()!);
 
+            await _unitOfWork.CommitAsync();
             return response;
         }
 
@@ -63,7 +66,7 @@ namespace Amazon.Cart.Application
             if (cart is null)
                 return RestResponse<int>.NotFound($"Cart with id {cartId} was not found");
 
-            var result = await AddItemToCartAsync(cart, cartItemDto);
+            var result = await _cartService.TryAddItemToCartAsync(cart, cartItemDto.ProductId);
             if (!result.IsSuccess)
                 return result.MapTo((int)0);
 
@@ -109,11 +112,7 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<int>> SetupForCheckoutAsync(Guid cartId, UpdateCartDto updateCartDto)
         {
-            var cartResult = await _cartService.GetByIdAsync(cartId);
-            if (!cartResult.IsSuccess)
-                return cartResult.MapTo(-1);
-
-            var setupResult = await _cartService.SetupForCheckoutAsync(cartResult, _currentUserId, updateCartDto.DeliverToAddressId, updateCartDto.PaymentMethodId);
+            var setupResult = await _cartService.SetupForCheckoutAsync(cartId, _currentUserId, updateCartDto.DeliverToAddressId, updateCartDto.PaymentMethodId);
             if (!setupResult.IsSuccess)
                 return setupResult.MapTo(-1);
 
@@ -123,11 +122,19 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, string otp)
         {
+            var cartResult = await _cartService.GetByIdForUserAsync(cartId, _currentUserId);
+            if (!cartResult.IsSuccess)
+                return cartResult.MapTo(Guid.Empty);
+
+            var isCartStateSatisfied = await _specification.SatisfiesAsync(cartResult);
+            if (!isCartStateSatisfied.IsSuccess)
+                return isCartStateSatisfied.MapTo(Guid.Empty);
+
             var isOtpValid = await _otpService.ValidateAsync(_currentUserId, otp);
             if (!isOtpValid)
                 return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
 
-            var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId, new { PaymentMethod = "Cash" });
+            var orderCreateResult = await _cartService.TryCheckoutAsync(cartResult, _currentUserId, new { PaymentMethod = "Cash" });
             if (!orderCreateResult.IsSuccess)
                 return orderCreateResult.MapTo(Guid.Empty);
 
@@ -141,22 +148,20 @@ namespace Amazon.Cart.Application
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(Guid.Empty);
 
+            var isCartStateSatisfied = await _specification.SatisfiesAsync(cartResult);
+            if (!isCartStateSatisfied.IsSuccess)
+                return isCartStateSatisfied.MapTo(Guid.Empty);
+
             var canPaymentCardSatisfyOrder = await _paymentsService.TryWithdrawFromPaymentCardAsync(_currentUserId, request.PaymentCardId, request.Cvv, cartResult.Value.TotalAmount);
             if (!canPaymentCardSatisfyOrder.IsSuccess)
                 return RestResponse<Guid>.BadRequest(canPaymentCardSatisfyOrder.Error.ToString());
 
-            var orderCreateResult = await _cartService.TryCheckoutAsync(cartId, _currentUserId, new { PaymentMethod = "Visa", CardNumber = canPaymentCardSatisfyOrder.Value });
+            var orderCreateResult = await _cartService.TryCheckoutAsync(cartResult, _currentUserId, new { PaymentMethod = "Visa", CardNumber = canPaymentCardSatisfyOrder.Value });
             if (!orderCreateResult.IsSuccess)
                 return orderCreateResult.MapTo(Guid.Empty);
 
             await _unitOfWork.CommitAsync();
             return RestResponse<Guid>.Success(orderCreateResult.Value);
         }
-
-        private async Task<RestResponse<CartItem>> AddItemToCartAsync(ShoppingCart cart, CartItemCreateDto cartItem)
-        {
-            return await _cartService.TryAddItemToCartAsync(cart, cartItem.ProductId);
-        }
-
     }
 }

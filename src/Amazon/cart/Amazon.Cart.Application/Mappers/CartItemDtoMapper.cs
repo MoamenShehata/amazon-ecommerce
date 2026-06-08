@@ -13,9 +13,10 @@ namespace Amazon.Cart.Application.Mappers
             var dtos = new List<CartItemDto>();
             foreach (var productGroup in productGroups)
             {
-                var productInfo = products.FirstOrDefault(x => x.Id == productGroup.Key).Info;
+                var product = products.FirstOrDefault(x => x.Id == productGroup.Key);
+                var productInfo = product.Info;
 
-                dtos.Add(new CartItemDto(productGroup.Key, productInfo.Name, productInfo.ImageUrl, cart.Items.Where(i => i.ProductId == productGroup.Key).Select(x => 0).ToList(), productInfo.UnitPrice));
+                dtos.Add(new CartItemDto(productGroup.Key, productInfo.Name, productInfo.ImageUrl, cart.Items.Where(i => i.ProductId == productGroup.Key).Select(x => 0).ToList(), productInfo.UnitPrice, !product.IsDeleted));
             }
 
             return dtos;

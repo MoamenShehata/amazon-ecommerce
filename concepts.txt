@@ -18,14 +18,6 @@
         - using Http methods
         - using URIs
 
-
-
-
-
-
-
-        
-
     - Consistency
         - Transactional
         - Eventual  => DONE

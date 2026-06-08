@@ -44,13 +44,13 @@ export class ShoppingCartComponent {
 
   get totalPrice() {
     let total = 0;
-    this.cartItems.forEach((i) => total += i.subTotal ?? 0);
+    this.cartItems.filter(x => x.isAvailable).forEach((i) => total += i.subTotal ?? 0);
     return total;
   }
 
   get cartItemsFalttenedCount() {
     let count = 0;
-    this.cartItems.forEach((i) => (count += i.itemIds.length));
+    this.cartItems.filter(x => x.isAvailable).forEach((i) => (count += i.itemIds.length));
     return count;
   }
 }

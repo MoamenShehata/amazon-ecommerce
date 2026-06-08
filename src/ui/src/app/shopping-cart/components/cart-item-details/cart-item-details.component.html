@@ -10,19 +10,23 @@
 
                 <p class="mb-1">
                     <strong>Unit Price:</strong>
-                    <span *ngIf="unitPrice !== null; else noPrice">${{ unitPrice?.toFixed(2) }}</span>
-                    <ng-template #noPrice>—</ng-template>
+                    <span *ngIf="cartItem.isAvailable &&  unitPrice !== null; else noPrice">${{ unitPrice?.toFixed(2)
+                        }}</span>
+                    <ng-template #noPrice>--</ng-template>
                 </p>
 
                 <p class="mb-1">
                     <strong>Quantity:</strong>
-                    <span class="badge rounded-pill text-bg-primary">{{ quantity }}</span>
+                    <span *ngIf="cartItem.isAvailable" class="badge rounded-pill text-bg-primary">{{ quantity
+                        }}</span>
+                    <span *ngIf="!cartItem.isAvailable">--</span>
                 </p>
 
                 <p class="mb-0">
                     <strong>Subtotal:</strong>
-                    <span *ngIf="unitPrice !== null; else noSubtotal">${{ subtotal.toFixed(2) }}</span>
-                    <ng-template #noSubtotal>—</ng-template>
+                    <span *ngIf="cartItem.isAvailable &&  unitPrice !== null; else noSubtotal">${{ subtotal.toFixed(2)
+                        }}</span>
+                    <ng-template #noSubtotal>--</ng-template>
                 </p>
             </div>
         </div>

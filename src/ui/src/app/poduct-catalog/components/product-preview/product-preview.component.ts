@@ -28,6 +28,7 @@ export class ProductPreviewComponent extends AppServicesProvider {
       productId: this.product.id,
       productName: this.product.name,
       productImageUrl: this.product.imageUrl!,
+      isAvailable: this.product.isAvailable!,
       itemIds: [],
       unitPrice: this.product.unitPrice,
     };

@@ -5,5 +5,6 @@
         string ProductName,
         string ProductImageUrl,
         List<int> ItemIds,
-        decimal UnitPrice);
+        decimal UnitPrice,
+        bool IsAvailable);
 }

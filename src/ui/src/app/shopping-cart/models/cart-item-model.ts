@@ -13,5 +13,6 @@ export interface CartItemDto {
   productImageUrl: string;
   itemIds: number[];
   unitPrice?: number;
+  isAvailable: boolean;
   subTotal?: number;
 }
