@@ -9,7 +9,7 @@
         - understood it
         - implemented order creation orchestrator
 
-    - api gateway
+    - api gateway => 5%
 
     - CQRS => 10%
         - i just used it to return customer profile data without joins(coded payment cards,addresses as two json columns)
@@ -32,7 +32,8 @@
     - Event sourcing => 5%
         - used for persisting order status(history not current state)
 
-    - 
+    - minimal api
+    - open api/swagger
 
 ///////////////////////////////////////////////////////////////
 
@@ -43,6 +44,7 @@ Synchronous
 Service-to-service authentication
 
 Versioning APIs (backward compatibility)
+    - 
 
 Idempotency
 
