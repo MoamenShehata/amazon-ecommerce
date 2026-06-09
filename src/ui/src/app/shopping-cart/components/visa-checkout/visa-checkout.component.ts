@@ -44,7 +44,7 @@ export class VisaCheckoutComponent extends AppServicesProvider implements OnInit
       return;
     }
 
-    this.cartService.checkoutUsingVisa(this.paymentForm.value).subscribe(
+    this.cartService.confirmPayment(null, this.paymentForm.value)?.subscribe(
       (orederId) => {
         this.cartService.clearInMemoryCart();
         this.router.navigate(["/my/orders", orederId]);

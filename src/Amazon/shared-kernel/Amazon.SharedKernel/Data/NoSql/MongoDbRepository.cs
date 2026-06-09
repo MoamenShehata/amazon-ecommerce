@@ -18,7 +18,7 @@ public class MongoDbRepository<TCollection, TKey>(IMongoDatabase _database, stri
     public void Add(TCollection aggregate)
     {
         _collection.InsertOne(aggregate);
-        TrackInstance(aggregate);
+        //TrackInstance(aggregate);
     }
 
     public async Task<IEnumerable<TProjection>> GetAllAsync<TProjection>(Expression<Func<TCollection, bool>> predicate, Expression<Func<TCollection, TProjection>> projector)

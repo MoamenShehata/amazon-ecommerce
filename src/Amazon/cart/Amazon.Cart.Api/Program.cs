@@ -59,6 +59,17 @@ builder.Services.AddAuthorization(op =>
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var repo = scope.ServiceProvider.GetRequiredService<IRepository<PaymentMethod, Guid>>();
+var uow = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+if ((await repo.GetAllAsync()).Count() == 0)
+{
+    repo.Add(PaymentMethod.ForCash());
+    repo.Add(PaymentMethod.ForVisa());
+    //await uow.CommitAsync();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -73,17 +84,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Use(async (ctxt, rd) =>
-{
-    var repo = ctxt.RequestServices.GetRequiredService<IRepository<PaymentMethod, Guid>>();
-    var uow = ctxt.RequestServices.GetRequiredService<IUnitOfWork>();
 
-    if ((await repo.GetAllAsync()).Count() == 0)
-    {
-        repo.Add(PaymentMethod.ForCash());
-        repo.Add(PaymentMethod.ForVisa());
-        //await uow.CommitAsync();
-    }
-    await rd(ctxt);
-});
 app.Run();
