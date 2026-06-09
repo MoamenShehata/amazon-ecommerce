@@ -35,8 +35,6 @@
 </div>
 
 <bootstrap-modal title="Update status to Shipping started" #modal>
-    <ng-container *ngIf="showModal">
-        <order-ship-started-form *ngIf="order.statusId==1" (submitted)="onStatusFormSubmitted($event)" />
-        <order-shiped-form *ngIf="order.statusId==2" (submitted)="onStatusFormSubmitted($event)" />
-    </ng-container>
+    <order-ship-started-form *ngIf="order.statusId==1" (submitted)="onStatusFormSubmitted($event)" />
+    <order-shiped-form *ngIf="order.statusId==2" (submitted)="onStatusFormSubmitted($event)" />
 </bootstrap-modal>

@@ -11,7 +11,7 @@ export class BootstrapModalComponent implements AfterContentInit {
   @Input() title = '';
   @ContentChild('[slot="title"]', { static: false }) customTitle: any;
 
-  showModal = false;
+  @Input() showModal = false;
   hasCustomTitle = false;
 
   ngAfterContentInit() {

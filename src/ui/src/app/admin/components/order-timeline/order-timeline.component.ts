@@ -44,7 +44,11 @@ export class OrderTimelineComponent extends AppServicesProvider {
       .subscribe((res) => {
         this.toastSuccess('Updated successfully');
 
-        this.order.id = this.form.value.to;
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true })
+          .then(() => {
+            this.router.navigateByUrl(currentUrl);
+          });
 
         this.closeModal();
       })
@@ -56,7 +60,7 @@ export class OrderTimelineComponent extends AppServicesProvider {
     this.updateStatus();
   }
 
-  showModal = true;
+  showModal = false;
 
   closeModal() {
     this.showModal = false;
