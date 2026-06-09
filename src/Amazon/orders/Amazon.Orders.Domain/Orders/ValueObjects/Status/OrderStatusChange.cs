@@ -45,9 +45,9 @@ public abstract class OrderStatusChange : IdentifiedValue<int>
     #endregion
 }
 
-public class OrderCreatedStatus(Guid orderId) : OrderStatusChange(orderId, OrderState.Created)
+public class OrderPendingStatus(Guid orderId) : OrderStatusChange(orderId, OrderState.Pending)
 {
-    private OrderCreatedStatus() : this(Guid.Empty) { }
+    private OrderPendingStatus() : this(Guid.Empty) { }
     public override bool CanBeCancelled => true;
 
     protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload) => RestResponse<OrderStatusChange>.Success(new OrderProcessingStatus(OrderId));

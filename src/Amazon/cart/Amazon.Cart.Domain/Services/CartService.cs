@@ -8,6 +8,7 @@ using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Specifications;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Moamen.SDKs.Repository;
 
@@ -43,6 +44,19 @@ public class CartService(
         var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
         if (cart is null)
             return RestResponse<ShoppingCart>.NotFound($"Cart with id {cartId} was not found");
+
+        return RestResponse<ShoppingCart>.Success(cart);
+    }
+
+    public async Task<RestResponse<ShoppingCart>> GetForCheckoutAsync(Guid cartId)
+    {
+        var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
+        if (cart is null)
+            return RestResponse<ShoppingCart>.NotFound($"Cart with id {cartId} was not found");
+
+        var isCartStateSatisfied = await _specification.SatisfiesAsync(cart);
+        if (!isCartStateSatisfied.IsSuccess)
+            return isCartStateSatisfied.MapTo(null as ShoppingCart);
 
         return RestResponse<ShoppingCart>.Success(cart);
     }
@@ -94,7 +108,7 @@ public class CartService(
         return await _paymentsService.UsePaymentMethodAsync(paymentMethodId, userId, deliveryAddressResult);
     }
 
-    public async Task<RestResponse<Guid>> TryCheckoutAsync(ShoppingCart cart, Guid userId, object PaymentInfo)
+    public async Task<RestResponse<Guid>> CreateOrderAsync(ShoppingCart cart, Guid userId)
     {
         var orderId = Guid.NewGuid();
 
@@ -109,16 +123,15 @@ public class CartService(
 
         var deliveryAddressResult = await _customerIntegration.GetDeliveryAddressOrDefaultAsync(cart.DeliverToAddressId);
 
-        var createdOrder = await _ordersIntegration.CreateAsync(ConstructOrderRequest(orderId, cart, PaymentInfo, deliveryAddressResult));
+        var createdOrder = await _ordersIntegration.CreateAsync(ConstructOrderRequest(orderId, cart, deliveryAddressResult));
 
-        _carts.Remove(cart);
         scope.Dispose();
         return RestResponse<Guid>.Success(createdOrder.Id);
     }
 
-    private OrderCreateDto ConstructOrderRequest(Guid orderId, ShoppingCart cart, object paymentInfo, CustomerDeliveryAddress deliverToAddressInfo)
+    private OrderCreateDto ConstructOrderRequest(Guid orderId, ShoppingCart cart, CustomerDeliveryAddress deliverToAddressInfo)
     {
-        return new OrderCreateDto(orderId, cart.AggregatToProducts, paymentInfo, deliverToAddressInfo.AsOrderDeliveryAddress);
+        return new OrderCreateDto(orderId, cart.AggregatToProducts, deliverToAddressInfo.AsOrderDeliveryAddress);
     }
 
     private async Task<RestResponse<bool>> CanOrderBeSatisifiedForCartAsync(ShoppingCart cart)

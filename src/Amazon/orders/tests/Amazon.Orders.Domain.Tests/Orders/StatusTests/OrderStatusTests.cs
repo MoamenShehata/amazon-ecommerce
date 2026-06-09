@@ -14,7 +14,7 @@ public class OrderStatusTests
     {
         _orderFactory = new OrderFactory(RepoFactory.Create<Product, Guid>());
     }
-    private async Task<Order> PlaceNewOrderAsync() => await _orderFactory.CreateAsync(Guid.NewGuid(), new CustomerInfo(Guid.NewGuid(), "mo@mo.com", "+20202"), new List<KeyValuePair<Guid, int>>(), "", null);
+    private async Task<Order> PlaceNewOrderAsync() => await _orderFactory.CreateAsync(Guid.NewGuid(), new CustomerInfo(Guid.NewGuid(), "mo@mo.com", "+20202"), new List<KeyValuePair<Guid, int>>(), null);
 
     [Fact]
     public async Task New_Order_CannotBeCancelled_UsingNormaStatus_Flow()
@@ -25,7 +25,7 @@ public class OrderStatusTests
     }
 
     [Theory]
-    [InlineData(OrderState.Created)]
+    [InlineData(OrderState.Pending)]
     [InlineData(OrderState.Processing)]
     [InlineData(OrderState.Shipped)]
     [InlineData(OrderState.DeliveryRecieved)]
@@ -41,7 +41,7 @@ public class OrderStatusTests
     }
 
     [Theory]
-    [InlineData(OrderState.Created)]
+    [InlineData(OrderState.Pending)]
     [InlineData(OrderState.Processing)]
     [InlineData(OrderState.ShippingStarted)]
     [InlineData(OrderState.DeliveryRecieved)]
@@ -60,7 +60,7 @@ public class OrderStatusTests
 
 
     [Theory]
-    [InlineData(OrderState.Created)]
+    [InlineData(OrderState.Pending)]
     [InlineData(OrderState.Processing)]
     [InlineData(OrderState.ShippingStarted)]
     [InlineData(OrderState.Shipped)]
@@ -81,7 +81,7 @@ public class OrderStatusTests
 
 
     [Theory]
-    [InlineData(OrderState.Created)]
+    [InlineData(OrderState.Pending)]
     [InlineData(OrderState.Processing)]
     [InlineData(OrderState.ShippingStarted)]
     [InlineData(OrderState.Shipped)]
@@ -103,7 +103,7 @@ public class OrderStatusTests
     }
 
     [Theory]
-    [InlineData(OrderState.Created)]
+    [InlineData(OrderState.Pending)]
     [InlineData(OrderState.Processing)]
     [InlineData(OrderState.ShippingStarted)]
     [InlineData(OrderState.Shipped)]

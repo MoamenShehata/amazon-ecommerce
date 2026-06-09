@@ -1,9 +1,9 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Application.Payments;
+using Amazon.Cart.Application.Payments.Validators;
 using Amazon.Cart.Application.Services;
 using Amazon.Cart.Domain;
-using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
@@ -12,9 +12,12 @@ using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
+using Amazon.SharedKernel.Orders.Events;
+using FluentValidation;
 using MassTransit;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.Cart.Application
 {
@@ -22,12 +25,15 @@ namespace Amazon.Cart.Application
         CartService _cartService,
         IRepository<ShoppingCart, Guid> _cartsRepo,
         IRepository<Product, Guid> _products,
+        IRepository<Transaction, Guid> _transactions,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
         IAuthenticationService _authenticationService,
         PaymentsAppService _paymentsAppService,
         PaymentsService _paymentsService,
-        ShoppingCartSpecification _specification
+        ShoppingCartSpecification _specification,
+        IRepository<ShoppingCart, Guid> _carts,
+        EventStoreService _eventStoreService
         )
     {
         private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
@@ -134,7 +140,7 @@ namespace Amazon.Cart.Application
             if (!isOtpValid)
                 return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
 
-            var orderCreateResult = await _cartService.TryCheckoutAsync(cartResult, _currentUserId, new { PaymentMethod = "Cash" });
+            var orderCreateResult = await _cartService.CreateOrderAsync(cartResult, _currentUserId);
             if (!orderCreateResult.IsSuccess)
                 return orderCreateResult.MapTo(Guid.Empty);
 
@@ -152,16 +158,89 @@ namespace Amazon.Cart.Application
             if (!isCartStateSatisfied.IsSuccess)
                 return isCartStateSatisfied.MapTo(Guid.Empty);
 
-            var canPaymentCardSatisfyOrder = await _paymentsService.TryWithdrawFromPaymentCardAsync(_currentUserId, request.PaymentCardId, request.Cvv, cartResult.Value.TotalAmount);
+            var canPaymentCardSatisfyOrder = await _paymentsService.ChargePaymentCardForAmountAsync(_currentUserId, request.PaymentCardId, request.Cvv, cartResult.Value.TotalAmount);
             if (!canPaymentCardSatisfyOrder.IsSuccess)
                 return RestResponse<Guid>.BadRequest(canPaymentCardSatisfyOrder.Error.ToString());
 
-            var orderCreateResult = await _cartService.TryCheckoutAsync(cartResult, _currentUserId, new { PaymentMethod = "Visa", CardNumber = canPaymentCardSatisfyOrder.Value });
+            var orderCreateResult = await _cartService.CreateOrderAsync(cartResult, _currentUserId);
             if (!orderCreateResult.IsSuccess)
                 return orderCreateResult.MapTo(Guid.Empty);
 
             await _unitOfWork.CommitAsync();
             return RestResponse<Guid>.Success(orderCreateResult.Value);
+        }
+
+        public async Task<RestResponse<ChallengePaymentResponse>> ChallengePaymentAndCreateOrderAsync(Guid cartId, ChallengePaymentRequest request)
+        {
+            var cartResult = await _cartService.GetForCheckoutAsync(cartId);
+            if (!cartResult.IsSuccess)
+                return cartResult.MapTo(null as ChallengePaymentResponse);
+
+            Guid orderId = Guid.Empty;
+
+            if (!cartResult.Value.OrderId.HasValue)
+            {
+                var orderCreateResult = await _cartService.CreateOrderAsync(cartResult, _currentUserId);
+                if (!orderCreateResult.IsSuccess)
+                    return orderCreateResult.MapTo(null as ChallengePaymentResponse);
+
+                orderId = orderCreateResult.Value;
+
+                cartResult.Value.SetOrder(orderId);
+            }
+
+            var checkoutResponse = await _paymentsAppService.ChallengePaymentAsync(orderId, request.PaymentMethodId, _currentUserId, request.DeliverToAddressId);
+            cartResult.Value.SetPaymentMethod(checkoutResponse.Value.PaymentMehod);
+
+            await _unitOfWork.CommitAsync();
+            return RestResponse<ChallengePaymentResponse>.Success(checkoutResponse);
+        }
+
+
+        public async Task<RestResponse<Guid>> ConfirmPaymentAsync(Guid cartId, ConfirmPaymentRequest request)
+        {
+            var cartResult = await _cartService.GetForCheckoutAsync(cartId);
+            if (!cartResult.IsSuccess)
+                return cartResult.MapTo(Guid.Empty);
+
+            if (!cartResult.Value.OrderId.HasValue || !cartResult.Value.PaymentMethod.HasValue)
+                return RestResponse<Guid>.BadRequest("Cart has not been checed out  yet!");
+
+            switch (cartResult.Value.PaymentMethod.Value)
+            {
+                case PaymentMehodType.Cash:
+                    if (string.IsNullOrWhiteSpace(request.Otp))
+                        return RestResponse<Guid>.BadRequest("Please provide a valid otp");
+
+                    var isOtpValid = await _otpService.ValidateAsync(_currentUserId, request.Otp);
+                    if (!isOtpValid)
+                        return RestResponse<Guid>.BadRequest($"Invalid otp {request.Otp}");
+
+                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value));
+                    break;
+
+                case PaymentMehodType.Visa:
+                    var validationResult = new CheckoutUsingVisaRequestValidator().Validate(request.VisaDetails);
+                    if (!validationResult.IsValid)
+                        return RestResponse<Guid>.BadRequest(validationResult.Errors.FirstOrDefault().ErrorMessage);
+
+                    var chargeCardResult = await _paymentsService.ChargePaymentCardForAmountAsync(_currentUserId, request.VisaDetails.PaymentCardId, request.VisaDetails.Cvv, cartResult.Value.TotalAmount);
+                    if (!chargeCardResult.IsSuccess)
+                        return RestResponse<Guid>.BadRequest(chargeCardResult.Error.ToString());
+
+                    var transaction = new Transaction(cartResult.Value.TotalAmount, cartResult.Value.OrderId.Value, _currentUserId, request.VisaDetails.PaymentCardId, chargeCardResult.Value);
+                    _transactions.Add(transaction);
+
+                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, transaction.Id));
+                    break;
+
+                default:
+                    return RestResponse<Guid>.Failure(new InvalidOperationException("Payment method is not supported"));
+            }
+
+            _carts.Remove(cartResult.Value);
+            await _unitOfWork.CommitAsync();
+            return RestResponse<Guid>.Success(cartResult.Value.OrderId.Value);
         }
     }
 }

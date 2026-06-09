@@ -90,21 +90,21 @@ export class ShoppingCartService extends AppServicesProvider {
     );
   }
 
-  setupForCheckout(dto: any) {
+  createOrderAndChallengePayment(dto: any) {
     if (!this.activeCartId) throw new Error("No active cart");
 
-    return this.http.put<number>(
-      `${this.cartsBaseUrl}/${this.activeCartId}`,
+    return this.http.post<{ redirectUrl: string, paymentMehod: number }>(
+      `${this.cartsBaseUrl}/${this.activeCartId}/Checkout/CreateOrder`,
       dto,
     );
   }
 
-  checkoutUsingOtp(otp: string) {
+  confirmPayment(otp: any = null, visaDetails: any = null) {
     if (!this.activeCartId) return;
 
     return this.http.post<any>(
-      `${this.cartsBaseUrl}/${this.activeCartId}/checkoutOtp`,
-      { otp }
+      `${this.cartsBaseUrl}/${this.activeCartId}/Checkout/ConfirmPayment`,
+      { otp: otp, visaDetails: visaDetails }
     );
   }
 

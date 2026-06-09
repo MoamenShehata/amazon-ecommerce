@@ -44,6 +44,7 @@ public static class InfrastructureDependencyRegistrar
            .AddMongoRepo<PaymentMethod, Guid>("paymentMethods")
            .AddMongoRepo<OutboxMessage, int>("outboxMessages")
            .AddMongoRepo<CustomerClaim, ObjectId>("customerClaims")
+           .AddMongoRepo<Transaction, Guid>("transactions")
            ;
 
         services.AddScoped<IUnitOfWork, MongoDbUnitOfWork>();

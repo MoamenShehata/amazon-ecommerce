@@ -38,7 +38,7 @@ namespace Amazon.Orders.Application.Orders
 
         public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(Guid customerId, string customerEmail, OrderCreateDto request)
         {
-            var result = await _ordersService.PlaceOrderAsync(request.OrderId, new CustomerInfo(customerId, customerEmail, "+000000"), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
+            var result = await _ordersService.PlaceOrderAsync(request.OrderId, new CustomerInfo(customerId, customerEmail, "+000000"), request.ShoppingCart, request.DeliveryAddress);
             if (result.IsSuccess)
             {
                 await _unitOfWork.CommitAsync();

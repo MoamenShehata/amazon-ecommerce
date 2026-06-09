@@ -39,11 +39,11 @@ public class OrdersService(
         return RestResponse<PagedResult<Order, DateTime>>.Success(new PagedResult<Order, DateTime>(page.Items, page.TotalCount, page.LastSeenValue));
     }
 
-    public async Task<RestResponse<Order>> PlaceOrderAsync(Guid orderId, CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, DeliveryAddress deliveryAddress)
+    public async Task<RestResponse<Order>> PlaceOrderAsync(Guid orderId, CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, DeliveryAddress deliveryAddress)
     {
         //validate customer data
 
-        var order = await _orderFactory.CreateAsync(orderId, customerInfo, cartItems, paymentInfo, deliveryAddress);
+        var order = await _orderFactory.CreateAsync(orderId, customerInfo, cartItems, deliveryAddress);
         _orders.Add(order);
 
         return RestResponse<Order>.Created(order, order.Id.ToString());

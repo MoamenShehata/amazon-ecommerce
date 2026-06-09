@@ -1,7 +1,8 @@
-﻿namespace Amazon.Cart.Domain.Integrations.Orders.Dtos;
+﻿using Amazon.SharedKernel.Customers;
+
+namespace Amazon.Cart.Domain.Integrations.Orders.Dtos;
 
 public record OrderCreateDto(
     Guid OrderId,
     List<KeyValuePair<Guid, int>> ShoppingCart,
-    object PaymentInfo,
-    object DeliveryAddress);
+    DeliveryAddress DeliveryAddress);

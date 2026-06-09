@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Domain.Entities;
+using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
 using Moamen.SDKs.Repository;
@@ -9,6 +10,21 @@ namespace Amazon.Cart.Domain;
 public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public Guid? CustomerId { get; private set; }
+    public Guid? OrderId { get; private set; }
+    public RestResponse<bool> SetOrder(Guid orderId)
+    {
+        if (OrderId.HasValue)
+            return RestResponse<bool>.BadRequest("You already tried to checkout this cart, please confirm your order");
+
+        OrderId = orderId;
+        return RestResponse<bool>.Success(true);
+    }
+
+    public PaymentMehodType? PaymentMethod { get; private set; }
+    public void SetPaymentMethod(PaymentMehodType paymentMethod)
+    {
+        PaymentMethod = paymentMethod;
+    }
 
     public CartExpiration Expiration { get; private set; }
 

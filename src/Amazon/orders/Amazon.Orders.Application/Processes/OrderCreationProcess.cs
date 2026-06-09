@@ -14,14 +14,14 @@ public class OrderCreationProcess(
     IRepository<Order, Guid> _orders,
     IUnitOfWork _unitOfWork,
     EventStoreService _eventStoreService
-    ) : IConsumer<OrderCreatedEvent>,
+    ) : IConsumer<OrderPaymentConfirmedEvent>,
     IConsumer<InventoryReservedEvent>, IConsumer<InventoryReservationFailedEvent>,
     IConsumer<ShipmentCreatedEvent>, IConsumer<CreateShipmentFailedEvent>
 {
-    public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
+    public async Task Consume(ConsumeContext<OrderPaymentConfirmedEvent> context)
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        order.RaiseEvent(new ReserveInventoryCommand(context.Message.OrderId, context.Message.OrderItems));
+        order.RaiseEvent(new ReserveInventoryCommand(order.Id, order.Items.Select(x => new KeyValuePair<Guid, int>(x.ProductInfo.ProductId, x.Quantity)).ToList()));
 
         await _unitOfWork.CommitAsync();
     }

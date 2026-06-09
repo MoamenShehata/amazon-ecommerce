@@ -21,7 +21,7 @@ export class CachCheckoutComponent extends AppServicesProvider {
     if (!otp) return;
 
 
-    this.cartService.checkoutUsingOtp(otp)?.subscribe(
+    this.cartService.confirmPayment(otp)?.subscribe(
       (orederId) => {
         this.cartService.clearInMemoryCart();
         this.router.navigate(["/my/orders", orederId]);

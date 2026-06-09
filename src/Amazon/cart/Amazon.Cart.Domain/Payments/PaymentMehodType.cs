@@ -1,6 +1,6 @@
 ﻿namespace Amazon.Cart.Domain.Payments;
 
-internal enum PaymentMehodType
+public enum PaymentMehodType
 {
     Cash = 0,
     Visa = 1,

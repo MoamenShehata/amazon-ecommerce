@@ -6,7 +6,7 @@ namespace Amazon.Cart.Domain.Payments;
 public class PaymentMethod : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public string Name { get; private set; }
-    internal PaymentMehodType Type { get; private set; }
+    public PaymentMehodType Type { get; private set; }
 
     internal PaymentMethod(string name, PaymentMehodType type) : base(Guid.NewGuid())
     {

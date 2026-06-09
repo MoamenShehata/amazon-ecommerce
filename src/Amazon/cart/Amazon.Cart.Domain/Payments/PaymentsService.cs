@@ -36,7 +36,7 @@ public class PaymentsService(
         }
     }
 
-    public async Task<RestResponse<string>> TryWithdrawFromPaymentCardAsync(Guid customerId, int paymentCardId, string cvv, decimal amount)
+    public async Task<RestResponse<string>> ChargePaymentCardForAmountAsync(Guid customerId, int paymentCardId, string cvv, decimal amount)
     {
         var paymentCardResult = await _customerService.GetPaymentCardAsync(paymentCardId);
         if (!paymentCardResult.IsSuccess)

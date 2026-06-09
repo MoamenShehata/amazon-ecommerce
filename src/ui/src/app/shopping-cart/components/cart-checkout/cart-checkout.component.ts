@@ -16,6 +16,7 @@ import { PaymentsService } from "../../services/payments.service";
   styleUrl: "./cart-checkout.component.css",
 })
 export class CartCheckoutComponent extends AppServicesProvider {
+  chellengePaymentForm: FormGroup;
 
   paymentMethods: PaymentMethod[] = [];
 
@@ -27,38 +28,38 @@ export class CartCheckoutComponent extends AppServicesProvider {
     this.initForm();
   }
 
+  initForm() {
+    this.chellengePaymentForm = this.fb.group({
+      deliverToAddressId: [null, [Validators.required]],
+      paymentMethodId: [null, [Validators.required]],
+    });
+  }
+
   ngOnInit() {
     this.paymentsService.getPaymentMethods().subscribe((methods) => {
       this.paymentMethods = methods;
     });
   }
 
-  redirectRoutes: any = {
-    0: '/cart/checkout/cash',
-    1: '/cart/checkout/card',
-  }
+  // redirectRoutes: any = {
+  //   0: '/cart/checkout/cash',
+  //   1: '/cart/checkout/card',
+  // }
 
-  proceedToPayment() {
-    if (!this.setupForCheckoutForm.valid) {
+  createOrderAndChallengePayment() {
+    if (!this.chellengePaymentForm.valid) {
       this.toastError("Please select delivery address and payment method");
       return;
     }
 
-    this.cartService.setupForCheckout(this.setupForCheckoutForm.value)
+    this.cartService.createOrderAndChallengePayment(this.chellengePaymentForm.value)
       .subscribe((result) => {
-        this.router.navigate([this.redirectRoutes[result]]);
+        debugger;
+        document.location.href = result.redirectUrl;
       });
   }
 
-  setupForCheckoutForm: FormGroup;
-  initForm() {
-    this.setupForCheckoutForm = this.fb.group({
-      deliverToAddressId: [null, [Validators.required]],
-      paymentMethodId: [null, [Validators.required]],
-    });
-  }
-
   setDeliveryAddress(addressId: number) {
-    this.setupForCheckoutForm.patchValue({ deliverToAddressId: addressId });
+    this.chellengePaymentForm.patchValue({ deliverToAddressId: addressId });
   }
 }

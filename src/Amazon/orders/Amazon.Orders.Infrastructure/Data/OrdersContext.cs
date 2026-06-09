@@ -31,7 +31,7 @@ public class OrdersContext : DbContextBase
             entity.ToTable("OutboxMessages", "orders");
         });
 
-        modelBuilder.Entity<OrderCreatedStatus>();
+        modelBuilder.Entity<OrderPendingStatus>();
         modelBuilder.Entity<OrderCancelledStatus>();
         modelBuilder.Entity<OrderProcessingStatus>();
 

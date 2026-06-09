@@ -12,20 +12,20 @@ namespace Amazon.Orders.Domain.Orders;
 public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public CustomerInfo Owner { get; private set; }
-    public string PaymentInfo { get; private set; }
+    public string? PaymentInfo { get; private set; }
     public DeliveryAddress DeliveryAddress { get; private set; }
 
 
     private readonly List<OrderItem> _orderItems = new();
     public IReadOnlyCollection<OrderItem> Items => _orderItems.AsReadOnly();
 
-    public Order(Guid orderId, CustomerInfo customer, List<OrderItem> orderItems, string paymentInfo, DeliveryAddress deliveryAddress) : base(orderId)
+    public Order(Guid orderId, CustomerInfo customer, List<OrderItem> orderItems, DeliveryAddress deliveryAddress) : base(orderId)
     {
         Owner = customer;
         _orderItems = orderItems;
-        PaymentInfo = paymentInfo;
+        PaymentInfo = null;
         DeliveryAddress = deliveryAddress;
-        UpdateStatus(new OrderCreatedStatus(orderId));
+        UpdateStatus(new OrderPendingStatus(orderId));
     }
 
     public decimal Price => _orderItems.Sum(x => x.Price);
