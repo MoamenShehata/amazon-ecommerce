@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\shared-kernel\Amazon.SharedKernel\Amazon.SharedKernel.csproj" />
     <ProjectReference Include="..\Amazon.Shipping.Domain\Amazon.Shipping.Domain.csproj" />
   </ItemGroup>

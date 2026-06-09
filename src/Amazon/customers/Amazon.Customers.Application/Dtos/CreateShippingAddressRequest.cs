@@ -1,5 +1,4 @@
-﻿using Amazon.Customers.Domain.ValueObjects;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Amazon.SharedKernel.Customers;
 
 namespace Amazon.Customers.Application.Dtos;
 

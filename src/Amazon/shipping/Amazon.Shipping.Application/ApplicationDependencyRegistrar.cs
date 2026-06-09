@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Amazon.Shipping.Domain.Strategies;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -35,15 +36,14 @@ public static class ApplicationDependencyRegistrar
 
     private static void AddDomainServices(IServiceCollection services)
     {
-        //services
+        services.AddScoped<ShippingCompanyStrategy>();
             ;
     }
 
     private static void AddApplicationServices(IServiceCollection services)
     {
-        //services
-        //    .AddScoped<CartAppService>()
-        //    .AddScoped<PaymentsAppService>()
-        //    ;
+        services
+            .AddScoped<ShippingAppService>()
+            ;
     }
 }

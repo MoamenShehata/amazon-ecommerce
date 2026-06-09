@@ -1,16 +1,19 @@
 ﻿using Amazon.Orders.Domain.Orders;
+using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.SharedKernel.Orders.Commands;
 using Amazon.SharedKernel.Orders.Events;
 using MassTransit;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 
 namespace Amazon.Orders.Application.Processes;
 
 // order creation business process orchestator SAGA
 public class OrderCreationProcess(
     IRepository<Order, Guid> _orders,
-    IUnitOfWork _unitOfWork
+    IUnitOfWork _unitOfWork,
+    EventStoreService _eventStoreService
     ) : IConsumer<OrderCreatedEvent>,
     IConsumer<InventoryReservedEvent>, IConsumer<InventoryReservationFailedEvent>,
     IConsumer<ShipmentCreatedEvent>, IConsumer<CreateShipmentFailedEvent>
@@ -26,7 +29,9 @@ public class OrderCreationProcess(
     public async Task Consume(ConsumeContext<InventoryReservedEvent> context)
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        order.RaiseEvent(new CreateShipmentCommand(order.Id, order.Owner.Id, order.Owner.Email, "phoneNumber", order.DeliveryAddress));
+        order.TryUpdateTo(OrderState.Processing, null);
+
+        _eventStoreService.Append(new CreateShipmentCommand(order.Id, order.Owner, order.DeliveryAddress));
 
         await _unitOfWork.CommitAsync();
     }
@@ -46,7 +51,7 @@ public class OrderCreationProcess(
     public async Task Consume(ConsumeContext<ShipmentCreatedEvent> context)
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        order.RaiseEvent(new CreateShipmentCommand(context.Message.OrderId));
+        //update order status
 
         await _unitOfWork.CommitAsync();
     }
@@ -55,7 +60,6 @@ public class OrderCreationProcess(
     {
         // we should retry TBH, as what could happen in just creating a shipment request for me to compensate and cancel the order???
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        order.RaiseEvent(new CreateShipmentCommand(context.Message.OrderId));
 
         await _unitOfWork.CommitAsync();
     }

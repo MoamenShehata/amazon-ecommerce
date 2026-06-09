@@ -2,6 +2,7 @@
 using Amazon.Customers.Domain.Events;
 using Amazon.Customers.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Customers;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 using static Amazon.Customers.Domain.ValueObjects.PaymentCardNumber;

@@ -3,6 +3,7 @@ using Amazon.Orders.Domain.Orders.Factories;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.Orders.Domain.Products;
+using Amazon.SharedKernel.Customers;
 
 namespace Amazon.Orders.Domain.Tests.Orders.StatusTests;
 
@@ -13,7 +14,7 @@ public class OrderStatusTests
     {
         _orderFactory = new OrderFactory(RepoFactory.Create<Product, Guid>());
     }
-    private async Task<Order> PlaceNewOrderAsync() => await _orderFactory.CreateAsync(Guid.NewGuid(), new CustomerInfo(Guid.NewGuid(), "mo@mo.com"), new List<KeyValuePair<Guid, int>>(), "", "");
+    private async Task<Order> PlaceNewOrderAsync() => await _orderFactory.CreateAsync(Guid.NewGuid(), new CustomerInfo(Guid.NewGuid(), "mo@mo.com", "+20202"), new List<KeyValuePair<Guid, int>>(), "", null);
 
     [Fact]
     public async Task New_Order_CannotBeCancelled_UsingNormaStatus_Flow()

@@ -3,6 +3,7 @@ using Amazon.Orders.Application.Orders.Mappers;
 using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Customers;
 using Amazon.SharedKernel.Extensions;
 using Microsoft.Extensions.Logging;
 using Moamen.SDKs.Repository;
@@ -39,7 +40,7 @@ namespace Amazon.Orders.Application.Orders
 
         public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(Guid customerId, string customerEmail, OrderCreateDto request)
         {
-            var result = await _ordersService.PlaceOrderAsync(request.OrderId, new CustomerInfo(customerId, customerEmail), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
+            var result = await _ordersService.PlaceOrderAsync(request.OrderId, new CustomerInfo(customerId, customerEmail,"+000000"), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
             if (result.IsSuccess)
             {
                 await _unitOfWork.CommitAsync();

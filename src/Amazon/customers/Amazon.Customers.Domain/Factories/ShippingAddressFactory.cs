@@ -1,5 +1,6 @@
 ﻿using Amazon.Customers.Domain.Entities;
 using Amazon.Customers.Domain.ValueObjects;
+using Amazon.SharedKernel.Customers;
 
 namespace Amazon.Customers.Domain.Factories;
 

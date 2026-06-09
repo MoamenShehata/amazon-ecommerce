@@ -1,4 +1,4 @@
-﻿using Amazon.Customers.Domain.ValueObjects;
+﻿using Amazon.SharedKernel.Customers;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
 namespace Amazon.Customers.Domain.Entities;

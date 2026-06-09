@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Amazon.Orders.Domain.Orders;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
+using Amazon.SharedKernel.Customers;
 using MassTransit.Transports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -33,8 +34,14 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             });
         });
 
+        builder.Property(x => x.DeliveryAddress)
+            .HasConversion(
+            address => JsonSerializer.Serialize(address, null as JsonSerializerOptions),
+            json => JsonSerializer.Deserialize<DeliveryAddress>(json, null as JsonSerializerOptions)
+            );
+
         builder.Navigation(o => o.Items).HasField("_orderItems")
-             .UsePropertyAccessMode(PropertyAccessMode.Field);
+         .UsePropertyAccessMode(PropertyAccessMode.Field);
 
         builder
             .HasMany<OrderStatusChange>("_history")

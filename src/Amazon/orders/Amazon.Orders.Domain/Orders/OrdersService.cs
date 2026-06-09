@@ -3,6 +3,7 @@ using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Products;
 using Amazon.Orders.Domain.Stakeholders;
 using Amazon.SharedKernel.API;
+using Amazon.SharedKernel.Customers;
 using Amazon.SharedKernel.Extensions;
 using Moamen.SDKs.Repository;
 
@@ -15,7 +16,7 @@ public class OrdersService(
     OrderFactory _orderFactory
     )
 {
-    public async Task<RestResponse<Order>> PlaceOrderAsync(Guid orderId, CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, object deliveryAddress)
+    public async Task<RestResponse<Order>> PlaceOrderAsync(Guid orderId, CustomerInfo customerInfo, List<KeyValuePair<Guid, int>> cartItems, object paymentInfo, DeliveryAddress deliveryAddress)
     {
         //validate customer data
 

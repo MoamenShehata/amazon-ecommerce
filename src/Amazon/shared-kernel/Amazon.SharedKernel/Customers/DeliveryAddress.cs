@@ -1,3 +1,20 @@
 ﻿namespace Amazon.SharedKernel.Customers;
 
-public record DeliveryAddress(int CountryId, int CityId, string PostalCode, string PhoneNumber, int BuildingNumber, int? ApartmentNumber);
+public class DeliveryAddress
+{
+    public CityInfo City { get; private set; }
+    public HouseInfo Appartment { get; private set; }
+
+    public DeliveryAddress(CityInfo city, HouseInfo appartment)
+    {
+        City = city;
+        Appartment = appartment;
+    }
+
+    #region MyRegion
+    private DeliveryAddress()
+    {
+
+    }
+    #endregion
+}

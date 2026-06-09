@@ -13,6 +13,6 @@ public static class OrderMappers
 
     public static OrderDetailsDto ToDetailsDto(this Order o)
     {
-        return new OrderDetailsDto(o.Id, o.CreatedOn, o.Status.ToString(), o.Status.AdditionalInfo, o.Price, o.Status.CanBeCancelled, o.Items.Select(i => new OrderItemDto(i.ProductInfo.Name, "", i.ProductInfo.UnitPrice, i.Quantity)).ToList(), JsonSerializer.Deserialize<object>(o.PaymentInfo), JsonSerializer.Deserialize<object>(o.DeliveryAddress));
+        return new OrderDetailsDto(o.Id, o.CreatedOn, o.Status.ToString(), o.Status.AdditionalInfo, o.Price, o.Status.CanBeCancelled, o.Items.Select(i => new OrderItemDto(i.ProductInfo.Name, "", i.ProductInfo.UnitPrice, i.Quantity)).ToList(), JsonSerializer.Deserialize<object>(o.PaymentInfo), o.DeliveryAddress);
     }
 }

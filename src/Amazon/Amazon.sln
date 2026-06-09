@@ -93,6 +93,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Shipping.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Shipping.Domain", "shipping\Amazon.Shipping.Domain\Amazon.Shipping.Domain.csproj", "{B761A9CE-FF57-4067-9AA1-EFEBB1C3FD81}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Shipping.Infrastructure", "shipping\Amazon.Shipping.Infrastructure\Amazon.Shipping.Infrastructure.csproj", "{5F1A867A-AAD5-4592-BA16-B8174E339E42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon.Shipping.Api", "shipping\Amazon.Shipping.Api\Amazon.Shipping.Api.csproj", "{507F9A81-6E76-49CC-B703-45F4EB029F52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +235,14 @@ Global
 		{B761A9CE-FF57-4067-9AA1-EFEBB1C3FD81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B761A9CE-FF57-4067-9AA1-EFEBB1C3FD81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B761A9CE-FF57-4067-9AA1-EFEBB1C3FD81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F1A867A-AAD5-4592-BA16-B8174E339E42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F1A867A-AAD5-4592-BA16-B8174E339E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F1A867A-AAD5-4592-BA16-B8174E339E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F1A867A-AAD5-4592-BA16-B8174E339E42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{507F9A81-6E76-49CC-B703-45F4EB029F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{507F9A81-6E76-49CC-B703-45F4EB029F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{507F9A81-6E76-49CC-B703-45F4EB029F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{507F9A81-6E76-49CC-B703-45F4EB029F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -271,6 +283,8 @@ Global
 		{AB2A50FF-7546-455E-AB35-F51A00B44CEB} = {CEAA1603-A770-476C-87F3-23E6AA2063AE}
 		{E9864338-4624-4447-BEFF-96C2F103609D} = {861FE137-9046-4BCD-9CE9-D6368608777D}
 		{B761A9CE-FF57-4067-9AA1-EFEBB1C3FD81} = {861FE137-9046-4BCD-9CE9-D6368608777D}
+		{5F1A867A-AAD5-4592-BA16-B8174E339E42} = {861FE137-9046-4BCD-9CE9-D6368608777D}
+		{507F9A81-6E76-49CC-B703-45F4EB029F52} = {861FE137-9046-4BCD-9CE9-D6368608777D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {854E9683-3600-41BC-A815-52488984E5D7}

@@ -1,4 +1,6 @@
-﻿namespace Amazon.Orders.Application.Orders.Dtos
+﻿using Amazon.SharedKernel.Customers;
+
+namespace Amazon.Orders.Application.Orders.Dtos
 {
-    public record OrderCreateDto(Guid OrderId, List<KeyValuePair<Guid, int>> ShoppingCart, object PaymentInfo, object DeliveryAddress);
+    public record OrderCreateDto(Guid OrderId, List<KeyValuePair<Guid, int>> ShoppingCart, object PaymentInfo, DeliveryAddress DeliveryAddress);
 }

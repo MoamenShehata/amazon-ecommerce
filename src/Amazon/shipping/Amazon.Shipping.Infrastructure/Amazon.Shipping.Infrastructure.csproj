@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared-kernel\Amazon.SharedKernel\Amazon.SharedKernel.csproj" />
+    <ProjectReference Include="..\Amazon.Shipping.Application\Amazon.Shipping.Application.csproj" />
+    <ProjectReference Include="..\Amazon.Shipping.Domain\Amazon.Shipping.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Moamen.SDKs.Repository">
+      <HintPath>..\..\shared-kernel\lib\Moamen.SDKs.Repository.dll</HintPath>
+    </Reference>
+    <Reference Include="Moamen.SDKs.SharedKernel">
+      <HintPath>..\..\media\lib\Moamen.SDKs.SharedKernel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
