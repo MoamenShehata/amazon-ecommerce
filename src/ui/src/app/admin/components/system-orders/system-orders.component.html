@@ -1,0 +1,74 @@
+<div *ngIf="isLoading" class="alert alert-info" role="alert">
+    Loading orders...
+</div>
+
+<div class="row mt-4" *ngIf="ordersPage && !isLoading">
+    <ng-container *ngIf="ordersPage.items && ordersPage.items.length > 0">
+        <div class="table-responsive mb-4">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Status</th>
+                        <th>Created By</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let order of ordersPage.items; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.createdByEmail }}</td>
+                        <td>{{ order.createdAt | date: "medium" }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" [routerLink]="['/admin/orders', order.id]">
+                                View Details
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </ng-container>
+    <div *ngIf="!ordersPage.items || ordersPage.items.length === 0" class="col-12">
+        <div class="alert alert-warning" role="alert">No orders found.</div>
+    </div>
+</div>
+
+<nav *ngIf="ordersPage && ordersPage.items && ordersPage.items.length > 0" aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="!hasPreviousPage">
+            <button class="page-link" (click)="previousPage()" [disabled]="!hasPreviousPage">
+                <i class="bi bi-chevron-left"></i>
+                Previous
+            </button>
+        </li>
+
+        <li class="page-item" *ngFor="let pageNum of getPageNumbers()"
+            [class.active]="pageNum === searchRequest.pageNumber">
+            <button class="page-link" (click)="goToPage(pageNum)" *ngIf="pageNum.toString() !== '...'">
+                {{ pageNum }}
+            </button>
+            <span class="page-link" *ngIf="pageNum.toString() === '...'">
+                {{ pageNum }}
+            </span>
+        </li>
+
+        <li class="page-item" [class.disabled]="!hasNextPage">
+            <button class="page-link" (click)="nextPage()" [disabled]="!hasNextPage">
+                Next
+                <i class="bi bi-chevron-right"></i>
+            </button>
+        </li>
+    </ul>
+
+    <!-- Page Info -->
+    <div class="text-center text-muted mt-3">
+        <small>
+            Page {{ searchRequest.pageNumber }} of
+            {{ Math.ceil(ordersPage.totalCount / searchRequest.pageSize) }} (Total:
+            {{ ordersPage.totalCount }} orders)
+        </small>
+    </div>
+</nav>

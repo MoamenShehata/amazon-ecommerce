@@ -10,9 +10,9 @@ namespace Amazon.Orders.Api.Controllers;
 public class OrdersController(OrdersAppService _service) : ApiControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetCustomerOrdersPage([FromQuery] SearchOrdersRequest pageRequest)
+    public async Task<IActionResult> GetOrdersPage([FromQuery] SearchOrdersRequest pageRequest)
     {
-        return Ok(await _service.GetCustomerOrdersPageAsync(UserId, pageRequest));
+        return RestResult(await _service.GetOrdersPageAsync(UserId, pageRequest));
     }
 
     [HttpGet("{id}", Name = "GetOrderById")]

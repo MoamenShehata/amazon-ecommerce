@@ -1,0 +1,47 @@
+<div *ngIf="isLoading" class="alert alert-info" role="alert">
+    Loading order details...
+</div>
+
+<div *ngIf="orderDetails && !isLoading" class="card">
+    <div class="card-header">order details...</div>
+    <div class="card-body">
+        <p class="card-text">
+            <strong>Created At:</strong>
+            {{ orderDetails.createdAt | date: "medium" }}
+        </p>
+        <p class="card-text">
+            <strong>Total Amount:</strong>
+            ${{ orderDetails.totalAmount }}
+        </p>
+
+        <p class="card-text">
+            <strong>Status:</strong>
+            {{ orderDetails.status }}
+        </p>
+
+        <div class="card-text" *ngIf="orderDetails.statusAdditionalInfo">
+            <strong>Additional Info:</strong>
+            <json-to-list [value]="orderDetails.statusAdditionalInfo" />
+        </div>
+
+        <h6>Items:</h6>
+        <ul class="list-group list-group-flush">
+            <li *ngFor="let item of orderDetails.items" class="list-group-item">
+                {{ item.productName }} - Quantity: {{ item.quantity }} - Price: ${{
+                item.unitPrice
+                }}
+            </li>
+        </ul>
+
+        <h6>Payment Information:</h6>
+        <json-to-list [value]="orderDetails.paymentInfo" />
+
+        <h6>Deliver to Address:</h6>
+        <json-to-list [value]="orderDetails.deliveryAddress" />
+
+
+        <button class="btn btn-danger" (click)="cancelOrder()" *ngIf="orderDetails.canBeCanceled">
+            Cancel Order
+        </button>
+    </div>
+</div>

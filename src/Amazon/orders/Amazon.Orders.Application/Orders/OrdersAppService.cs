@@ -27,20 +27,18 @@ namespace Amazon.Orders.Application.Orders
             return RestResponse<OrderDetailsDto>.Success(orderResult.Value.ToDetailsDto());
         }
 
-        public async Task<PagedResult<OrderForListDto, DateTime>> GetCustomerOrdersPageAsync(Guid customerId, SearchOrdersRequest pageRequest)
+        public async Task<RestResponse<PagedResult<OrderForListDto, DateTime>>> GetOrdersPageAsync(Guid customerId, SearchOrdersRequest pageRequest)
         {
-            _logger.LogDebug("Loading apdo for customer {customerId}", customerId);
+            var pageResult = await _ordersService.GetOrdersPageByRequestingCustomer(customerId, pageRequest.PageNumber, pageRequest.PageSize, !string.IsNullOrWhiteSpace(pageRequest.LastSeenValue) ? DateTime.Parse(pageRequest.LastSeenValue) : null);
+            if (!pageResult.IsSuccess)
+                return pageResult.MapTo(null as PagedResult<OrderForListDto, DateTime>);
 
-            var page = pageRequest.PageNumber == 1
-            ? await _ordersRepo.GetPageAsync(new PagedRequest(pageRequest.PageNumber, pageRequest.PageSize), c => c.CreatedOn, [x => x.Owner.Id == customerId])
-            : await _ordersRepo.GetPageAsync(pageRequest.PageSize, c => c.CreatedOn, DateTime.Parse(pageRequest.LastSeenValue), [x => x.Owner.Id == customerId]);
-
-            return new PagedResult<OrderForListDto, DateTime>(page.Items.Select(o => o.ToForListDto()), page.TotalCount, page.LastSeenValue);
+            return pageResult.MapTo(new PagedResult<OrderForListDto, DateTime>(pageResult.Value.Items.Select(o => o.ToForListDto()), pageResult.Value.TotalCount, pageResult.Value.LastSeenValue));
         }
 
         public async Task<RestResponse<OrderCreatedDto>> PlaceAsync(Guid customerId, string customerEmail, OrderCreateDto request)
         {
-            var result = await _ordersService.PlaceOrderAsync(request.OrderId, new CustomerInfo(customerId, customerEmail,"+000000"), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
+            var result = await _ordersService.PlaceOrderAsync(request.OrderId, new CustomerInfo(customerId, customerEmail, "+000000"), request.ShoppingCart, request.PaymentInfo, request.DeliveryAddress);
             if (result.IsSuccess)
             {
                 await _unitOfWork.CommitAsync();

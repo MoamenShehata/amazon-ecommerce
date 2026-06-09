@@ -1,20 +1,20 @@
-import { Component } from "@angular/core";
-import { AppServicesProvider } from "../../../core/services/app-services.provider";
-import { OrdersService } from "../../../orders/orders.services";
-import { OrderForListDto } from "../../../orders/models/OrderForListDto";
-import { PagedResult } from "../../../core/models/paged-result.models";
-import { SearchOrdersRequest } from "../../../orders/models/search-orders.model";
-import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { Component } from '@angular/core';
+import { PagedResult } from '../../../core/models/paged-result.models';
+import { AppServicesProvider } from '../../../core/services/app-services.provider';
+import { OrderForListDto } from '../../../orders/models/OrderForListDto';
+import { SearchOrdersRequest } from '../../../orders/models/search-orders.model';
+import { OrdersService } from '../../../orders/orders.services';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: "app-my-orders",
+  selector: 'app-system-orders',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: "./my-orders.component.html",
-  styleUrl: "./my-orders.component.css",
+  templateUrl: './system-orders.component.html',
+  styleUrl: './system-orders.component.css'
 })
-export class MyOrdersComponent extends AppServicesProvider {
+export class SystemOrdersComponent extends AppServicesProvider {
   constructor(private ordersService: OrdersService) {
     super();
   }

@@ -8,7 +8,7 @@ public static class OrderMappers
 {
     public static OrderForListDto ToForListDto(this Order o)
     {
-        return new OrderForListDto(o.Id, o.CreatedOn, o.Status.ToString());
+        return new OrderForListDto(o.Id, o.CreatedOn, o.Status.ToString(), o.Owner.Email);
     }
 
     public static OrderDetailsDto ToDetailsDto(this Order o)

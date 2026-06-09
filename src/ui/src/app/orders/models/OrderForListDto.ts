@@ -4,6 +4,7 @@ export interface OrderForListDto {
   id: string;
   status: string;
   createdAt: Date;
+  createdByEmail: string;
 }
 
 export interface OrderDetailsDto {

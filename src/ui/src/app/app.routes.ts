@@ -1,4 +1,4 @@
-import {Routes} from "@angular/router";
+import { Routes } from "@angular/router";
 
 export const routes: Routes = [
   {
@@ -31,5 +31,10 @@ export const routes: Routes = [
     path: "my",
     loadChildren: () =>
       import("./customers/customer.routes").then((m) => m.CustomerRoutes),
+  },
+  {
+    path: "admin",
+    loadChildren: () =>
+      import("./admin/admin.routes").then((m) => m.AdminRoutes),
   },
 ];

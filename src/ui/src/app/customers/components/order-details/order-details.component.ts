@@ -4,50 +4,21 @@ import { OrdersService } from "../../../orders/orders.services";
 import { CommonModule } from "@angular/common";
 import { OrderDetailsDto } from "../../../orders/models/OrderForListDto";
 import { JsonToListComponent } from "../../../core/components/json-to-list/json-to-list.component";
+import { OrderDetailsSharedComponent } from "../../../core/orders/components/order-details-shared/order-details-shared.component";
 
 @Component({
   selector: "app-order-details",
   standalone: true,
-  imports: [CommonModule, JsonToListComponent],
+  imports: [OrderDetailsSharedComponent],
   templateUrl: "./order-details.component.html",
   styleUrl: "./order-details.component.css",
 })
 export class OrderDetailsComponent extends AppServicesProvider {
   orderId: string;
-
-  orderDetails: OrderDetailsDto;
-
-  isLoading = false;
-  constructor(private ordersService: OrdersService) {
-    super();
-  }
-
   ngOnInit() {
     this.activatedRoute.params.subscribe((params) => {
       this.orderId = params["id"];
-
-      this.loadOrderDetails();
     });
   }
 
-  loadOrderDetails() {
-    this.isLoading = true;
-    this.ordersService.getOrderDetails(this.orderId).subscribe({
-      next: (details) => {
-        this.orderDetails = details;
-        this.isLoading = false;
-      }
-    });
-  }
-
-  cancelOrder() {
-    this.ordersService.cancelOrder(this.orderId).subscribe({
-      next: () => {
-        this.loadOrderDetails();
-      },
-      error: (err) => {
-        this.toastError(err.error);
-      },
-    });
-  }
 }
