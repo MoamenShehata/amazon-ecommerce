@@ -10,6 +10,7 @@ export interface OrderForListDto {
 export interface OrderDetailsDto {
   id: string;
   status: string;
+  statusId: number;
   statusAdditionalInfo: any;
   totalAmount: number;
   createdAt: Date;

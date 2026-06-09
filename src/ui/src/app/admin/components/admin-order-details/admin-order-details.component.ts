@@ -3,11 +3,12 @@ import { OrderDetailsSharedComponent } from '../../../core/orders/components/ord
 import { AppServicesProvider } from '../../../core/services/app-services.provider';
 import { CommonModule } from '@angular/common';
 import { OrderDetailsDto } from '../../../orders/models/OrderForListDto';
+import { OrderTimelineComponent } from '../order-timeline/order-timeline.component';
 
 @Component({
   selector: 'app-admin-order-details',
   standalone: true,
-  imports: [OrderDetailsSharedComponent, CommonModule],
+  imports: [OrderDetailsSharedComponent, CommonModule, OrderTimelineComponent],
   templateUrl: './admin-order-details.component.html',
   styleUrl: './admin-order-details.component.css'
 })

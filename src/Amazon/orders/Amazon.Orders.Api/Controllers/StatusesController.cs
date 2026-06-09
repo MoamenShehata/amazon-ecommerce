@@ -23,7 +23,7 @@ public class StatusesController(OrdersAppService _ordersAppService) : ApiControl
             var payload = jsonElement.Deserialize<ShippingCompanyInfo>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             var validationResult = new ShippingCompanyInfoValidator().Validate(payload);
             if (!validationResult.IsValid)
-                return BadRequest(validationResult.Errors);
+                return BadRequest(validationResult.Errors.FirstOrDefault().ErrorMessage);
             request.Payload = payload;
         }
 

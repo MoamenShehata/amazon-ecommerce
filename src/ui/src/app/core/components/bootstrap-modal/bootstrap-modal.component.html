@@ -1,0 +1,21 @@
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1"
+    *ngIf="showModal">
+    <div *ngIf="showModal" [class.show]="showModal" class="modal-backdrop fade" (click)="closeModal()"></div>
+    <div class="modal-dialog modal-dialog-centered modal-xl" style="z-index: 10000">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <ng-content select="[slot='title']"></ng-content>
+                    <ng-container *ngIf="!hasCustomTitle">
+                        {{ title }}
+                    </ng-container>
+                </h5>
+                <button type="button" class="btn-close" (click)="closeModal()"></button>
+            </div>
+
+            <div class="modal-body">
+                <ng-content></ng-content>
+            </div>
+        </div>
+    </div>
+</div>

@@ -103,6 +103,8 @@ public class OrderShippedStatus : OrderStatusChange
         TrackingId = trackingId;
     }
 
+    public override object AdditionalInfo => new { TrackingId };
+
     public override bool CanBeCancelled => false;
     private OrderShippedStatus() : this(Guid.Empty, null) { }
 

@@ -1,0 +1,29 @@
+<div class="mt-4">
+    <div class="row justify-content-center">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Update status to Shipping started</h5>
+            </div>
+            <div class="card-body">
+
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <div class="row">
+                        <div class="mb-3">
+                            <label class="form-label">Tracking Id</label>
+                            <input type="text" class="form-control" formControlName="trackingId"
+                                placeholder="Company name" />
+                            <div class="invalid-feedback d-block" *ngIf="trackingId.touched && trackingId.invalid">
+                                Tracking Id is required.
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button class="btn btn-primary" type="submit" [disabled]="form.invalid">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

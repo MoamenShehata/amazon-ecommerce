@@ -3,6 +3,7 @@
     public record OrderDetailsDto(
         Guid Id,
         DateTime CreatedAt,
+        int StatusId,
         string Status,
         object StatusAdditionalInfo,
         decimal TotalAmount,
