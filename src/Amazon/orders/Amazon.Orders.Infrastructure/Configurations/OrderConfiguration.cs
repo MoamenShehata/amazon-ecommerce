@@ -18,6 +18,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         {
             b.Property(d => d.Id);
             b.Property(d => d.Email);
+            b.Property(d => d.PhoneNumber);
         });
 
         builder.OwnsMany(x => x.Items, b =>
