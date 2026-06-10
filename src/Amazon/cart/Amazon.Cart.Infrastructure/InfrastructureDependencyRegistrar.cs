@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Domain;
+using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Integrations;
 using Amazon.Cart.Domain.Integrations.Customers;
 using Amazon.Cart.Domain.Integrations.Orders;
@@ -20,6 +21,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 
 namespace Amazon.Cart.Infrastructure;
 
@@ -28,6 +31,7 @@ public static class InfrastructureDependencyRegistrar
     public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services,
         IConfiguration configuration)
     {
+        ConfigureMongoEntities();
 
         services.AddScoped<EventStoreService>();
 
@@ -66,5 +70,24 @@ public static class InfrastructureDependencyRegistrar
             ;
 
         return services;
+    }
+
+    private static void ConfigureMongoEntities()
+    {
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
+        BsonClassMap.RegisterClassMap<ShoppingCart>(cm =>
+        {
+            cm.AutoMap();
+
+            cm.MapField("_cartItems");
+        });
+
+        BsonClassMap.RegisterClassMap<CartItem>(cm =>
+        {
+            cm.AutoMap();
+
+            cm.UnmapMember(x => x.Product);
+        });
     }
 }

@@ -13,6 +13,11 @@ public static class DependencyRegistrar
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
         services
+            .AddFrameworkServices()
+            .AddAuthorizationPolicies()
+            ;
+
+        services
             .AddSharedJobs()
             .RegisterSharedServices(configuration)
             .RegisterOtpServices()
@@ -28,7 +33,46 @@ public static class DependencyRegistrar
 
         return services;
     }
-    
+
+    private static IServiceCollection AddFrameworkServices(this IServiceCollection services)
+    {
+
+        services.AddControllers();
+        services.AddOpenApi();
+
+        services.AddCors(op =>
+        {
+            op.AddPolicy("CORS_Policy", policy =>
+            {
+                policy.WithOrigins("http://localhost:4200", "http://localhost:62832")
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddAuthorizationPolicies(this IServiceCollection services)
+    {
+        services.AddAuthorization(op =>
+        {
+            op.AddPolicy("CARTS_POLICY", builder =>
+            {
+                builder.RequireClaim("scope", "amazon.cart");
+            });
+
+            op.AddPolicy("CUSTOMERS_POLICY", builder =>
+            {
+                builder.RequireClaim("scope", "amazon.customers");
+            });
+        });
+
+
+        return services;
+    }
+
     private static IServiceCollection AddAppSettings(this IServiceCollection services)
     {
         services
