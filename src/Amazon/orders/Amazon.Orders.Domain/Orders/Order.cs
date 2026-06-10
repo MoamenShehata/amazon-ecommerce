@@ -36,8 +36,8 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
     {
         _history.Add(newStatus);
 
-        if (newStatus.State == OrderState.CustomerDelivered)
-            RaiseEvent(new OrderCompletedEvent(Id));
+        foreach (var @event in newStatus.EventsToRaise)
+            RaiseEvent(@event);
     }
 
     public OrderStatusChange Status => _history.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
