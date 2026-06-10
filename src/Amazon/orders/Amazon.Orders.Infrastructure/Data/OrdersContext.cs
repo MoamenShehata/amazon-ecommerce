@@ -49,6 +49,7 @@ public class OrdersContext : DbContextBase
         });
 
         modelBuilder.Entity<OrderDeliveredStatus>();
+        modelBuilder.Entity<OrderAbandonedStatus>();
 
         modelBuilder.Entity<AdminUser>();
         modelBuilder.Entity<Customer>();

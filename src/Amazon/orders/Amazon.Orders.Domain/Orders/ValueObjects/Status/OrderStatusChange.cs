@@ -22,7 +22,7 @@ public abstract class OrderStatusChange : IdentifiedValue<int>
     public virtual object AdditionalInfo => string.Empty;
 
     public abstract bool CanBeCancelled { get; }
-    public virtual List<DomainEvent> EventsToRaise => new();
+    internal virtual List<DomainEvent> EventsToRaise => [];
 
     internal RestResponse<OrderStatusChange> CanUpdateTo(OrderState state, object withPayload)
     {
@@ -97,7 +97,7 @@ public class OrderShippingStartedStatus : OrderStatusChange
         return RestResponse<OrderStatusChange>.Success(new OrderShippedStatus(OrderId, payload.ToString()));
     }
 
-    public override List<DomainEvent> EventsToRaise => [new OrderShippingStartedEvent(OrderId)];
+    override internal List<DomainEvent> EventsToRaise => [new OrderShippingStartedEvent(OrderId)];
 }
 
 public class OrderShippedStatus : OrderStatusChange
@@ -148,7 +148,7 @@ public class OrderDeliveredStatus(Guid orderId) : OrderStatusChange(orderId, Ord
     private OrderDeliveredStatus() : this(Guid.Empty) { }
     protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload) => RestResponse<OrderStatusChange>.BadRequest("Order is completed and cannot be updated to any status!");
 
-    public override List<DomainEvent> EventsToRaise => [new OrderCompletedEvent(OrderId)];
+    override internal List<DomainEvent> EventsToRaise => [new OrderCompletedEvent(OrderId)];
 }
 
 
