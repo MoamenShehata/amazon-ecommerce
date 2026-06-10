@@ -108,15 +108,6 @@ export class ShoppingCartService extends AppServicesProvider {
     );
   }
 
-  checkoutUsingVisa(request: { paymentCardId: number; cvv: string }) {
-    if (!this.activeCartId) throw new Error("No active cart");
-
-    return this.http.post<any>(
-      `${this.cartsBaseUrl}/${this.activeCartId}/checkoutVisa`,
-      { paymentCardId: request.paymentCardId, Cvv: request.cvv }
-    );
-  }
-
   clearInMemoryCart() {
     this.storageService.delete("cartId");
     this.shoppingCartState.clear();

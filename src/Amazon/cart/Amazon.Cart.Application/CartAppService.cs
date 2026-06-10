@@ -7,7 +7,6 @@ using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
-using Amazon.Cart.Domain.Specifications;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
@@ -28,23 +27,12 @@ namespace Amazon.Cart.Application
         IAuthenticationService _authenticationService,
         PaymentsAppService _paymentsAppService,
         PaymentsService _paymentsService,
-        ShoppingCartSpecification _specification,
         IRepository<ShoppingCart, Guid> _carts,
         EventStoreService _eventStoreService
         )
     {
         private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
         private Guid _currentUserId => _currentUser.Id;
-
-        public async Task<RestResponse<List<CartItemDto>>> GetByIdAsync(Guid cartId)
-        {
-            var cartResult = await _cartService.GetByIdAsync(cartId);
-            if (!cartResult.IsSuccess)
-                return cartResult.MapTo(null as List<CartItemDto>);
-
-            var products = await _products.GetAllAsync(x => cartResult.Value.AggregatToProducts.Select(x => x.Key).Contains(x.Id));
-            return RestResponse<List<CartItemDto>>.Success(cartResult.Value.ToItemsDto(products));
-        }
 
         public async Task<RestResponse<CartCreateResultDto>> CreateCartAsync(CartCreateDto createDto)
         {
@@ -62,6 +50,18 @@ namespace Amazon.Cart.Application
             await _unitOfWork.CommitAsync();
             return response;
         }
+
+        public async Task<RestResponse<List<CartItemDto>>> GetByIdAsync(Guid cartId)
+        {
+            var cartResult = await _cartService.GetByIdAsync(cartId);
+            if (!cartResult.IsSuccess)
+                return cartResult.MapTo(null as List<CartItemDto>);
+
+            var products = await _products.GetAllAsync(x => cartResult.Value.AggregatToProducts.Select(x => x.Key).Contains(x.Id));
+            return RestResponse<List<CartItemDto>>.Success(cartResult.Value.ToItemsDto(products));
+        }
+
+        
 
         public async Task<RestResponse<int>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItemDto)
         {

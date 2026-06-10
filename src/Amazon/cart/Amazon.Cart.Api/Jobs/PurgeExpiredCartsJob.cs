@@ -11,7 +11,7 @@ public class PurgeExpiredCartsJob(
     protected override TimeSpan Interval => TimeSpan.FromSeconds(5);
     protected override async Task DoAsync(CancellationToken stoppingToken)
     {
-        var scope = _serviceScopeFactory.CreateScope();
+        using var scope = _serviceScopeFactory.CreateScope();
         var cartService = scope.ServiceProvider.GetRequiredService<CartAppService>();
         await cartService.PurgeExpiredCartsAsync();
     }
