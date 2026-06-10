@@ -12,7 +12,6 @@ namespace Amazon.Inventory.Infrastructure.Data
         public InventoryContext(DbContextOptions<InventoryContext> options) : base(options) { }
 
         public DbSet<Product> Products { get; set; }
-        public DbSet<OutboxMessage> EventStore { get; private set; }
 
         public override bool AutoSaveDomainEvents => true;
 

@@ -18,7 +18,6 @@ public class CatalogDbContext : DbContextBase
 
     public DbSet<Category> Categories { get; private set; }
     public DbSet<Product> Products { get; private set; }
-    public DbSet<OutboxMessage> EventStore { get; private set; }
 
     public override bool AutoSaveDomainEvents => true;
 

@@ -26,6 +26,16 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
         PaymentMethod = paymentMethod;
     }
 
+    public string? CheckedoutSessionId { get; private set; }
+    public RestResponse<bool> SetCheckedoutSession(string checkedoutSessionId)
+    {
+        if (!string.IsNullOrWhiteSpace(CheckedoutSessionId))
+            return RestResponse<bool>.BadRequest("You already have an active checkout session");
+
+        CheckedoutSessionId = checkedoutSessionId;
+        return RestResponse<bool>.Success(true);
+    }
+
     public CartExpiration Expiration { get; private set; }
 
     public int? DeliverToAddressId { get; private set; }
@@ -75,7 +85,7 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     public void Clear() => _cartItems.Clear();
 
-    public decimal TotalAmount => _cartItems.Sum(i => 0);
+    public decimal TotalAmount => _cartItems.Sum(i => i.Price);
 
     public List<KeyValuePair<Guid, int>> AggregatToProducts => _cartItems.GroupBy(i => i.ProductId)
             .Select(g => new KeyValuePair<Guid, int>(g.Key, g.Count()))

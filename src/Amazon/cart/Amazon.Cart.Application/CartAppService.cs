@@ -13,8 +13,7 @@ using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
-using FluentValidation;
-using MassTransit;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -116,65 +115,15 @@ namespace Amazon.Cart.Application
             await _unitOfWork.CommitAsync();
         }
 
-        public async Task<RestResponse<int>> SetupForCheckoutAsync(Guid cartId, UpdateCartDto updateCartDto)
-        {
-            var setupResult = await _cartService.SetupForCheckoutAsync(cartId, _currentUserId, updateCartDto.DeliverToAddressId, updateCartDto.PaymentMethodId);
-            if (!setupResult.IsSuccess)
-                return setupResult.MapTo(-1);
-
-            await _unitOfWork.CommitAsync();
-            return setupResult;
-        }
-
-        public async Task<RestResponse<Guid>> CheckoutCartUsingOtpAsync(Guid cartId, string otp)
-        {
-            var cartResult = await _cartService.GetByIdForUserAsync(cartId, _currentUserId);
-            if (!cartResult.IsSuccess)
-                return cartResult.MapTo(Guid.Empty);
-
-            var isCartStateSatisfied = await _specification.SatisfiesAsync(cartResult);
-            if (!isCartStateSatisfied.IsSuccess)
-                return isCartStateSatisfied.MapTo(Guid.Empty);
-
-            var isOtpValid = await _otpService.ValidateAsync(_currentUserId, otp);
-            if (!isOtpValid)
-                return RestResponse<Guid>.BadRequest($"Invalid otp {otp}");
-
-            var orderCreateResult = await _cartService.CreateOrderAsync(cartResult, _currentUserId);
-            if (!orderCreateResult.IsSuccess)
-                return orderCreateResult.MapTo(Guid.Empty);
-
-            await _unitOfWork.CommitAsync();
-            return RestResponse<Guid>.Success(orderCreateResult.Value);
-        }
-
-        public async Task<RestResponse<Guid>> CheckoutCartUsingVisaAsync(Guid cartId, CheckoutUsingVisaRequest request)
-        {
-            var cartResult = await _cartService.GetByIdAsync(cartId);
-            if (!cartResult.IsSuccess)
-                return cartResult.MapTo(Guid.Empty);
-
-            var isCartStateSatisfied = await _specification.SatisfiesAsync(cartResult);
-            if (!isCartStateSatisfied.IsSuccess)
-                return isCartStateSatisfied.MapTo(Guid.Empty);
-
-            var canPaymentCardSatisfyOrder = await _paymentsService.ChargePaymentCardForAmountAsync(_currentUserId, request.PaymentCardId, request.Cvv, cartResult.Value.TotalAmount);
-            if (!canPaymentCardSatisfyOrder.IsSuccess)
-                return RestResponse<Guid>.BadRequest(canPaymentCardSatisfyOrder.Error.ToString());
-
-            var orderCreateResult = await _cartService.CreateOrderAsync(cartResult, _currentUserId);
-            if (!orderCreateResult.IsSuccess)
-                return orderCreateResult.MapTo(Guid.Empty);
-
-            await _unitOfWork.CommitAsync();
-            return RestResponse<Guid>.Success(orderCreateResult.Value);
-        }
-
         public async Task<RestResponse<ChallengePaymentResponse>> ChallengePaymentAndCreateOrderAsync(Guid cartId, ChallengePaymentRequest request)
         {
             var cartResult = await _cartService.GetForCheckoutAsync(cartId);
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(null as ChallengePaymentResponse);
+
+            var cartProducts = await _products.GetAllAsync(x => cartResult.Value.AggregatToProducts.Select(x => x.Key).Contains(x.Id));
+            foreach (var cartItem in cartResult.Value.Items)
+                cartItem.Product = cartProducts.FirstOrDefault(x => x.Id == cartItem.ProductId);
 
             Guid orderId = Guid.Empty;
 
@@ -241,6 +190,41 @@ namespace Amazon.Cart.Application
             _carts.Remove(cartResult.Value);
             await _unitOfWork.CommitAsync();
             return RestResponse<Guid>.Success(cartResult.Value.OrderId.Value);
+        }
+
+        public async Task<RestResponse<bool>> ProcessStripeCallbackAsync(Stripe.Event callbackEvent)
+        {
+            switch (callbackEvent.ExtractPaymentStatus())
+            {
+                case PaymentStatus.Paid:
+                    var stripeSessionId = callbackEvent.ExtractCheckoutSessionId();
+
+                    var cartBySessionId = await _carts.GetInstanceAsync(x => x.CheckedoutSessionId == stripeSessionId);
+                    if (cartBySessionId != null)
+                    {
+                        var transaction = new Transaction(cartBySessionId.TotalAmount, cartBySessionId.OrderId.Value, _currentUserId, stripeSessionId);
+                        _transactions.Add(transaction);
+
+                        _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartBySessionId.OrderId.Value, transaction.Id));
+
+                        _carts.Remove(cartBySessionId);
+                        await _unitOfWork.CommitAsync();
+                    }
+                    return RestResponse<bool>.Success(true);
+                    // Find Order by StripeSessionId
+
+                    // Mark Order Paid
+
+                    // Publish OrderPaid event
+                    break;
+                case PaymentStatus.Failed_Insufficient:
+
+                    break;
+                case PaymentStatus.Unknown:
+                    break;
+            }
+
+            return RestResponse<bool>.Success(true);
         }
     }
 }

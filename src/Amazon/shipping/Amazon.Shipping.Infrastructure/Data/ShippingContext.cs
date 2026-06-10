@@ -13,8 +13,6 @@ public class ShippingContext : DbContextBase
 {
     public ShippingContext(DbContextOptions<ShippingContext> options) : base(options) { }
 
-    public DbSet<OutboxMessage> EventStore { get; private set; }
-
     public override bool AutoSaveDomainEvents => true;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

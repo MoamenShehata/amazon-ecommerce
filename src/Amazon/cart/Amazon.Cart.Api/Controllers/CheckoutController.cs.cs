@@ -1,16 +1,21 @@
 ﻿using Amazon.Cart.Application;
 using Amazon.Cart.Application.Dtos;
+using Amazon.Cart.Application.Settings.PaymentGateways;
 using Amazon.SharedKernel.API;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Stripe;
-using Stripe.Checkout;
 
 namespace Amazon.Cart.Api.Controllers;
 
 [Route("api/carts/{cartId}/[controller]")]
-public class CheckoutController(CartAppService _cartAppService) : ApiControllerBase
+public class CheckoutController(
+    CartAppService _cartAppService,
+    IOptions<PaymentGatewaySettings> paymentGatewayOptions) : ApiControllerBase
 {
+    private readonly PaymentGatewaySettings _paymentGatewaySettings = paymentGatewayOptions.Value;
+
     [Authorize(Policy = "CARTS_POLICY")]
     [HttpPost("CreateOrder")]
     public async Task<IActionResult> ChallengePaymentMethodAndCreateOrder(Guid cartId, [FromBody] ChallengePaymentRequest request)
@@ -34,29 +39,9 @@ public class CheckoutController(CartAppService _cartAppService) : ApiControllerB
 
         var stripeEvent = EventUtility.ConstructEvent(
             json,
-            Request.Headers["Stripe-Signature"],
-            "whsec_z6vAQzg1kyTYaQiAicmnPS8PJCzvXSmV");
+            Request.Headers[_paymentGatewaySettings.Stripe.WebHookSecretHeaderName],
+            _paymentGatewaySettings.Stripe.WebHookSecret);
 
-        if (stripeEvent.Type == "checkout.session.completed")
-        {
-            var session =
-                stripeEvent.Data.Object as Session;
-
-            var stripeSessionId = session!.Id;
-
-            // Find Order by StripeSessionId
-
-            // Mark Order Paid
-
-            // Publish OrderPaid event
-        }
-
-        return Ok();
+        return RestResult(await _cartAppService.ProcessStripeCallbackAsync(stripeEvent));
     }
-}
-
-[Route("api/[controller]")]
-public class StripeController : ApiControllerBase
-{
-
 }

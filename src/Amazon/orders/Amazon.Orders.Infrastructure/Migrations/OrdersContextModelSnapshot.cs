@@ -176,11 +176,9 @@ namespace Amazon.Orders.Infrastructure.Migrations
 
             modelBuilder.Entity("Moamen.SDKs.SharedKernel.DDD.Events.OutboxMessage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Body")
                         .IsRequired()
@@ -211,13 +209,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("OrderCancelledStatus");
                 });
 
-            modelBuilder.Entity("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderCreatedStatus", b =>
-                {
-                    b.HasBaseType("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderStatusChange");
-
-                    b.HasDiscriminator().HasValue("OrderCreatedStatus");
-                });
-
             modelBuilder.Entity("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderDeliveredStatus", b =>
                 {
                     b.HasBaseType("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderStatusChange");
@@ -230,6 +221,13 @@ namespace Amazon.Orders.Infrastructure.Migrations
                     b.HasBaseType("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderStatusChange");
 
                     b.HasDiscriminator().HasValue("OrderDeliveryRecievedStatus");
+                });
+
+            modelBuilder.Entity("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderPendingStatus", b =>
+                {
+                    b.HasBaseType("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderStatusChange");
+
+                    b.HasDiscriminator().HasValue("OrderPendingStatus");
                 });
 
             modelBuilder.Entity("Amazon.Orders.Domain.Orders.ValueObjects.Status.OrderProcessingStatus", b =>

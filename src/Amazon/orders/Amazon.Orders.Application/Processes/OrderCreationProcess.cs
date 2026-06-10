@@ -39,9 +39,17 @@ public class OrderCreationProcess(
     public async Task Consume(ConsumeContext<InventoryReservationFailedEvent> context)
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        // depends how wer gonna handle it
-        // maybe serve the customer his products somehwre else
-        // or maybe update the ui to mark what items are not available and tell the customer they can contnue but with lack of some products
+        // if payment => cash
+            // cancel the order
+        
+        // if payment => payment-card
+            // refund from the transaction
+            // cancel the order
+
+        // if payment => gateway
+            // refund from the payment gateway
+            // cancel the order
+
         // or maybe cancel the request as a whole
         //order.RaiseEvent(new ReserveInventoryCommand(context.Message.OrderId, context.Message.OrderItems));
 

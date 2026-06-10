@@ -13,7 +13,7 @@ public class MongoDbUnitOfWork(
     MongoDbRepository<ShoppingCart, Guid> _carts,
     MongoDbRepository<Product, Guid> _products,
     MongoDbRepository<PaymentMethod, Guid> _paymentMethods,
-    MongoDbRepository<OutboxMessage, int> _events,
+    MongoDbRepository<OutboxMessage, Guid> _events,
     MongoDbRepository<CustomerClaim, ObjectId> _customerClaims
     ) : IUnitOfWork
 {

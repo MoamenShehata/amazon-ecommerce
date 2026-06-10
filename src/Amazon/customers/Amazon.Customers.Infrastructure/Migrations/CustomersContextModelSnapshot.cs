@@ -50,11 +50,9 @@ namespace Amazon.Customers.Infrastructure.Migrations
 
             modelBuilder.Entity("Moamen.SDKs.SharedKernel.DDD.Events.OutboxMessage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Body")
                         .IsRequired()
@@ -281,7 +279,7 @@ namespace Amazon.Customers.Infrastructure.Migrations
                                     b2.WithOwner()
                                         .HasForeignKey("CustomerId");
 
-                                    b2.OwnsOne("Amazon.Customers.Domain.ValueObjects.CityInfo", "City", b3 =>
+                                    b2.OwnsOne("Amazon.SharedKernel.Customers.CityInfo", "City", b3 =>
                                         {
                                             b3.Property<Guid>("ShippingAddressCustomerId")
                                                 .HasColumnType("uniqueidentifier");
@@ -307,7 +305,7 @@ namespace Amazon.Customers.Infrastructure.Migrations
                                                 .HasForeignKey("ShippingAddressCustomerId", "ShippingAddressId");
                                         });
 
-                                    b2.OwnsOne("Amazon.Customers.Domain.ValueObjects.HouseInfo", "House", b3 =>
+                                    b2.OwnsOne("Amazon.SharedKernel.Customers.HouseInfo", "House", b3 =>
                                         {
                                             b3.Property<Guid>("ShippingAddressCustomerId")
                                                 .HasColumnType("uniqueidentifier");

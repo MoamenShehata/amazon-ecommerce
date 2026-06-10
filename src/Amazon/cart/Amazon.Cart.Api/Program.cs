@@ -1,8 +1,11 @@
 using Amazon.Cart.Api;
 using Amazon.Cart.Domain;
+using Amazon.Cart.Domain.Entities;
 using Amazon.Cart.Domain.Payments;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
+using Moamen.SDKs.SharedKernel.DDD.Definitions;
+using Moamen.SDKs.SharedKernel.DDD.Events;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -19,7 +22,13 @@ BsonClassMap.RegisterClassMap<ShoppingCart>(cm =>
     cm.AutoMap();
 
     cm.MapField("_cartItems");
-    var g = cm.MapField("_cartItems").Getter;
+});
+
+BsonClassMap.RegisterClassMap<CartItem>(cm =>
+{
+    cm.AutoMap();
+
+    cm.UnmapMember(x => x.Product);
 });
 
 builder.Services.AddControllers();

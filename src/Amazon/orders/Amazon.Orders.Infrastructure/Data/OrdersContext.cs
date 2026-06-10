@@ -18,7 +18,6 @@ public class OrdersContext : DbContextBase
 
     public DbSet<Order> Orders { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<OutboxMessage> EventStore { get; private set; }
 
     public override bool AutoSaveDomainEvents => true;
 

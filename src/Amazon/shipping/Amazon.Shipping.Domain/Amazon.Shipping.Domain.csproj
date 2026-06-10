@@ -15,7 +15,7 @@
       <HintPath>..\..\identity-management\lib\Moamen.SDKs.Repository.dll</HintPath>
     </Reference>
     <Reference Include="Moamen.SDKs.SharedKernel">
-      <HintPath>..\..\..\..\..\Moamen.Lookups\lib\Moamen.SDKs.SharedKernel.dll</HintPath>
+      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.SharedKernel\bin\Debug\net9.0\Moamen.SDKs.SharedKernel.dll</HintPath>
     </Reference>
   </ItemGroup>
 

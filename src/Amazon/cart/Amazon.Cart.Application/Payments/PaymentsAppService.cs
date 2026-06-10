@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Application.Dtos;
+using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Application.Payments.Dtos;
 using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Integrations.Customers;
@@ -41,6 +42,7 @@ namespace Amazon.Cart.Application.Payments
 
             switch (paymentMethod.Type)
             {
+                // we should check if he already came here before, and he is just fooling around
                 case PaymentMehodType.Cash:
                     var otp = await _otpService.GenerateAsync(customerId);
                     await _smsService.SendMessageAsync(deliveryAddressResult.Value.PhoneNumber, $"Your OTP for confirming your cash payment is: {otp}");
@@ -51,37 +53,32 @@ namespace Amazon.Cart.Application.Payments
 
                 case PaymentMehodType.Stripe:
                     return await CreateStripeSessionAsync(cart);
-                    return RestResponse<ChallengePaymentResponse>.Success(new ChallengePaymentResponse($"{frontEndBaseUrl}/cart/checkout/card", PaymentMehodType.Visa));
 
                 default:
-                    throw new NotSupportedException();
+                    return RestResponse<ChallengePaymentResponse>.Failure(new NotSupportedException("Payment method is not supported currently!"));
             }
         }
 
         private async Task<RestResponse<ChallengePaymentResponse>> CreateStripeSessionAsync(ShoppingCart cart)
         {
-            var lineItems = cart.AggregatToProducts.Select(p => new SessionLineItemOptions
-            {
-                Quantity = p.Value,
-                PriceData = new SessionLineItemPriceDataOptions
-                {
-                    Currency = "usd",
-                    UnitAmount = 10_00,
-                    ProductData = new SessionLineItemPriceDataProductDataOptions
-                    {
-                        Name = p.Key.ToString(),
-                    }
-                }
-            }).ToList();
+            if (!string.IsNullOrWhiteSpace(cart.CheckedoutSessionId))
+                return GetCheckoutSessionResponse(await _stripeClient.V1.Checkout.Sessions.GetAsync(cart.CheckedoutSessionId));
 
             var options = new SessionCreateOptions
             {
-                LineItems = lineItems,
+                LineItems = cart.ToSessionLineItems(),
                 Mode = "payment",
                 SuccessUrl = $"{_configuration.GetValue<string>("Front_Url")}/my/orders/{cart.OrderId}",
             };
 
             Session session = await _stripeClient.V1.Checkout.Sessions.CreateAsync(options);
+            cart.SetCheckedoutSession(session.Id);
+
+            return GetCheckoutSessionResponse(session);
+        }
+
+        private RestResponse<ChallengePaymentResponse> GetCheckoutSessionResponse(Session session)
+        {
             return RestResponse<ChallengePaymentResponse>.Success(new ChallengePaymentResponse(session.Url, PaymentMehodType.Stripe));
         }
     }

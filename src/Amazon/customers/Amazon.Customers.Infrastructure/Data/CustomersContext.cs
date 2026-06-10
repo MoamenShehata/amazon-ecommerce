@@ -13,7 +13,6 @@ public class CustomersContext : DbContextBase
     {
     }
 
-    public DbSet<OutboxMessage> EventStore { get; private set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

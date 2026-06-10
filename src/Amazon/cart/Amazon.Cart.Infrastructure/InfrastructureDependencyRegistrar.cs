@@ -42,7 +42,7 @@ public static class InfrastructureDependencyRegistrar
            .AddMongoRepo<ShoppingCart, Guid>("carts")
            .AddMongoRepo<Product, Guid>("products")
            .AddMongoRepo<PaymentMethod, Guid>("paymentMethods")
-           .AddMongoRepo<OutboxMessage, int>("outboxMessages")
+           .AddMongoRepo<OutboxMessage, Guid>("outboxMessages")
            .AddMongoRepo<CustomerClaim, ObjectId>("customerClaims")
            .AddMongoRepo<Transaction, Guid>("transactions")
            ;
