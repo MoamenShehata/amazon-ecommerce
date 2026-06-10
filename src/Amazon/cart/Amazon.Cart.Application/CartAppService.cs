@@ -13,7 +13,6 @@ using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -24,7 +23,6 @@ namespace Amazon.Cart.Application
         CartService _cartService,
         IRepository<ShoppingCart, Guid> _cartsRepo,
         IRepository<Product, Guid> _products,
-        IRepository<Transaction, Guid> _transactions,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
         IAuthenticationService _authenticationService,
@@ -165,7 +163,7 @@ namespace Amazon.Cart.Application
                     if (!isOtpValid)
                         return RestResponse<Guid>.BadRequest($"Invalid otp {request.Otp}");
 
-                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value));
+                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, new CashOnDeliveryCheckoutInfo()));
                     break;
 
                 case PaymentMehodType.Visa:
@@ -177,10 +175,7 @@ namespace Amazon.Cart.Application
                     if (!chargeCardResult.IsSuccess)
                         return RestResponse<Guid>.BadRequest(chargeCardResult.Error.ToString());
 
-                    var transaction = new Transaction(cartResult.Value.TotalAmount, cartResult.Value.OrderId.Value, _currentUserId, request.VisaDetails.PaymentCardId, chargeCardResult.Value);
-                    _transactions.Add(transaction);
-
-                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, transaction.Id));
+                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, new PaymentCardCheckoutInfo(request.VisaDetails.PaymentCardId, chargeCardResult.Value)));
                     break;
 
                 default:
@@ -202,10 +197,7 @@ namespace Amazon.Cart.Application
                     var cartBySessionId = await _carts.GetInstanceAsync(x => x.CheckedoutSessionId == stripeSessionId);
                     if (cartBySessionId != null)
                     {
-                        var transaction = new Transaction(cartBySessionId.TotalAmount, cartBySessionId.OrderId.Value, _currentUserId, stripeSessionId);
-                        _transactions.Add(transaction);
-
-                        _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartBySessionId.OrderId.Value, transaction.Id));
+                        _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartBySessionId.OrderId.Value, new PaymentGatewayCheckoutInfo(stripeSessionId)));
 
                         _carts.Remove(cartBySessionId);
                         await _unitOfWork.CommitAsync();

@@ -21,7 +21,9 @@ public class OrderCreationProcess(
     public async Task Consume(ConsumeContext<OrderPaymentConfirmedEvent> context)
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        order.RaiseEvent(new ReserveInventoryCommand(order.Id, order.Items.Select(x => new KeyValuePair<Guid, int>(x.ProductInfo.ProductId, x.Quantity)).ToList()));
+        order.ConfirmPayment(context.Message.OccurredOn, context.Message.PaymentInfo);
+
+        _eventStoreService.Append(new ReserveInventoryCommand(order.Id, order.Items.Select(x => new KeyValuePair<Guid, int>(x.ProductInfo.ProductId, x.Quantity)).ToList()));
 
         await _unitOfWork.CommitAsync();
     }
@@ -39,20 +41,7 @@ public class OrderCreationProcess(
     public async Task Consume(ConsumeContext<InventoryReservationFailedEvent> context)
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
-        // if payment => cash
-            // cancel the order
-        
-        // if payment => payment-card
-            // refund from the transaction
-            // cancel the order
-
-        // if payment => gateway
-            // refund from the payment gateway
-            // cancel the order
-
-        // or maybe cancel the request as a whole
-        //order.RaiseEvent(new ReserveInventoryCommand(context.Message.OrderId, context.Message.OrderItems));
-
+        order.RequestCompensation();
         await _unitOfWork.CommitAsync();
     }
 
@@ -71,6 +60,4 @@ public class OrderCreationProcess(
 
         await _unitOfWork.CommitAsync();
     }
-
-
 }

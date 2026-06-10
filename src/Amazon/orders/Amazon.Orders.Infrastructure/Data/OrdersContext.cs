@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Amazon.Orders.Domain.Orders;
+using Amazon.Orders.Domain.Orders.Entites;
 using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.Orders.Domain.Products;

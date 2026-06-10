@@ -5,6 +5,7 @@ using Amazon.Orders.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,9 +13,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Amazon.Orders.Infrastructure.Migrations
 {
     [DbContext(typeof(OrdersContext))]
-    partial class OrdersContextModelSnapshot : ModelSnapshot
+    [Migration("20260610134214_Add_Order_Transactions")]
+    partial class Add_Order_Transactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,7 +170,7 @@ namespace Amazon.Orders.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("StakeHolder", (string)null);
+                    b.ToTable("StakeHolder");
 
                     b.HasDiscriminator().HasValue("StakeHolder");
 
@@ -278,6 +281,53 @@ namespace Amazon.Orders.Infrastructure.Migrations
 
             modelBuilder.Entity("Amazon.Orders.Domain.Orders.Order", b =>
                 {
+                    b.OwnsMany("Amazon.Orders.Domain.Orders.Entites.Transaction", "_transactions", b1 =>
+                        {
+                            b1.Property<Guid>("OrderId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("decimal(18,2)");
+
+                            b1.Property<string>("CreatedBy")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
+
+                            b1.Property<DateTime>("CreatedOn")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<bool>("IsArchived")
+                                .HasColumnType("bit");
+
+                            b1.Property<string>("PaymentInfo")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int>("Type")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("UpdatedBy")
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)");
+
+                            b1.Property<DateTime?>("UpdatedOn")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("OrderId", "Id");
+
+                            b1.ToTable("payments", "orders");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
                     b.OwnsMany("Amazon.Orders.Domain.Orders.ValueObjects.OrderItem", "Items", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -327,53 +377,6 @@ namespace Amazon.Orders.Infrastructure.Migrations
 
                             b1.Navigation("ProductInfo")
                                 .IsRequired();
-                        });
-
-                    b.OwnsMany("Amazon.Orders.Domain.Orders.Entites.Transaction", "_transactions", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.Property<string>("CreatedBy")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<DateTime>("CreatedOn")
-                                .HasColumnType("datetime2");
-
-                            b1.Property<bool>("IsArchived")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("PaymentInfo")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<int>("Type")
-                                .HasColumnType("int");
-
-                            b1.Property<string>("UpdatedBy")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
-
-                            b1.Property<DateTime?>("UpdatedOn")
-                                .HasColumnType("datetime2");
-
-                            b1.HasKey("OrderId", "Id");
-
-                            b1.ToTable("payments", "orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
                         });
 
                     b.Navigation("Items");

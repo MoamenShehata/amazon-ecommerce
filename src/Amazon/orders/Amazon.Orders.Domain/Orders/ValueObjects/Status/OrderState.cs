@@ -9,4 +9,5 @@ public enum OrderState
     DeliveryRecieved = 4,
     CustomerDelivered = 5,
     Cancelled = 6,
+    Abandoned = 7,
 }

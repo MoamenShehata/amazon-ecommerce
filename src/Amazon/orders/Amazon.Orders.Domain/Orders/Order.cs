@@ -1,4 +1,5 @@
-﻿using Amazon.Orders.Domain.Orders.ValueObjects;
+﻿using Amazon.Orders.Domain.Orders.Entites;
+using Amazon.Orders.Domain.Orders.ValueObjects;
 using Amazon.Orders.Domain.Orders.ValueObjects.Status;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Customers;
@@ -60,20 +61,41 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
         RaiseEvent(new OrderCancelledEvent(Id));
     }
 
-    //public void StartShipping(string trackingId, ShippingCompanyInfo shippingCompanyInfo)
-    //{
-    //    UpdateStatus(new OrderShippingStartedStatus(Id, trackingId, shippingCompanyInfo));
+    private readonly ICollection<Transaction> _transactions = new HashSet<Transaction>();
 
-    //    RaiseEvent(new OrderShippingStartedEvent(Id));
-    //}
+    internal Transaction? Transaction => _transactions.SingleOrDefault(x => !x.IsArchived);
 
-    //public void DeliveryAccepted(DeliveryMember deliveryMember)
-    //{
-    //    UpdateStatus(new OrderDeliveryRecievedStatus(Id, deliveryMember));
+    public CheckoutPaymentInfo Info => Transaction.PaymentInfo;
 
-    //    RaiseEvent(new OrderRecievedByDeliveryGuyEvent(Id, deliveryMember.Name, deliveryMember.PhoneNumber));
-    //    // to send sms to the customer
-    //}
+    public RestResponse<bool> ConfirmPayment(DateTime happenedAt, CheckoutPaymentInfo paymentInfo)
+    {
+        if (Transaction != null)
+            return RestResponse<bool>.BadRequest("Can not cconfirm this order!");
+
+        _transactions.Add(new Transaction(Id, Price, happenedAt, paymentInfo));
+        return RestResponse<bool>.Success(true);
+    }
+
+    public RestResponse<bool> RequestCompensation()
+    {
+        if (Transaction is null)
+            return RestResponse<bool>.BadRequest("Order is in pending state");
+
+        RaiseEvent(new OrderRefundRequestedEvent(Id));
+        Abandon("Could not reserve inventory items");
+
+        return RestResponse<bool>.Success(true);
+    }
+
+    private void Abandon(string reason)
+    {
+        UpdateStatus(new OrderAbandonedStatus(Id, reason));
+
+        RaiseEvent(new OrderAbandonedEvent(Id, reason));
+    }
+
+
+
 
 
     #region Infra

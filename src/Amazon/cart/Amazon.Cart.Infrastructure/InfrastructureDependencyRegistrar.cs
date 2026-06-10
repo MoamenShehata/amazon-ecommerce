@@ -5,7 +5,6 @@ using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
-using Amazon.Cart.Infrastructure.Data;
 using Amazon.Cart.Infrastructure.Data.Models;
 using Amazon.Cart.Infrastructure.Integrations;
 using Amazon.Cart.Infrastructure.Integrations.Customers;
@@ -18,7 +17,6 @@ using Amazon.SharedKernel.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moamen.SDKs.Repository.Extensions;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 using MongoDB.Bson;
@@ -30,10 +28,6 @@ public static class InfrastructureDependencyRegistrar
     public static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services,
         IConfiguration configuration)
     {
-        //services
-        //    .AddGenericRepos()
-        //    .AddBaseContext<ShoppingCartContext>(o => o.UseSqlServer(configuration.GetConnectionString("Default")));
-        //;
 
         services.AddScoped<EventStoreService>();
 
@@ -44,7 +38,6 @@ public static class InfrastructureDependencyRegistrar
            .AddMongoRepo<PaymentMethod, Guid>("paymentMethods")
            .AddMongoRepo<OutboxMessage, Guid>("outboxMessages")
            .AddMongoRepo<CustomerClaim, ObjectId>("customerClaims")
-           .AddMongoRepo<Transaction, Guid>("transactions")
            ;
 
         services.AddScoped<IUnitOfWork, MongoDbUnitOfWork>();

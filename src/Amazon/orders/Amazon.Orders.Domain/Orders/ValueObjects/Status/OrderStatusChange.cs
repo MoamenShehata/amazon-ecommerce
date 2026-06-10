@@ -143,3 +143,19 @@ public class OrderDeliveredStatus(Guid orderId) : OrderStatusChange(orderId, Ord
     private OrderDeliveredStatus() : this(Guid.Empty) { }
     protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload) => RestResponse<OrderStatusChange>.BadRequest("Order is completed and cannot be updated to any status!");
 }
+
+
+public class OrderAbandonedStatus : OrderStatusChange
+{
+    public string Reason { get; private set; }
+    internal OrderAbandonedStatus(Guid orderId, string reason) : base(orderId, OrderState.Abandoned)
+    {
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(reason);
+
+        Reason = reason;
+    }
+
+    public override bool CanBeCancelled => false;
+
+    protected override RestResponse<OrderStatusChange> CreateNextStatus(object payload) => RestResponse<OrderStatusChange>.BadRequest("Order is abandoned and cannot be handled in anyway!");
+}
