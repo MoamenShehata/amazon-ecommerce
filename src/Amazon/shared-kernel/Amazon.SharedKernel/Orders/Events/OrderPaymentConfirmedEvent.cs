@@ -11,12 +11,12 @@ public record OrderPaymentConfirmedEvent(Guid OrderId, CheckoutPaymentInfo Payme
 [JsonDerivedType(typeof(PaymentGatewayCheckoutInfo), "gateway")]
 public class CheckoutPaymentInfo
 {
-
+    public virtual List<KeyValuePair<string, string>> ToProps => new();
 }
 
 public class CashOnDeliveryCheckoutInfo : CheckoutPaymentInfo
 {
-
+    public override List<KeyValuePair<string, string>> ToProps => [new KeyValuePair<string, string>("Method", "Cash on delivery")];
 }
 
 public class PaymentCardCheckoutInfo : CheckoutPaymentInfo
@@ -30,6 +30,11 @@ public class PaymentCardCheckoutInfo : CheckoutPaymentInfo
     public int Id { get; set; }
     public string NumberMasked { get; set; }
 
+    public override List<KeyValuePair<string, string>> ToProps => [
+        new KeyValuePair<string, string>("Method", "Visa"),
+        new KeyValuePair<string, string>("Number", NumberMasked)
+        ];
+
 }
 
 public class PaymentGatewayCheckoutInfo : CheckoutPaymentInfo
@@ -40,4 +45,6 @@ public class PaymentGatewayCheckoutInfo : CheckoutPaymentInfo
     }
 
     public string SessionId { get; set; }
+
+    public override List<KeyValuePair<string, string>> ToProps => [new KeyValuePair<string, string>("Method", "Stripe gateway")];
 }

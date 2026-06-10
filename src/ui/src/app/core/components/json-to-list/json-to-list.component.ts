@@ -15,6 +15,10 @@ export class JsonToListComponent {
     if (!jsonData || typeof jsonData !== 'object')
       return;
 
+    if (jsonData instanceof Array) {
+      this._entries = Array.from(jsonData).map((i) => { return { key: i.key, value: i.value } });
+      return;
+    }
     this._entries = Object.entries(jsonData).map(([key, value]) => ({ key, value }));
   }
 }

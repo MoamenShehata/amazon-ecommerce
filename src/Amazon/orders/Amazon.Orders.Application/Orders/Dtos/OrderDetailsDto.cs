@@ -9,6 +9,6 @@
         decimal TotalAmount,
         bool CanBeCanceled,
         List<OrderItemDto> Items,
-        object PaymentInfo,
+        List<KeyValuePair<string, string>> PaymentInfo,
         object DeliveryAddress);
 }

@@ -13,7 +13,6 @@ namespace Amazon.Orders.Domain.Orders;
 public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 {
     public CustomerInfo Owner { get; private set; }
-    public string? PaymentInfo { get; private set; }
     public DeliveryAddress DeliveryAddress { get; private set; }
 
 
@@ -24,7 +23,6 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
     {
         Owner = customer;
         _orderItems = orderItems;
-        PaymentInfo = null;
         DeliveryAddress = deliveryAddress;
         UpdateStatus(new OrderPendingStatus(orderId));
     }
@@ -65,7 +63,7 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 
     internal Transaction? Transaction => _transactions.SingleOrDefault(x => !x.IsArchived);
 
-    public CheckoutPaymentInfo Info => Transaction.PaymentInfo;
+    public CheckoutPaymentInfo PaymentInfo => Transaction.PaymentInfo;
 
     public RestResponse<bool> ConfirmPayment(DateTime happenedAt, CheckoutPaymentInfo paymentInfo)
     {

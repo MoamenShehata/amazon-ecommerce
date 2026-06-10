@@ -13,7 +13,7 @@ internal class OrderRefundRequestedEventHandler(
     {
         var order = await _orders.GetInstanceAsync(context.Message.OrderId);
 
-        var paymentInfo = order.Info;
+        var paymentInfo = order.PaymentInfo;
 
         if (paymentInfo is PaymentCardCheckoutInfo cardCheckoutInfo)
         {
