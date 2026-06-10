@@ -63,7 +63,7 @@ public class Order : AuditableAggregate<Guid>, IEntity<Guid>
 
     internal Transaction? Transaction => _transactions.SingleOrDefault(x => !x.IsArchived);
 
-    public CheckoutPaymentInfo PaymentInfo => Transaction.PaymentInfo;
+    public CheckoutPaymentInfo PaymentInfo => Transaction?.PaymentInfo ?? new CheckoutPaymentInfo();
 
     public RestResponse<bool> ConfirmPayment(DateTime happenedAt, CheckoutPaymentInfo paymentInfo)
     {
