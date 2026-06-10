@@ -189,7 +189,7 @@ namespace Amazon.Cart.Application
                 cartResult.Value.SetOrder(orderId);
             }
 
-            var checkoutResponse = await _paymentsAppService.ChallengePaymentAsync(orderId, request.PaymentMethodId, _currentUserId, request.DeliverToAddressId);
+            var checkoutResponse = await _paymentsAppService.ChallengePaymentAsync(cartResult, orderId, request.PaymentMethodId, _currentUserId, request.DeliverToAddressId);
             cartResult.Value.SetPaymentMethod(checkoutResponse.Value.PaymentMehod);
 
             await _unitOfWork.CommitAsync();

@@ -16,6 +16,7 @@ public class PaymentMethod : AuditableAggregate<Guid>, IEntity<Guid>
 
     public static PaymentMethod ForCash() => new("Cash On Delivery", PaymentMehodType.Cash);
     public static PaymentMethod ForVisa() => new("Payment Card", PaymentMehodType.Visa);
+    public static PaymentMethod ForStripe() => new("Stripe", PaymentMehodType.Stripe);
 
     #region Infra
     private PaymentMethod() : base(Guid.Empty) { }

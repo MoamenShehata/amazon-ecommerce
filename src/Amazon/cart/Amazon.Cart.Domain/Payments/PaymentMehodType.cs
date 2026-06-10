@@ -4,4 +4,5 @@ public enum PaymentMehodType
 {
     Cash = 0,
     Visa = 1,
+    Stripe = 2,
 }

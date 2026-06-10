@@ -55,6 +55,7 @@ public static class ApplicationDependencyRegistrar
         services
             .AddScoped<CartAppService>()
             .AddScoped<PaymentsAppService>()
+            .AddSingleton(new Stripe.StripeClient("sk_test_51TgdiIE2V1ENgl2scqHP7VqPguTjjPiWDYBIuqfJVxcH4BU9dSRkW6maVUpnvlIbK7NKBBOviQoEEsktTfXYP8UY00P9zeItkb"))
             ;
     }
 }

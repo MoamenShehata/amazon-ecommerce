@@ -67,7 +67,7 @@ if ((await repo.GetAllAsync()).Count() == 0)
 {
     repo.Add(PaymentMethod.ForCash());
     repo.Add(PaymentMethod.ForVisa());
-    //await uow.CommitAsync();
+    repo.Add(PaymentMethod.ForStripe());
 }
 
 // Configure the HTTP request pipeline.

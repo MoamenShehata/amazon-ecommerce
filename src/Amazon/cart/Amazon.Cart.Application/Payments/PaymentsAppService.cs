@@ -1,13 +1,14 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Payments.Dtos;
+using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Integrations.Customers;
 using Amazon.Cart.Domain.Payments;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
-using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Moamen.SDKs.Repository;
+using Stripe.Checkout;
 
 namespace Amazon.Cart.Application.Payments
 {
@@ -16,7 +17,8 @@ namespace Amazon.Cart.Application.Payments
         IOtpService _otpService,
         ISmsService _smsService,
         ICustomersIntegration _customerIntegration,
-        IConfiguration _configuration
+        IConfiguration _configuration,
+        Stripe.StripeClient _stripeClient
         )
     {
         public async Task<RestResponse<List<PaymentMethodDto>>> GetPaymentMethodsAsync()
@@ -25,7 +27,7 @@ namespace Amazon.Cart.Application.Payments
             return RestResponse<List<PaymentMethodDto>>.Success(methods.Select(m => new PaymentMethodDto(m.Id, m.Name)).ToList());
         }
 
-        public async Task<RestResponse<ChallengePaymentResponse>> ChallengePaymentAsync(Guid orderId, Guid paymentMethodId, Guid customerId, int deliveryToCustomerAddressId)
+        public async Task<RestResponse<ChallengePaymentResponse>> ChallengePaymentAsync(ShoppingCart cart, Guid orderId, Guid paymentMethodId, Guid customerId, int deliveryToCustomerAddressId)
         {
             var paymentMethod = await _paymentMethods.GetInstanceAsync(paymentMethodId);
             if (paymentMethod is null)
@@ -47,9 +49,40 @@ namespace Amazon.Cart.Application.Payments
                 case PaymentMehodType.Visa:
                     return RestResponse<ChallengePaymentResponse>.Success(new ChallengePaymentResponse($"{frontEndBaseUrl}/cart/checkout/card", PaymentMehodType.Visa));
 
+                case PaymentMehodType.Stripe:
+                    return await CreateStripeSessionAsync(cart);
+                    return RestResponse<ChallengePaymentResponse>.Success(new ChallengePaymentResponse($"{frontEndBaseUrl}/cart/checkout/card", PaymentMehodType.Visa));
+
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        private async Task<RestResponse<ChallengePaymentResponse>> CreateStripeSessionAsync(ShoppingCart cart)
+        {
+            var lineItems = cart.AggregatToProducts.Select(p => new SessionLineItemOptions
+            {
+                Quantity = p.Value,
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = "usd",
+                    UnitAmount = 10_00,
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = p.Key.ToString(),
+                    }
+                }
+            }).ToList();
+
+            var options = new SessionCreateOptions
+            {
+                LineItems = lineItems,
+                Mode = "payment",
+                SuccessUrl = $"{_configuration.GetValue<string>("Front_Url")}/my/orders/{cart.OrderId}",
+            };
+
+            Session session = await _stripeClient.V1.Checkout.Sessions.CreateAsync(options);
+            return RestResponse<ChallengePaymentResponse>.Success(new ChallengePaymentResponse(session.Url, PaymentMehodType.Stripe));
         }
     }
 }
