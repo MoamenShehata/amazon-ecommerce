@@ -1,6 +1,7 @@
 ﻿using Amazon.Cart.Domain.Factories;
 using Amazon.Cart.Domain.Integrations.Customers;
 using Amazon.Cart.Domain.Integrations.Customers.Dtos;
+using Amazon.Cart.Domain.Integrations.Inventory;
 using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Integrations.Orders.Dtos;
 using Amazon.Cart.Domain.Payments;
@@ -20,7 +21,7 @@ public class CartService(
         ShoppingCartFactory _cartFactory,
         IRepository<ShoppingCart, Guid> _carts,
         IRepository<Product, Guid> _products,
-        IInventoryService _inventoryService,
+        IInventoryIntegration _inventoryService,
         ICustomersIntegration _customerIntegration,
         IOrdersIntegration _ordersIntegration,
         PaymentsService _paymentsService,
@@ -69,14 +70,12 @@ public class CartService(
     public async Task<RestResponse<CartItem>> TryAddItemToCartAsync(ShoppingCart cart, Guid productId)
     {
         var addResult = await _productService.CreateCartItemAsync(cart, productId);
-        var product = await _products.GetInstanceAsync(productId);
         if (!addResult.IsSuccess)
             return addResult.MapTo(null as CartItem);
 
-        var totalItemsCountRequested = cart.GetItemsCountForProduct(productId) + 1;
-        var isAvailable = await _inventoryService.IsProductAvailableForQuantityAsync(productId, totalItemsCountRequested);
-        if (!isAvailable)
-            return RestResponse<CartItem>.Conflict($"Product with id {productId} is not available in inventory");
+        var availableResult = await _inventoryService.IsProductAvailableForQuantityAsync(productId, addResult.Value.Quantity);
+        if (!availableResult.IsSuccess)
+            return availableResult.MapTo(null as CartItem);
 
         return RestResponse<CartItem>.Success(addResult.Value);
     }

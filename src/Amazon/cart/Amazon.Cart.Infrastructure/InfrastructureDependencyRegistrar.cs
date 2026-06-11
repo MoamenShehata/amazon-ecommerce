@@ -1,15 +1,16 @@
 ﻿using Amazon.Cart.Domain.Integrations;
 using Amazon.Cart.Domain.Integrations.Customers;
+using Amazon.Cart.Domain.Integrations.Inventory;
 using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
-using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Cart.Infrastructure.Data.Models;
 using Amazon.Cart.Infrastructure.Integrations;
 using Amazon.Cart.Infrastructure.Integrations.Customers;
 using Amazon.Cart.Infrastructure.Integrations.Customers.Adapters;
+using Amazon.Cart.Infrastructure.Integrations.Inventory;
 using Amazon.Cart.Infrastructure.Integrations.Orders;
 using Amazon.Cart.Infrastructure.Services;
 using Amazon.SharedKernel.Common.Services;
@@ -61,7 +62,7 @@ public static class InfrastructureDependencyRegistrar
             ;
 
         services
-            .AddScoped<IInventoryService, InventoryService>()
+            .AddScoped<IInventoryIntegration, InventoryIntegration>()
             .AddScoped<IOrdersIntegration, OrderIntegration>()
             .AddScoped<ICustomersIntegration, CustomersIntegration>()
             .AddScoped<IUserClaimsStore, CartUserClaimsStore>()

@@ -67,7 +67,9 @@ namespace Amazon.Cart.Application
                 return RestResponse<CartItemDto>.NotFound($"Cart with id {cartId} was not found");
 
             var result = await TryAddItemToCartAsync(cart, cartItemDto.ProductId);
-            await _unitOfWork.CommitAsync();
+            if (result.IsSuccess)
+                await _unitOfWork.CommitAsync();
+
             return result;
         }
 

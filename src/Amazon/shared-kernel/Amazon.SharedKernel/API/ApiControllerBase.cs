@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Security.Claims;
 
 namespace Amazon.SharedKernel.API;
@@ -11,17 +13,20 @@ public abstract class ApiControllerBase : ControllerBase
     {
         switch (restResponse.StatusCode)
         {
-            case System.Net.HttpStatusCode.OK:
+            case HttpStatusCode.OK:
                 return Ok(restResponse.Value);
 
-            case System.Net.HttpStatusCode.BadRequest:
+            case HttpStatusCode.BadRequest:
                 return BadRequest(restResponse.Error);
 
-            case System.Net.HttpStatusCode.NotFound:
+            case HttpStatusCode.NotFound:
                 return NotFound(restResponse.Error);
 
-            case System.Net.HttpStatusCode.Conflict:
+            case HttpStatusCode.Conflict:
                 return Conflict(restResponse.Error);
+
+            case HttpStatusCode.InternalServerError:
+                return StatusCode((int)HttpStatusCode.InternalServerError, restResponse.Error);
 
             default:
                 return Ok();
