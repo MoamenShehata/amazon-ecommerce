@@ -3,6 +3,7 @@ using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Application.Payments;
 using Amazon.Cart.Application.Payments.Validators;
 using Amazon.Cart.Application.Services;
+using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
@@ -24,6 +25,7 @@ namespace Amazon.Cart.Application
         IProductsRepo _products,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
+        IOrdersIntegration _ordersIntegration,
         IAuthenticationService _authenticationService,
         PaymentsAppService _paymentsAppService,
         PaymentsService _paymentsService,
@@ -113,11 +115,11 @@ namespace Amazon.Cart.Application
 
             if (!cartResult.Value.OrderId.HasValue)
             {
-                var orderCreateResult = await _cartService.CreateOrderAsync(cartResult, _currentUserId);
+                var orderCreateResult = await _ordersIntegration.CreateAsync(cartResult);
                 if (!orderCreateResult.IsSuccess)
                     return orderCreateResult.MapTo(null as ChallengePaymentResponse);
 
-                orderId = orderCreateResult.Value;
+                orderId = orderCreateResult.Value.Id;
 
                 cartResult.Value.SetOrder(orderId);
             }

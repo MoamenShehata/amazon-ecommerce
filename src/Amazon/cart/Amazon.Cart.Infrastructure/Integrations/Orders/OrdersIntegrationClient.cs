@@ -6,9 +6,9 @@ namespace Amazon.Cart.Infrastructure.Integrations.Orders;
 
 public class OrdersIntegrationClient(HttpClient _httpClient)
 {
-    public async Task<HttpContent> CreateAsync(OrderCreateDto orderDto)
+    public async Task<HttpContent> CreateAsync(object orderCreateRequest)
     {
-        var requestAsJson = JsonSerializer.Serialize(orderDto);
+        var requestAsJson = JsonSerializer.Serialize(orderCreateRequest);
 
         var response = await _httpClient.PostAsync($"orders", new StringContent(requestAsJson, new MediaTypeHeaderValue("application/json")));
 

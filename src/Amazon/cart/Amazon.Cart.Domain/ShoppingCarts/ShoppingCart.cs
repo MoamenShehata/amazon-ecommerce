@@ -94,9 +94,6 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     public decimal TotalAmount => _cartItems.Sum(i => i.UnitPrice);
 
-    public List<KeyValuePair<Guid, int>> AggregatToProducts => _cartItems.GroupBy(i => i.ProductId)
-            .Select(g => new KeyValuePair<Guid, int>(g.Key, g.Count()))
-            .ToList();
 
     private CartItem FindProductItem(Guid productId) => _cartItems.FirstOrDefault(x => x.ProductId == productId);
 
