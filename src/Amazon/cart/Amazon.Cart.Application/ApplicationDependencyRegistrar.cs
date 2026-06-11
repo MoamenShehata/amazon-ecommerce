@@ -1,6 +1,7 @@
 ﻿using Amazon.Cart.Application.Payments;
 using Amazon.Cart.Application.Payments.Challenge;
 using Amazon.Cart.Application.Payments.Challenge.Handlers;
+using Amazon.Cart.Application.Payments.Confirmation;
 using Amazon.Cart.Domain.Factories;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Payments.Factories;
@@ -66,6 +67,8 @@ public static class ApplicationDependencyRegistrar
             .AddScoped<CashPaymentMethodHandler>()
             .AddScoped<VisaPaymentMethodHandler>()
             .AddSingleton<StripePaymentMethodHandler>()
+            .AddScoped<CashConfirmationHanlder>()
+            .AddScoped<VisaConfirmationHanlder>()
             ;
     }
 }

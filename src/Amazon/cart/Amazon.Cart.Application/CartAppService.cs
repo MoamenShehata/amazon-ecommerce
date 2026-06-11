@@ -1,8 +1,8 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
+using Amazon.Cart.Application.Payments;
 using Amazon.Cart.Application.Payments.Challenge;
 using Amazon.Cart.Application.Payments.Stripe;
-using Amazon.Cart.Application.Payments.Validators;
 using Amazon.Cart.Application.Services;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
@@ -28,7 +28,8 @@ namespace Amazon.Cart.Application
         IAuthenticationService _authenticationService,
         PaymentsService _paymentsService,
         EventStoreService _eventStoreService,
-        PaymentMethodChallengeStartegy _paymentMethodChallengeStartegy
+        PaymentMethodChallengeStartegy _paymentMethodChallengeStartegy,
+        IPaymentMethodChallengeHandlerFactory _factory
         )
     {
         private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
@@ -127,36 +128,16 @@ namespace Amazon.Cart.Application
             if (!cartResult.Value.OrderId.HasValue || !cartResult.Value.PaymentMethod.HasValue)
                 return RestResponse<Guid>.BadRequest("Cart has not been checed out  yet!");
 
-            switch (cartResult.Value.PaymentMethod.Value)
-            {
-                case PaymentMehodType.Cash:
-                    if (string.IsNullOrWhiteSpace(request.Otp))
-                        return RestResponse<Guid>.BadRequest("Please provide a valid otp");
+            var confimrationHandler = _factory.CreateForConfirmation(cartResult.Value.PaymentMethod.Value);
 
-                    var isOtpValid = await _otpService.ValidateAsync(_currentUserId, request.Otp);
-                    if (!isOtpValid)
-                        return RestResponse<Guid>.BadRequest($"Invalid otp {request.Otp}");
+            var paymentConfimration = await confimrationHandler.ConfirmAsync(request, _currentUserId, cartResult.Value.TotalAmount);
+            if (!paymentConfimration.IsSuccess)
+                return paymentConfimration.MapTo(Guid.Empty);
 
-                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, new CashOnDeliveryCheckoutInfo()));
-                    break;
-
-                case PaymentMehodType.Visa:
-                    var validationResult = new CheckoutUsingVisaRequestValidator().Validate(request.VisaDetails);
-                    if (!validationResult.IsValid)
-                        return RestResponse<Guid>.BadRequest(validationResult.Errors.FirstOrDefault().ErrorMessage);
-
-                    var chargeCardResult = await _paymentsService.ChargePaymentCardForAmountAsync(_currentUserId, request.VisaDetails.PaymentCardId, request.VisaDetails.Cvv, cartResult.Value.TotalAmount);
-                    if (!chargeCardResult.IsSuccess)
-                        return RestResponse<Guid>.BadRequest(chargeCardResult.Error.ToString());
-
-                    _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, new PaymentCardCheckoutInfo(request.VisaDetails.PaymentCardId, chargeCardResult.Value)));
-                    break;
-
-                default:
-                    return RestResponse<Guid>.Failure(new InvalidOperationException("Payment method is not supported"));
-            }
+            _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, paymentConfimration));
 
             _carts.Remove(cartResult.Value);
+
             await _unitOfWork.CommitAsync();
             return RestResponse<Guid>.Success(cartResult.Value.OrderId.Value);
         }

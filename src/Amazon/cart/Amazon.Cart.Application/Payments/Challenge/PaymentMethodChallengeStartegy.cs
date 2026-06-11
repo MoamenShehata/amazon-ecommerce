@@ -2,7 +2,6 @@
 using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.SharedKernel.API;
-using Amazon.SharedKernel.Extensions;
 
 namespace Amazon.Cart.Application.Payments.Challenge;
 
@@ -13,7 +12,7 @@ public class PaymentMethodChallengeStartegy(
 {
     public async Task<RestResponse<ChallengePaymentResponse>> ChallengeCustomerAsync(ShoppingCart shoppingCart, Guid paymentMethodId, Guid customerId, int customerDeliverToAddressId)
     {
-        var challengeHandler = await factory.CreateAsync(paymentMethodId);
+        var challengeHandler = await factory.CreateForChallengeAsync(paymentMethodId);
 
         return await challengeHandler.HandleAsync(shoppingCart, customerId, customerDeliverToAddressId);
     }
