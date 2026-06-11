@@ -1,6 +1,5 @@
 ﻿using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.SharedKernel.API;
-using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
