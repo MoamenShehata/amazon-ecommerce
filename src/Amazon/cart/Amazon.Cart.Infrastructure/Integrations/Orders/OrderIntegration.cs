@@ -27,7 +27,7 @@ public class OrderIntegration(
         {
             var deliveryAddressResult = await _customerIntegration.GetDeliveryAddressOrDefaultAsync(cart.DeliverToAddressId);
 
-            var jsonResponse = await _ordersClient.CreateAsync(new { OrderId = orderId, DeliveryAddress = deliveryAddressResult.Value, ShoppingCart = cart.Items.Select(x => new KeyValuePair<Guid, int>(x.ProductId, x.Quantity)).ToList() });
+            var jsonResponse = await _ordersClient.CreateAsync(new { OrderId = orderId, DeliveryAddress = deliveryAddressResult.Value.AsOrderDeliveryAddress, ShoppingCart = cart.Items.Select(x => new KeyValuePair<Guid, int>(x.ProductId, x.Quantity)).ToList() });
 
             return RestResponse<OrderDto>.Success(await jsonResponse.ReadFromJsonAsync<OrderDto>());
         }
