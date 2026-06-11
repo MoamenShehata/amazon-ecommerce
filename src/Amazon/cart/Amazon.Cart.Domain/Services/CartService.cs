@@ -1,13 +1,11 @@
 ﻿using Amazon.Cart.Domain.Factories;
 using Amazon.Cart.Domain.Integrations.Inventory;
 using Amazon.Cart.Domain.Integrations.Orders;
-using Amazon.Cart.Domain.Integrations.Orders.Dtos;
 using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Cart.Domain.Specifications;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
-using Microsoft.Extensions.Logging;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.Cart.Domain.Services;
@@ -17,7 +15,6 @@ public class CartService(
         IRepository<ShoppingCart, Guid> _carts,
         IInventoryIntegration _inventoryService,
         IOrdersIntegration _ordersIntegration,
-        ILogger<CartService> _logger,
         ShoppingCartSpecification _specification,
         ProductService _productService
         )
@@ -60,6 +57,24 @@ public class CartService(
 
         return RestResponse<CartItem>.Success(addResult.Value);
     }
+
+    public async Task<RestResponse<ShoppingCart>> EnsureCartHasOrderAsync(Guid cartId)
+    {
+        var shoppingCart = await GetForCheckoutAsync(cartId);
+        if (!shoppingCart.IsSuccess)
+            return shoppingCart.MapTo(null as ShoppingCart);
+
+        if (shoppingCart.Value.OrderId.HasValue)
+            return RestResponse<ShoppingCart>.Success(shoppingCart);
+
+        var orderCreateResult = await _ordersIntegration.CreateAsync(shoppingCart);
+        if (!orderCreateResult.IsSuccess)
+            return orderCreateResult.MapTo(null as ShoppingCart);
+
+        shoppingCart.Value.SetOrder(orderCreateResult.Value.Id);
+        return RestResponse<ShoppingCart>.Success(shoppingCart);
+    }
+
 
     //private async Task<RestResponse<bool>> CanOrderBeSatisifiedForCartAsync(ShoppingCart cart)
     //{

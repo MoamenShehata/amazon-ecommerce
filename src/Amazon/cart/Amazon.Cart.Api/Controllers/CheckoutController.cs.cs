@@ -20,7 +20,7 @@ public class CheckoutController(
     [HttpPost("CreateOrder")]
     public async Task<IActionResult> ChallengePaymentMethodAndCreateOrder(Guid cartId, [FromBody] ChallengePaymentRequest request)
     {
-        return RestResult(await _cartAppService.ChallengePaymentAndCreateOrderAsync(cartId, request));
+        return RestResult(await _cartAppService.CreateOrderAndChallengePaymentAsync(cartId, request));
     }
 
     [Authorize(Policy = "CARTS_POLICY")]

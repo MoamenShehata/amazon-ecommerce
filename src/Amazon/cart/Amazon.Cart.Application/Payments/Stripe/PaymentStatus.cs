@@ -1,4 +1,4 @@
-﻿namespace Amazon.Cart.Application.Payments;
+﻿namespace Amazon.Cart.Application.Payments.Stripe;
 
 internal enum PaymentStatus
 {

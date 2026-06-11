@@ -1,6 +1,7 @@
 ﻿using Stripe;
+using Stripe.Checkout;
 
-namespace Amazon.Cart.Application.Payments;
+namespace Amazon.Cart.Application.Payments.Stripe;
 
 internal static class StripePaymentGatewayExtensions
 {
@@ -18,7 +19,7 @@ internal static class StripePaymentGatewayExtensions
     internal static string ExtractCheckoutSessionId(this Event callbackEvent)
     {
         var session =
-                    callbackEvent.Data.Object as Stripe.Checkout.Session;
+                    callbackEvent.Data.Object as Session;
 
         return session!.Id;
     }

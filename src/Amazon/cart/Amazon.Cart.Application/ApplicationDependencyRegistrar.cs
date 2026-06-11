@@ -1,4 +1,6 @@
 ﻿using Amazon.Cart.Application.Payments;
+using Amazon.Cart.Application.Payments.Challenge;
+using Amazon.Cart.Application.Payments.Challenge.Handlers;
 using Amazon.Cart.Domain.Factories;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Payments.Factories;
@@ -56,7 +58,14 @@ public static class ApplicationDependencyRegistrar
             .AddScoped<CartAppService>()
             .AddScoped<PaymentsAppService>()
             .AddSingleton(new Stripe.StripeClient("sk_test_51TgdiIE2V1ENgl2scqHP7VqPguTjjPiWDYBIuqfJVxcH4BU9dSRkW6maVUpnvlIbK7NKBBOviQoEEsktTfXYP8UY00P9zeItkb"))
-            .AddSingleton<StripePaymentGateway>()
+            .AddScoped<PaymentMethodChallengeStartegy>()
+            ;
+
+        services
+            .AddScoped<IPaymentMethodChallengeHandlerFactory, PaymentMethodChallengHandlerFactory>()
+            .AddScoped<CashPaymentMethodHandler>()
+            .AddScoped<VisaPaymentMethodHandler>()
+            .AddSingleton<StripePaymentMethodHandler>()
             ;
     }
 }

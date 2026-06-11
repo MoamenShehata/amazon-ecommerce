@@ -1,9 +1,9 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
-using Amazon.Cart.Application.Payments;
+using Amazon.Cart.Application.Payments.Challenge;
+using Amazon.Cart.Application.Payments.Stripe;
 using Amazon.Cart.Application.Payments.Validators;
 using Amazon.Cart.Application.Services;
-using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
@@ -25,11 +25,10 @@ namespace Amazon.Cart.Application
         IProductsRepo _products,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
-        IOrdersIntegration _ordersIntegration,
         IAuthenticationService _authenticationService,
-        PaymentsAppService _paymentsAppService,
         PaymentsService _paymentsService,
-        EventStoreService _eventStoreService
+        EventStoreService _eventStoreService,
+        PaymentMethodChallengeStartegy _paymentMethodChallengeStartegy
         )
     {
         private readonly CurrentUser _currentUser = _authenticationService.CurrentUser;
@@ -105,27 +104,15 @@ namespace Amazon.Cart.Application
             return await CommitAsync();
         }
 
-        public async Task<RestResponse<ChallengePaymentResponse>> ChallengePaymentAndCreateOrderAsync(Guid cartId, ChallengePaymentRequest request)
+        public async Task<RestResponse<ChallengePaymentResponse>> CreateOrderAndChallengePaymentAsync(Guid cartId, ChallengePaymentRequest request)
         {
-            var cartResult = await _cartService.GetForCheckoutAsync(cartId);
-            if (!cartResult.IsSuccess)
-                return cartResult.MapTo(null as ChallengePaymentResponse);
+            var shoppingCart = await _cartService.EnsureCartHasOrderAsync(cartId);
+            if (!shoppingCart.IsSuccess)
+                return shoppingCart.MapTo(null as ChallengePaymentResponse);
 
-            Guid orderId = Guid.Empty;
-
-            if (!cartResult.Value.OrderId.HasValue)
-            {
-                var orderCreateResult = await _ordersIntegration.CreateAsync(cartResult);
-                if (!orderCreateResult.IsSuccess)
-                    return orderCreateResult.MapTo(null as ChallengePaymentResponse);
-
-                orderId = orderCreateResult.Value.Id;
-
-                cartResult.Value.SetOrder(orderId);
-            }
-
-            var checkoutResponse = await _paymentsAppService.ChallengePaymentAsync(cartResult, orderId, request.PaymentMethodId, _currentUserId, request.DeliverToAddressId);
-            cartResult.Value.SetPaymentMethod(checkoutResponse.Value.PaymentMehod);
+            var checkoutResponse = await _paymentMethodChallengeStartegy.ChallengeCustomerAsync(shoppingCart, request.PaymentMethodId, _currentUserId, request.DeliverToAddressId);
+            if (!checkoutResponse.IsSuccess)
+                return checkoutResponse;
 
             await _unitOfWork.CommitAsync();
             return RestResponse<ChallengePaymentResponse>.Success(checkoutResponse);
