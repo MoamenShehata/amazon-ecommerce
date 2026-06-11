@@ -5,7 +5,7 @@ using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.ShoppingCarts;
-using Amazon.Cart.Domain.ShoppingCarts.Entites;
+using Amazon.Cart.Infrastructure.Data;
 using Amazon.Cart.Infrastructure.Data.Models;
 using Amazon.Cart.Infrastructure.Integrations;
 using Amazon.Cart.Infrastructure.Integrations.Customers;
@@ -19,11 +19,13 @@ using Amazon.SharedKernel.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using StackExchange.Redis;
 
 namespace Amazon.Cart.Infrastructure;
 
@@ -44,6 +46,14 @@ public static class InfrastructureDependencyRegistrar
            .AddMongoRepo<OutboxMessage, Guid>("outboxMessages")
            .AddMongoRepo<CustomerClaim, ObjectId>("customerClaims")
            ;
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis");
+            options.InstanceName = "ECommerce:";
+        });
+
+        services.Decorate<IRepository<Product, Guid>, CachedProductsRepo>();
 
         services.AddScoped<IUnitOfWork, MongoDbUnitOfWork>();
 

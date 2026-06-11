@@ -10,9 +10,8 @@ public class ProductService(IRepository<Product, Guid> _products)
 {
     public async Task<RestResponse<CartItem>> CreateCartItemAsync(ShoppingCart cart, Guid productId)
     {
-        // should come from cache if valid
-        var product = await _products.GetInstanceAsync(x => x.Id == productId && !x.IsDeleted);
-        if (product is null)
+        var product = await _products.GetInstanceAsync(productId);
+        if (product is null || product.IsDeleted)
             return RestResponse<CartItem>.BadRequest($"Product with id {productId} does not appear in our inventory");
 
         var cartItem = cart.PushProductItem(product);

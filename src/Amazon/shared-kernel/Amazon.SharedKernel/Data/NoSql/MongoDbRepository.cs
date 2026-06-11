@@ -50,7 +50,7 @@ public class MongoDbRepository<TCollection, TKey>(IMongoDatabase _database, stri
     }
     public async Task<TCollection> GetInstanceAsync(Expression<Func<TCollection, bool>> predicate) => await GetInstanceAsync(predicate, x => x);
     public async Task<TProjection> GetInstanceAsync<TProjection>(TKey id, Expression<Func<TCollection, TProjection>> projector) => await GetInstanceAsync(x => x.Id.Equals(id), projector);
-    public async Task<TCollection> GetInstanceAsync(TKey id) => await GetInstanceAsync(id, x => x);
+    public virtual async Task<TCollection> GetInstanceAsync(TKey id) => await GetInstanceAsync(id, x => x);
 
 
     public async Task<PagedResult<TCollection, TOrderBy>> GetPageAsync<TOrderBy>(PagedRequest pagedRequest, Expression<Func<TCollection, TOrderBy>> orderByKey) => await GetPageAsync(pagedRequest, orderByKey, [x => true]);
