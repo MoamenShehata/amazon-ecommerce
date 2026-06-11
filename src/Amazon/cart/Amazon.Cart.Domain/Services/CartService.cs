@@ -6,6 +6,7 @@ using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Cart.Domain.Specifications;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Moamen.SDKs.Repository;
 
 namespace Amazon.Cart.Domain.Services;
@@ -41,6 +42,21 @@ public class CartService(
         var isCartStateSatisfied = await _specification.SatisfiesAsync(cart);
         if (!isCartStateSatisfied.IsSuccess)
             return isCartStateSatisfied.MapTo(null as ShoppingCart);
+
+        return RestResponse<ShoppingCart>.Success(cart);
+    }
+    
+    public async Task<RestResponse<ShoppingCart>> GetForCheckoutConfimrationAsync(Guid cartId)
+    {
+        var cart = await GetByIdAsync(cartId);
+        if (!cart.IsSuccess) return cart;
+
+        var isCartStateSatisfied = await _specification.SatisfiesAsync(cart);
+        if (!isCartStateSatisfied.IsSuccess)
+            return isCartStateSatisfied.MapTo(null as ShoppingCart);
+
+        if (!cart.Value.OrderId.HasValue || !cart.Value.PaymentMethod.HasValue)
+            return RestResponse<ShoppingCart>.BadRequest("Cart has not been checed out  yet!");
 
         return RestResponse<ShoppingCart>.Success(cart);
     }

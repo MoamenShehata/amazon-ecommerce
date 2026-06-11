@@ -13,6 +13,7 @@ using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -121,25 +122,26 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<Guid>> ConfirmPaymentAsync(Guid cartId, ConfirmPaymentRequest request)
         {
-            var cartResult = await _cartService.GetForCheckoutAsync(cartId);
+            var cartResult = await _cartService.GetForCheckoutConfimrationAsync(cartId);
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(Guid.Empty);
 
-            if (!cartResult.Value.OrderId.HasValue || !cartResult.Value.PaymentMethod.HasValue)
-                return RestResponse<Guid>.BadRequest("Cart has not been checed out  yet!");
-
-            var confimrationHandler = _factory.CreateForConfirmation(cartResult.Value.PaymentMethod.Value);
-
-            var paymentConfimration = await confimrationHandler.ConfirmAsync(request, _currentUserId, cartResult.Value.TotalAmount);
+            var paymentConfimration = await HandlePaymentConfirmationAsync(cartResult, request);
             if (!paymentConfimration.IsSuccess)
                 return paymentConfimration.MapTo(Guid.Empty);
 
             _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, paymentConfimration));
-
             _carts.Remove(cartResult.Value);
 
             await _unitOfWork.CommitAsync();
             return RestResponse<Guid>.Success(cartResult.Value.OrderId.Value);
+        }
+
+        private async Task<RestResponse<CheckoutPaymentInfo>> HandlePaymentConfirmationAsync(ShoppingCart shoppingCart, ConfirmPaymentRequest request)
+        {
+            var confimrationHandler = _factory.CreateForConfirmation(shoppingCart.PaymentMethod.Value);
+
+            return await confimrationHandler.ConfirmAsync(request, _currentUserId, shoppingCart.TotalAmount);
         }
 
         public async Task<RestResponse<bool>> ProcessStripeCallbackAsync(Stripe.Event callbackEvent)
