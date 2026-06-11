@@ -3,11 +3,12 @@ import { RouterLink, RouterOutlet } from "@angular/router";
 import { AuthService } from "./authentication/services/authentication.service";
 import { AppServicesProvider } from "./core/services/app-services.provider";
 import { IdentityControlsComponent } from "./authentication/components/authentication-landing/identity-controls/identity-controls.component";
+import { LoadingSpinnerComponent } from "./core/components/loading-spinner/loading-spinner.component";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet, IdentityControlsComponent],
+  imports: [RouterOutlet, IdentityControlsComponent, LoadingSpinnerComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })

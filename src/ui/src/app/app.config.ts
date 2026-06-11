@@ -9,11 +9,12 @@ import { ToastrModule } from 'ngx-toastr';
 import { InjectJwtInterceptor } from './core/interceptors/inject-jwt-interceptor';
 import { BadRequestInterceptor } from './core/interceptors/bad-request-interceptor';
 import { ServerErrorInterceptor } from './core/interceptors/server-error-interceptor';
+import { loadingInterceptor } from './core/interceptors/spinner-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptorsFromDi(), withInterceptors([loadingInterceptor])),
     provideAnimations(),
     ...(ToastrModule.forRoot().providers || []),
     {
