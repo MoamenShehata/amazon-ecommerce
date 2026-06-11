@@ -21,8 +21,6 @@ public class ProductService(
 
     public async Task ReserveProductItemsForOrderAsync(Guid orderId, List<KeyValuePair<Guid, int>> productsWithQuantities)
     {
-        _eventStore.Append(new InventoryReservationFailedEvent(orderId, new()));
-        return;
         var products = await _products.GetAllAsync(x => productsWithQuantities.Select(d => d.Key).Contains(x.Id));
 
         List<Guid> productOutOfStockIds = [];
