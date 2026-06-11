@@ -7,13 +7,11 @@ using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Domain.ShoppingCarts;
-using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -23,7 +21,7 @@ namespace Amazon.Cart.Application
     public class CartAppService(
         CartService _cartService,
         IRepository<ShoppingCart, Guid> _carts,
-        IRepository<Product, Guid> _products,
+        IProductsRepo _products,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
         IAuthenticationService _authenticationService,
@@ -55,16 +53,16 @@ namespace Amazon.Cart.Application
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(null as List<CartItemDto>);
 
-            var products = await _products.GetAllAsync(x => cartResult.Value.Items.Select(x => x.ProductId).Contains(x.Id));
+            var products = await _products.GetCartProductsAsync(cartResult);
 
             return RestResponse<List<CartItemDto>>.Success(cartResult.Value.ToItemsDto(products));
         }
 
         public async Task<RestResponse<CartItemDto>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItemDto)
         {
-            var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
-            if (cart is null)
-                return RestResponse<CartItemDto>.NotFound($"Cart with id {cartId} was not found");
+            var cart = await _cartService.GetByIdAsync(cartId);
+            if (!cart.IsSuccess)
+                return cart.MapTo(null as CartItemDto);
 
             var result = await TryAddItemToCartAsync(cart, cartItemDto.ProductId);
             if (result.IsSuccess)
@@ -83,41 +81,26 @@ namespace Amazon.Cart.Application
             return RestResponse<CartItemDto>.Success(new CartItemDto(addResult.Value.ProductId, addResult.Value.Info.Name, addResult.Value.Info.ImageUrl, addResult.Value.Quantity, addResult.Value.Info.UnitPrice, true));
         }
 
-
         public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, Guid productId)
         {
-            var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
-            if (cart is null)
-                return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
+            var cart = await _cartService.GetByIdAsync(cartId);
+            if (!cart.IsSuccess)
+                return cart.MapTo(false);
 
-            cart.PopProductItem(productId);
-            await _unitOfWork.CommitAsync();
+            cart.Value.PopProductItem(productId);
 
-            return RestResponse<bool>.Success(true);
+            return await CommitAsync();
         }
 
         public async Task<RestResponse<bool>> RemoveAllProductItemsAsync(Guid cartId, Guid productId)
         {
-            var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
-            if (cart is null)
-                return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
+            var cart = await _cartService.GetByIdAsync(cartId);
+            if (!cart.IsSuccess)
+                return cart.MapTo(false);
 
-            cart.RemoveProductItems(productId);
-            await _unitOfWork.CommitAsync();
+            cart.Value.RemoveProductItems(productId);
 
-            return RestResponse<bool>.Success(true);
-        }
-
-        public async Task PurgeExpiredCartsAsync()
-        {
-            var expiredCarts = await _carts.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
-            foreach (var expiredCart in expiredCarts)
-            {
-                expiredCart.RaiseEvent(new CartExpiredEvent([.. expiredCart.Items.Select(x => x.ProductId).Distinct().ToList()]));
-                _carts.Remove(expiredCart);
-            }
-
-            await _unitOfWork.CommitAsync();
+            return await CommitAsync();
         }
 
         public async Task<RestResponse<ChallengePaymentResponse>> ChallengePaymentAndCreateOrderAsync(Guid cartId, ChallengePaymentRequest request)
@@ -145,7 +128,6 @@ namespace Amazon.Cart.Application
             await _unitOfWork.CommitAsync();
             return RestResponse<ChallengePaymentResponse>.Success(checkoutResponse);
         }
-
 
         public async Task<RestResponse<Guid>> ConfirmPaymentAsync(Guid cartId, ConfirmPaymentRequest request)
         {
@@ -219,6 +201,24 @@ namespace Amazon.Cart.Application
                     break;
             }
 
+            return RestResponse<bool>.Success(true);
+        }
+
+        public async Task PurgeExpiredCartsAsync()
+        {
+            var expiredCarts = await _carts.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
+            foreach (var expiredCart in expiredCarts)
+            {
+                expiredCart.RaiseEvent(new CartExpiredEvent([.. expiredCart.Items.Select(x => x.ProductId).Distinct().ToList()]));
+                _carts.Remove(expiredCart);
+            }
+
+            await _unitOfWork.CommitAsync();
+        }
+
+        private async Task<RestResponse<bool>> CommitAsync()
+        {
+            await _unitOfWork.CommitAsync();
             return RestResponse<bool>.Success(true);
         }
     }

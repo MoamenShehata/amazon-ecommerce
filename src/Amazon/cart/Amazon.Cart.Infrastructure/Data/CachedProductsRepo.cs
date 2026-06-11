@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Domain.Products;
+using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.SharedKernel.Data.NoSql;
 using Microsoft.Extensions.Caching.Distributed;
 using MongoDB.Driver;
@@ -6,18 +7,16 @@ using System.Text.Json;
 
 namespace Amazon.Cart.Infrastructure.Data;
 
-internal class CachedProductsRepo : MongoDbRepository<Product, Guid>
+internal class CachedProductsRepo : MongoDbRepository<Product, Guid>, IProductsRepo
 {
     private readonly IDistributedCache _cache;
 
     public CachedProductsRepo(
         IMongoDatabase _database,
-        MongoDbRepository<Product, Guid> _repository,
         IDistributedCache cache) : base(_database, "products")
     {
         _cache = cache;
     }
-
 
     public override async Task<Product> GetInstanceAsync(Guid id)
     {
@@ -31,6 +30,17 @@ internal class CachedProductsRepo : MongoDbRepository<Product, Guid>
         await _cache.SetStringAsync(instanceKey, JsonSerializer.Serialize(product));
 
         return product;
+    }
+
+    public async Task<List<Product>> GetCartProductsAsync(ShoppingCart shoppingCart)
+    {
+        var result = new List<Product>();
+
+        var productIds = shoppingCart.Items.Select(x => x.ProductId);
+        foreach (var productId in productIds)
+            result.Add(await GetInstanceAsync(productId));
+
+        return result;
     }
 
     private string GenerateProductCahceKey(Guid productId) => productId.ToString();

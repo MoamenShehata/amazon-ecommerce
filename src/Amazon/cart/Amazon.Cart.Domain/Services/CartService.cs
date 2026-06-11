@@ -11,7 +11,7 @@ using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Cart.Domain.Specifications;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
-using Microsoft.AspNetCore.Cors.Infrastructure;
+using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Microsoft.Extensions.Logging;
 using Moamen.SDKs.Repository;
 

@@ -53,7 +53,7 @@ public static class InfrastructureDependencyRegistrar
             options.InstanceName = "ECommerce:";
         });
 
-        services.Decorate<IRepository<Product, Guid>, CachedProductsRepo>();
+        services.AddScoped<IProductsRepo, CachedProductsRepo>();
 
         services.AddScoped<IUnitOfWork, MongoDbUnitOfWork>();
 
