@@ -5,7 +5,7 @@ using Moamen.SDKs.Repository;
 
 namespace Amazon.Orders.Application.EventConsumers;
 
-internal class OrderRefundRequestedEventHandler(
+public class OrderRefundRequestedEventHandler(
     IRepository<Order, Guid> _orders
     ) : IConsumer<OrderRefundRequestedEvent>
 {

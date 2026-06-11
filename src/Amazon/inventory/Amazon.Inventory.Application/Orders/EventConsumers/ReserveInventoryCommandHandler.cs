@@ -1,13 +1,11 @@
 ﻿using Amazon.Inventory.Application.Products;
 using Amazon.SharedKernel.Orders.Commands;
 using MassTransit;
-using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.Inventory.Application.Orders.EventConsumers;
 
-public class OrderCreatedEventHandler(
-    ProductAppService _productsAppService,
-    IUnitOfWork _unitOfWork) : IConsumer<ReserveInventoryCommand>
+public class ReserveInventoryCommandHandler(
+    ProductAppService _productsAppService) : IConsumer<ReserveInventoryCommand>
 {
     public async Task Consume(ConsumeContext<ReserveInventoryCommand> context)
     {
