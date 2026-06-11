@@ -2,18 +2,13 @@
 using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Application.Payments;
 using Amazon.Cart.Application.Payments.Challenge;
-using Amazon.Cart.Application.Payments.Stripe;
 using Amazon.Cart.Application.Services;
-using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.SharedKernel.API;
-using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
-using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -25,9 +20,7 @@ namespace Amazon.Cart.Application
         IRepository<ShoppingCart, Guid> _carts,
         IProductsRepo _products,
         IUnitOfWork _unitOfWork,
-        IOtpService _otpService,
         IAuthenticationService _authenticationService,
-        PaymentsService _paymentsService,
         EventStoreService _eventStoreService,
         PaymentMethodChallengeStartegy _paymentMethodChallengeStartegy,
         IPaymentMethodChallengeHandlerFactory _factory
@@ -140,50 +133,6 @@ namespace Amazon.Cart.Application
             var confimrationHandler = _factory.CreateForConfirmation(shoppingCart.PaymentMethod.Value);
 
             return await confimrationHandler.ConfirmAsync(request, _currentUserId, shoppingCart.TotalAmount);
-        }
-
-        public async Task<RestResponse<bool>> ProcessStripeCallbackAsync(Stripe.Event callbackEvent)
-        {
-            switch (callbackEvent.ExtractPaymentStatus())
-            {
-                case PaymentStatus.Paid:
-                    var stripeSessionId = callbackEvent.ExtractCheckoutSessionId();
-
-                    var cartBySessionId = await _carts.GetInstanceAsync(x => x.CheckedoutSessionId == stripeSessionId);
-                    if (cartBySessionId != null)
-                    {
-                        _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartBySessionId.OrderId.Value, new PaymentGatewayCheckoutInfo(stripeSessionId)));
-
-                        _carts.Remove(cartBySessionId);
-                        await _unitOfWork.CommitAsync();
-                    }
-                    return RestResponse<bool>.Success(true);
-                    // Find Order by StripeSessionId
-
-                    // Mark Order Paid
-
-                    // Publish OrderPaid event
-                    break;
-                case PaymentStatus.Failed_Insufficient:
-
-                    break;
-                case PaymentStatus.Unknown:
-                    break;
-            }
-
-            return RestResponse<bool>.Success(true);
-        }
-
-        public async Task PurgeExpiredCartsAsync()
-        {
-            var expiredCarts = await _carts.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
-            foreach (var expiredCart in expiredCarts)
-            {
-                expiredCart.RaiseEvent(new CartExpiredEvent([.. expiredCart.Items.Select(x => x.ProductId).Distinct().ToList()]));
-                _carts.Remove(expiredCart);
-            }
-
-            await _unitOfWork.CommitAsync();
         }
 
         private async Task<RestResponse<bool>> CommitAsync()

@@ -2,6 +2,7 @@
 using Amazon.Cart.Application.Payments.Challenge;
 using Amazon.Cart.Application.Payments.Challenge.Handlers;
 using Amazon.Cart.Application.Payments.Confirmation;
+using Amazon.Cart.Application.Payments.Stripe;
 using Amazon.Cart.Domain.Factories;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Payments.Factories;
@@ -60,6 +61,7 @@ public static class ApplicationDependencyRegistrar
             .AddScoped<PaymentsAppService>()
             .AddSingleton(new Stripe.StripeClient("sk_test_51TgdiIE2V1ENgl2scqHP7VqPguTjjPiWDYBIuqfJVxcH4BU9dSRkW6maVUpnvlIbK7NKBBOviQoEEsktTfXYP8UY00P9zeItkb"))
             .AddScoped<PaymentMethodChallengeStartegy>()
+            .AddScoped<StripeServices>()
             ;
 
         services

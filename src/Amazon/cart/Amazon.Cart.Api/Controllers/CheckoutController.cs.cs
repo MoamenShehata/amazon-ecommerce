@@ -1,5 +1,6 @@
 ﻿using Amazon.Cart.Application;
 using Amazon.Cart.Application.Dtos;
+using Amazon.Cart.Application.Payments.Stripe;
 using Amazon.Cart.Application.Settings.PaymentGateways;
 using Amazon.SharedKernel.API;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,8 @@ namespace Amazon.Cart.Api.Controllers;
 [Route("api/carts/{cartId}/[controller]")]
 public class CheckoutController(
     CartAppService _cartAppService,
-    IOptions<PaymentGatewaySettings> paymentGatewayOptions) : ApiControllerBase
+    IOptions<PaymentGatewaySettings> paymentGatewayOptions,
+    StripeServices _stripeServices) : ApiControllerBase
 {
     private readonly PaymentGatewaySettings _paymentGatewaySettings = paymentGatewayOptions.Value;
 
@@ -42,6 +44,6 @@ public class CheckoutController(
             Request.Headers[_paymentGatewaySettings.Stripe.WebHookSecretHeaderName],
             _paymentGatewaySettings.Stripe.WebHookSecret);
 
-        return RestResult(await _cartAppService.ProcessStripeCallbackAsync(stripeEvent));
+        return RestResult(await _stripeServices.ProcessStripeCallbackAsync(stripeEvent));
     }
 }
