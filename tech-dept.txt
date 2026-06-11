@@ -2,18 +2,11 @@
     1- for CustomerReadContext => use NoSQL
 
 - categories CRUDs for admin
+- search,filter in catalog
 
 - http client for imediaservice in catalog
 
 - validate payment card when added from customer service
-
-- new payment method, payment gateway
-
-- search,filter in catalog
-
-- api gateway
-
-- customer adding payment cards, can be handled better using EConsistency, so we can encrypt(maybe) it in the background and validate it with it`s provider also
 
 - check what happens to httpClient.Response httpcontent, as i am passing it around, is it a stream that i need to be carefull with??
 
