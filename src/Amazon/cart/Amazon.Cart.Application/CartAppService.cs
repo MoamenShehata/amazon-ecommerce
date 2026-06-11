@@ -8,6 +8,7 @@ using Amazon.Cart.Domain.Services;
 using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
+using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
@@ -133,6 +134,18 @@ namespace Amazon.Cart.Application
             var confimrationHandler = _factory.CreateForConfirmation(shoppingCart.PaymentMethod.Value);
 
             return await confimrationHandler.ConfirmAsync(request, _currentUserId, shoppingCart.TotalAmount);
+        }
+
+        public async Task PurgeExpiredCartsAsync()
+        {
+            var expiredCarts = await _carts.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
+            foreach (var expiredCart in expiredCarts)
+            {
+                expiredCart.RaiseEvent(new CartExpiredEvent([.. expiredCart.Items.Select(x => x.ProductId).Distinct().ToList()]));
+                _carts.Remove(expiredCart);
+            }
+
+            await _unitOfWork.CommitAsync();
         }
 
         private async Task<RestResponse<bool>> CommitAsync()

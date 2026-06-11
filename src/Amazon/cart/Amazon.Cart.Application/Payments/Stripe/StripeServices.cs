@@ -46,16 +46,4 @@ public class StripeServices(
 
         return RestResponse<bool>.Success(true);
     }
-
-    public async Task PurgeExpiredCartsAsync()
-    {
-        var expiredCarts = await _carts.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
-        foreach (var expiredCart in expiredCarts)
-        {
-            expiredCart.RaiseEvent(new CartExpiredEvent([.. expiredCart.Items.Select(x => x.ProductId).Distinct().ToList()]));
-            _carts.Remove(expiredCart);
-        }
-
-        await _unitOfWork.CommitAsync();
-    }
 }
