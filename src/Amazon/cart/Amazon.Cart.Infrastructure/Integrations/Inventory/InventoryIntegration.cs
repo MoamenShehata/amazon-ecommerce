@@ -16,7 +16,7 @@ internal class InventoryIntegration(IConfiguration _configuration) : IInventoryI
 
         try
         {
-            using var call = client.IsProductAvailableInStockAsync(new ProductAvailabilityRequest { ProductId = productId.ToString(), Quantity = quantity });
+            using var call = client.IsProductAvailableInStockAsync(new ProductAvailabilityRequest { ProductId = productId.ToString(), Quantity = quantity }, new Grpc.Core.CallOptions(deadline: DateTime.UtcNow.AddSeconds(2)));
             var result = await call.ResponseAsync;
 
             if (!result.IsAvailableInStock)
