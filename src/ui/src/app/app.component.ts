@@ -4,6 +4,7 @@ import { AuthService } from "./authentication/services/authentication.service";
 import { AppServicesProvider } from "./core/services/app-services.provider";
 import { IdentityControlsComponent } from "./authentication/components/authentication-landing/identity-controls/identity-controls.component";
 import { LoadingSpinnerComponent } from "./core/components/loading-spinner/loading-spinner.component";
+import { SignalRService } from "./core/services/signalR-service";
 
 @Component({
   selector: "app-root",
@@ -14,9 +15,24 @@ import { LoadingSpinnerComponent } from "./core/components/loading-spinner/loadi
 })
 export class AppComponent extends AppServicesProvider {
   constructor(
-    authService: AuthService
+    authService: AuthService,
+    private signalRService: SignalRService,
   ) {
     super();
+
+    if (authService.isAuthenticated) {
+      this.signalRService.startConnection();
+
+      this.signalRService.addReceiveMessageListener(
+        'UserMessage',
+        (...args: any[]) => {
+          debugger;
+          this.toastSuccess(args[0]);
+          // else this.toastError(args[1]);
+        }
+      );
+
+    }
 
     authService.configure();
   }

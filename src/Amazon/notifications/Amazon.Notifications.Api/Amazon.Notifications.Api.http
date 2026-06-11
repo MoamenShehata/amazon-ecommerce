@@ -1,0 +1,6 @@
+@Amazon.Notifications.Api_HostAddress = http://localhost:5019
+
+GET {{Amazon.Notifications.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

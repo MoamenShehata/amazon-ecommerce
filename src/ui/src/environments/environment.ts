@@ -8,6 +8,8 @@ export const environment = {
   customersBaseUrl: "https://localhost:7128/api",
   lookupsBaseUrl: "https://localhost:7158/api",
   ordersBaseUrl: "https://localhost:7270/api",
+  notificationBaseUrl: "https://localhost:7043",
+
 
   appName: "Amazon Angular",
   version: "1.0.0",
