@@ -12,7 +12,7 @@ public class CartsController(CartAppService _cartService) : ApiControllerBase
     {
         var result = await _cartService.CreateCartAsync(cartModel);
         if (result.IsSuccess)
-            return CreatedAtRoute(nameof(GetById), result.Value);
+            return CreatedAtRoute(nameof(GetById), new { cartId = result.Value.CartId }, result.Value);
 
         return RestResult(result);
     }

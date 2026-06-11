@@ -1,6 +1,6 @@
-﻿using Amazon.Cart.Domain;
-using Amazon.Cart.Domain.Payments;
+﻿using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
+using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.Cart.Infrastructure.Data.Models;
 using Amazon.SharedKernel.Data.NoSql;
 using Moamen.SDKs.SharedKernel;

@@ -11,19 +11,11 @@ export class ShoppingCartState {
   add(item: CartItemDto) {
     let currentItems = this._source.value;
 
-    const cartProductItem = currentItems.find(
+    const existingCartItem = currentItems.find(
       (i) => i.productId == item.productId,
     );
-    if (cartProductItem) {
-      currentItems = currentItems.map((i) => {
-        if (i.productId == item.productId) {
-          return {
-            ...i,
-            itemIds: [...item.itemIds],
-          };
-        }
-        return i;
-      });
+    if (existingCartItem) {
+      existingCartItem.quantity = item.quantity
     } else {
       currentItems.push(item);
     }
@@ -31,12 +23,41 @@ export class ShoppingCartState {
     this._source.next([...currentItems]);
   }
 
-  remove(productId: string) {
-    const currentItems = this._source.value;
+  // add(productId: string) {
+  //   let currentItems = this._source.value;
 
-    currentItems.forEach((i) => {
-      i.itemIds = i.itemIds.slice(0, -1);
-    });
+  //   const cartProductItem = currentItems.find(
+  //     (i) => i.productId == productId,
+  //   );
+
+  //   if (cartProductItem) {
+  //     cartProductItem.quantity++;
+  //   } else {
+  //     currentItems.push({
+  //       productId: productId,
+  //       productName: 'string',
+  //       productImageUrl: 'string',
+  //       quantity: 0,
+  //       isAvailable: true,
+  //     });
+  //   }
+
+  //   this._source.next([...currentItems]);
+  // }
+
+  remove(productId: string) {
+    let currentItems = this._source.value;
+
+    const cartProductItem = currentItems.find(
+      (i) => i.productId == productId,
+    );
+
+    if (cartProductItem) {
+      cartProductItem.quantity--;
+      if (cartProductItem.quantity == 0) {
+        currentItems = currentItems.filter(x => x.productId != productId)
+      }
+    }
 
     this._source.next(currentItems);
   }

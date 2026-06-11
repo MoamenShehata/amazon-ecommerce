@@ -5,6 +5,8 @@ using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Integrations.Orders.Dtos;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
+using Amazon.Cart.Domain.ShoppingCarts;
+using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Cart.Domain.Specifications;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Extensions;
@@ -27,16 +29,10 @@ public class CartService(
         ProductService _productService
         )
 {
-    public async Task<RestResponse<ShoppingCart>> CreateCartAsync(Guid? customerId)
+    public async Task<ShoppingCart> EnsureCartExitsAsync(Guid? customerId)
     {
         var existingCustomerCart = await _carts.GetInstanceAsync(x => x.CustomerId == customerId && x.Expiration.ExpiresAt > DateTime.UtcNow);
-        if (existingCustomerCart != null)
-            return RestResponse<ShoppingCart>.Conflict($"Customer already has an active shopping cart");
-
-        var cart = _cartFactory.Create(customerId);
-        _carts.Add(cart);
-
-        return RestResponse<ShoppingCart>.Created(cart, cart.Id.ToString());
+        return existingCustomerCart ?? _cartFactory.Create(customerId);
     }
 
     public async Task<RestResponse<ShoppingCart>> GetByIdAsync(Guid cartId)
@@ -70,19 +66,19 @@ public class CartService(
         return RestResponse<ShoppingCart>.Success(cart);
     }
 
-    public async Task<RestResponse<bool>> TryAddItemToCartAsync(ShoppingCart cart, Guid productId)
+    public async Task<RestResponse<CartItem>> TryAddItemToCartAsync(ShoppingCart cart, Guid productId)
     {
         var addResult = await _productService.CreateCartItemAsync(cart, productId);
         var product = await _products.GetInstanceAsync(productId);
         if (!addResult.IsSuccess)
-            return addResult;
+            return addResult.MapTo(null as CartItem);
 
         var totalItemsCountRequested = cart.GetItemsCountForProduct(productId) + 1;
         var isAvailable = await _inventoryService.IsProductAvailableForQuantityAsync(productId, totalItemsCountRequested);
         if (!isAvailable)
-            return RestResponse<bool>.Conflict($"Product with id {productId} is not available in inventory");
+            return RestResponse<CartItem>.Conflict($"Product with id {productId} is not available in inventory");
 
-        return RestResponse<bool>.Success(true);
+        return RestResponse<CartItem>.Success(addResult.Value);
     }
 
     public async Task<RestResponse<int>> SetupForCheckoutAsync(Guid cartId, Guid userId, int deliverToAddressId, Guid paymentMethodId)

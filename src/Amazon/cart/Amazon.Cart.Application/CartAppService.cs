@@ -3,15 +3,17 @@ using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Application.Payments;
 using Amazon.Cart.Application.Payments.Validators;
 using Amazon.Cart.Application.Services;
-using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
+using Amazon.Cart.Domain.ShoppingCarts;
+using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;
 using Amazon.SharedKernel.IntegrationEvents.ShoppingCart;
 using Amazon.SharedKernel.Orders.Events;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel;
 using Moamen.SDKs.SharedKernel.DDD.Events;
@@ -20,14 +22,13 @@ namespace Amazon.Cart.Application
 {
     public class CartAppService(
         CartService _cartService,
-        IRepository<ShoppingCart, Guid> _cartsRepo,
+        IRepository<ShoppingCart, Guid> _carts,
         IRepository<Product, Guid> _products,
         IUnitOfWork _unitOfWork,
         IOtpService _otpService,
         IAuthenticationService _authenticationService,
         PaymentsAppService _paymentsAppService,
         PaymentsService _paymentsService,
-        IRepository<ShoppingCart, Guid> _carts,
         EventStoreService _eventStoreService
         )
     {
@@ -36,19 +37,16 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<CartCreateResultDto>> CreateCartAsync(CartCreateDto createDto)
         {
-            var cartCreateResult = await _cartService.CreateCartAsync(_currentUser.IsAuthenticated ? _currentUser.Id : null);
-            if (!cartCreateResult.IsSuccess)
-                return cartCreateResult.MapTo((CartCreateResultDto)null);
+            var shoppingCart = await _cartService.EnsureCartExitsAsync(_currentUser.IsAuthenticated ? _currentUser.Id : null);
 
-            var result = await _cartService.TryAddItemToCartAsync(cartCreateResult, createDto.CartItem.ProductId);
+            var cartAddResult = await TryAddItemToCartAsync(shoppingCart, createDto.CartItem.ProductId);
+            if (!cartAddResult.IsSuccess)
+                return cartAddResult.MapTo(null as CartCreateResultDto);
 
-            var response = RestResponse<CartCreateResultDto>.Success(new(cartCreateResult.Value.Id, 0));
-
-            if (!result.IsSuccess)
-                response.WithMessage(result.Error.ToString()!);
+            _carts.Add(shoppingCart);
 
             await _unitOfWork.CommitAsync();
-            return response;
+            return RestResponse<CartCreateResultDto>.Success(new CartCreateResultDto(shoppingCart.Id, cartAddResult.Value));
         }
 
         public async Task<RestResponse<List<CartItemDto>>> GetByIdAsync(Guid cartId)
@@ -57,33 +55,40 @@ namespace Amazon.Cart.Application
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(null as List<CartItemDto>);
 
-            var products = await _products.GetAllAsync(x => cartResult.Value.AggregatToProducts.Select(x => x.Key).Contains(x.Id));
+            var products = await _products.GetAllAsync(x => cartResult.Value.Items.Select(x => x.ProductId).Contains(x.Id));
+
             return RestResponse<List<CartItemDto>>.Success(cartResult.Value.ToItemsDto(products));
         }
 
-        
-
-        public async Task<RestResponse<int>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItemDto)
+        public async Task<RestResponse<CartItemDto>> AddItemToCartAsync(Guid cartId, CartItemCreateDto cartItemDto)
         {
-            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId);
+            var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
             if (cart is null)
-                return RestResponse<int>.NotFound($"Cart with id {cartId} was not found");
+                return RestResponse<CartItemDto>.NotFound($"Cart with id {cartId} was not found");
 
-            var result = await _cartService.TryAddItemToCartAsync(cart, cartItemDto.ProductId);
-            if (!result.IsSuccess)
-                return result.MapTo((int)0);
-
+            var result = await TryAddItemToCartAsync(cart, cartItemDto.ProductId);
             await _unitOfWork.CommitAsync();
-            return RestResponse<int>.Success(0);
+            return result;
         }
+
+        private async Task<RestResponse<CartItemDto>> TryAddItemToCartAsync(ShoppingCart shoppingCart, Guid productId)
+        {
+            var addResult = await _cartService.TryAddItemToCartAsync(shoppingCart, productId);
+
+            if (!addResult.IsSuccess)
+                return addResult.MapTo(null as CartItemDto);
+
+            return RestResponse<CartItemDto>.Success(new CartItemDto(addResult.Value.ProductId, addResult.Value.Info.Name, addResult.Value.Info.ImageUrl, addResult.Value.Quantity, addResult.Value.Info.UnitPrice, true));
+        }
+
 
         public async Task<RestResponse<bool>> RemoveItemFromCartAsync(Guid cartId, Guid productId)
         {
-            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId);
+            var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
             if (cart is null)
                 return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
 
-            cart.RemoveItem(productId);
+            cart.PopProductItem(productId);
             await _unitOfWork.CommitAsync();
 
             return RestResponse<bool>.Success(true);
@@ -91,7 +96,7 @@ namespace Amazon.Cart.Application
 
         public async Task<RestResponse<bool>> RemoveAllProductItemsAsync(Guid cartId, Guid productId)
         {
-            var cart = await _cartsRepo.GetInstanceAsync(x => x.Id == cartId);
+            var cart = await _carts.GetInstanceAsync(x => x.Id == cartId);
             if (cart is null)
                 return RestResponse<bool>.NotFound($"Cart with id {cartId} was not found");
 
@@ -103,11 +108,11 @@ namespace Amazon.Cart.Application
 
         public async Task PurgeExpiredCartsAsync()
         {
-            var expiredCarts = await _cartsRepo.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
+            var expiredCarts = await _carts.GetAllAsync(x => x.Expiration.ExpiresAt <= DateTime.UtcNow);
             foreach (var expiredCart in expiredCarts)
             {
                 expiredCart.RaiseEvent(new CartExpiredEvent([.. expiredCart.Items.Select(x => x.ProductId).Distinct().ToList()]));
-                _cartsRepo.Remove(expiredCart);
+                _carts.Remove(expiredCart);
             }
 
             await _unitOfWork.CommitAsync();
@@ -118,10 +123,6 @@ namespace Amazon.Cart.Application
             var cartResult = await _cartService.GetForCheckoutAsync(cartId);
             if (!cartResult.IsSuccess)
                 return cartResult.MapTo(null as ChallengePaymentResponse);
-
-            var cartProducts = await _products.GetAllAsync(x => cartResult.Value.AggregatToProducts.Select(x => x.Key).Contains(x.Id));
-            foreach (var cartItem in cartResult.Value.Items)
-                cartItem.Product = cartProducts.FirstOrDefault(x => x.Id == cartItem.ProductId);
 
             Guid orderId = Guid.Empty;
 

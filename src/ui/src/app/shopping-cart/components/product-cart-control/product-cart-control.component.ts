@@ -14,14 +14,14 @@ import { catchError } from "rxjs";
 })
 export class ProductCartControlComponent {
   @Input() cartItem: CartItemDto;
-  @Input() productItemIds: number[] = [];
+  // @Input() productItemIds: number[] = [];
 
   @Output() onAllItemsRemoved: EventEmitter<void> = new EventEmitter();
 
-  get quantity(): number {
-    return this.productItemIds?.length ?? 0;
+  quantity = 0;
+  ngOnInit() {
+    this.quantity = this.cartItem.quantity;
   }
-
   constructor(
     private shoppingCartService: ShoppingCartService,
     private shoppingCartState: ShoppingCartState,
@@ -29,7 +29,7 @@ export class ProductCartControlComponent {
 
   addToCart() {
     this.shoppingCartService
-      .addCartItem({
+      .ensureUserHasCartAndPushItem({
         productId: this.cartItem.productId,
       })
       .pipe(
@@ -38,39 +38,30 @@ export class ProductCartControlComponent {
         }),
       )
       ?.subscribe((res) => {
-        this.productItemIds.push(res.cartItemId);
+        this.quantity = res.quantity;
 
-        this.shoppingCartState.add({
-          productId: this.cartItem.productId,
-          productName: this.cartItem.productName,
-          productImageUrl: this.cartItem.productImageUrl,
-          itemIds: this.productItemIds,
-          unitPrice: this.cartItem.unitPrice,
-          isAvailable: this.cartItem.isAvailable
-        });
+        this.shoppingCartState.add(res);
       });
   }
 
   removeProductItem() {
-    if (this.productItemIds.length === 0) {
-      return;
-    }
+    if (this.quantity == 0) return;
 
-    this.shoppingCartService.removeCartItem(this.cartItem.productId)?.subscribe(() => {
-      this.productItemIds = this.productItemIds.slice(0, -1);
+
+    this.shoppingCartService.popProductItem(this.cartItem.productId)?.subscribe(() => {
+      this.quantity--;
       this.shoppingCartState.remove(this.cartItem.productId);
     });
   }
 
   deleteAllItemsForProduct() {
-    if (this.quantity === 0) {
-      return;
-    }
+    if (this.cartItem.quantity == 0) return;
+
 
     this.shoppingCartService
-      .RemoveAllProductItems(this.cartItem.productId)
+      .dropProductFromCart(this.cartItem.productId)
       ?.subscribe(() => {
-        this.productItemIds = [];
+        this.cartItem.quantity = 0;
         this.shoppingCartState.removeAll(this.cartItem.productId);
         this.onAllItemsRemoved.emit();
       });

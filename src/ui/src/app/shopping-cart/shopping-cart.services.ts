@@ -4,7 +4,7 @@ import { CartItemCreateModel } from "./models/cart-item-create.models";
 import { AuthService } from "../authentication/services/authentication.service";
 import { StorageService } from "../core/services/storage-service";
 import { BehaviorSubject, catchError, map, Observable, tap } from "rxjs";
-import { CartItemModel, CartItemDto } from "./models/cart-item-model";
+import { CartItemModel, CartItemDto, CartCreateResultDto } from "./models/cart-item-model";
 import { HttpClient } from "@angular/common/http";
 import { ShoppingCartState } from "./shopping-cart.state";
 import { AppServicesProvider } from "../core/services/app-services.provider";
@@ -43,11 +43,11 @@ export class ShoppingCartService extends AppServicesProvider {
       );
   }
 
-  addCartItem(cartItem: CartItemCreateModel) {
-    const action: (cartItem: CartItemCreateModel) => Observable<any> = !this
+  ensureUserHasCartAndPushItem(cartItem: CartItemCreateModel) {
+    const action: (cartItem: CartItemCreateModel) => Observable<CartItemDto> = !this
       .activeCartId
       ? this.initCart.bind(this)
-      : this.addItem.bind(this);
+      : this.pushProductItem.bind(this);
 
     return action(cartItem);
   }
@@ -55,7 +55,7 @@ export class ShoppingCartService extends AppServicesProvider {
   private initCart(cartItem: CartItemCreateModel) {
 
     return this.http
-      .post<CartItemModel>(
+      .post<CartCreateResultDto>(
         this.cartsBaseUrl,
         {
           customerId: this.customerId,
@@ -63,28 +63,23 @@ export class ShoppingCartService extends AppServicesProvider {
         }
       )
       .pipe(
-        map((resp: any) => {
-          this.storageService.save("cartId", resp.value.cartId);
+        map((resp: CartCreateResultDto) => {
+          this.storageService.save("cartId", resp.cartId);
 
-          if (resp.message) {
-            this.toastError(resp.message);
-            throw new Error(resp.message);
-          }
-
-          return resp.value;
+          return resp.cartItem;
         }),
       );
   }
 
-  private addItem(cartItem: CartItemCreateModel) {
-    return this.http.post<any>(this.cartItemsBaseUrl, cartItem);
+  private pushProductItem(cartItem: CartItemCreateModel) {
+    return this.http.post<CartItemDto>(this.cartItemsBaseUrl, cartItem);
   }
 
-  removeCartItem(productId: string) {
+  popProductItem(productId: string) {
     return this.http.delete<any>(`${this.cartItemsBaseUrl}/${productId}`);
   }
 
-  RemoveAllProductItems(productId: string) {
+  dropProductFromCart(productId: string) {
     return this.http.delete<any>(
       `${this.cartItemsBaseUrl}/RemoveAllProductItems/${productId}`,
     );

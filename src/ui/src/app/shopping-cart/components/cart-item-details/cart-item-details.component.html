@@ -33,8 +33,7 @@
 
         <div class="col-md-2 d-flex justify-content-center">
             <div class="p-2">
-                <product-cart-control [productItemIds]="cartItem.itemIds" [cartItem]="cartItem"
-                    (onAllItemsRemoved)="emitOnAllItemsRemoved()" />
+                <product-cart-control [cartItem]="cartItem" (onAllItemsRemoved)="emitOnAllItemsRemoved()" />
             </div>
         </div>
     </div>

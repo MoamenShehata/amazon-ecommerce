@@ -1,4 +1,5 @@
 ﻿using Amazon.Cart.Domain.Products;
+using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.SharedKernel.API;
 using Moamen.SDKs.Repository;
 

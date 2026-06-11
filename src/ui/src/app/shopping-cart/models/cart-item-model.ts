@@ -1,3 +1,7 @@
+export interface CartCreateResultDto {
+  cartId: string;
+  cartItem: CartItemDto;
+}
 export interface CartItemModel {
   cartId: string;
   itemId: string;
@@ -11,7 +15,7 @@ export interface CartItemDto {
   productId: string;
   productName: string;
   productImageUrl: string;
-  itemIds: number[];
+  quantity: number;
   unitPrice?: number;
   isAvailable: boolean;
   subTotal?: number;

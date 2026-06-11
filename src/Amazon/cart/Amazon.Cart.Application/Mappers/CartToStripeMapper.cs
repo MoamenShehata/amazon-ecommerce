@@ -1,4 +1,4 @@
-﻿using Amazon.Cart.Domain;
+﻿using Amazon.Cart.Domain.ShoppingCarts;
 using Stripe.Checkout;
 
 namespace Amazon.Cart.Application.Mappers;
@@ -7,18 +7,16 @@ internal static class CartToStripeMapper
 {
     internal static List<SessionLineItemOptions> ToSessionLineItems(this ShoppingCart cart)
     {
-        var products = cart.Items.DistinctBy(x => x.ProductId).Select(x => x.Product);
-
-        return cart.AggregatToProducts.Select(p => new SessionLineItemOptions
+        return cart.Items.Select(c => new SessionLineItemOptions
         {
-            Quantity = p.Value,
+            Quantity = c.Quantity,
             PriceData = new SessionLineItemPriceDataOptions
             {
                 Currency = "egp",
-                UnitAmountDecimal = products.FirstOrDefault(x => x.Id == p.Key).Info.UnitPrice * 100,
+                UnitAmountDecimal = c.TotalPrice * 100,
                 ProductData = new SessionLineItemPriceDataProductDataOptions
                 {
-                    Name = products.FirstOrDefault(x => x.Id == p.Key).Info.Name,
+                    Name = c.Info.Name,
                 }
             }
         }).ToList();

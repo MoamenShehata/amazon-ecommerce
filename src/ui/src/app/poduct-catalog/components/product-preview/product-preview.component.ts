@@ -29,8 +29,8 @@ export class ProductPreviewComponent extends AppServicesProvider {
       productName: this.product.name,
       productImageUrl: this.product.imageUrl!,
       isAvailable: this.product.isAvailable!,
-      itemIds: [],
       unitPrice: this.product.unitPrice,
+      quantity: 0
     };
   }
 

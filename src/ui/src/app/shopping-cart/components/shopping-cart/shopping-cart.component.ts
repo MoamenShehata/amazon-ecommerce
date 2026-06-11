@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { ShoppingCartService } from "../../shopping-cart.services";
-import { CartItemModel, CartItemDto } from "../../models/cart-item-model";
+import { CartItemDto } from "../../models/cart-item-model";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { ShoppingCartState } from "../../shopping-cart.state";
@@ -50,7 +50,7 @@ export class ShoppingCartComponent {
 
   get cartItemsFalttenedCount() {
     let count = 0;
-    this.cartItems.filter(x => x.isAvailable).forEach((i) => (count += i.itemIds.length));
+    this.cartItems.filter(x => x.isAvailable).forEach((i) => (count += i.quantity));
     return count;
   }
 }

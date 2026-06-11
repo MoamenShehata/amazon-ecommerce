@@ -1,11 +1,12 @@
-﻿using Amazon.Cart.Domain.Entities;
-using Amazon.Cart.Domain.Payments;
+﻿using Amazon.Cart.Domain.Payments;
+using Amazon.Cart.Domain.Products;
+using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Cart.Domain.ValueObjects;
 using Amazon.SharedKernel.API;
 using Moamen.SDKs.Repository;
 using Moamen.SDKs.SharedKernel.DDD.Definitions;
 
-namespace Amazon.Cart.Domain;
+namespace Amazon.Cart.Domain.ShoppingCarts;
 
 public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 {
@@ -48,25 +49,31 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     private List<CartItem> _cartItems = new();
     public IReadOnlyCollection<CartItem> Items => _cartItems;
-
-
-    public void AddItem(CartItem item)
+    public CartItem PushProductItem(Product product)
     {
-        _cartItems.Add(item);
+        var existingProductItem = FindProductItem(product.Id);
+        if (existingProductItem is not null)
+        {
+            existingProductItem.IncrementByOne();
+            return existingProductItem;
+        }
+
+        var newCartItem = product.CreateCartItem();
+        _cartItems.Add(newCartItem);
+        return newCartItem;
     }
 
-    public void RemoveItem(Guid productId)
+    public void PopProductItem(Guid productId)
     {
-        var cartItem = _cartItems.FirstOrDefault(x => x.ProductId == productId);
-        if (cartItem == null) return;
+        var existingProductItem = FindProductItem(productId);
+        if (existingProductItem is null) return;
 
-        _cartItems.Remove(cartItem);
-    }
+        existingProductItem.DecrementByOne();
 
-    public void RemoveProductItems(Guid productId)
-    {
-        _cartItems.RemoveAll(x => x.ProductId == productId);
+        if (existingProductItem.Quantity == 0)
+            _cartItems.Remove(existingProductItem);
     }
+    public void RemoveProductItems(Guid productId) => _cartItems.RemoveAll(x => x.ProductId == productId);
 
     public void SetDeliverToAddress(int addressId) => DeliverToAddressId = addressId;
 
@@ -85,11 +92,14 @@ public class ShoppingCart : AuditableAggregate<Guid>, IEntity<Guid>
 
     public void Clear() => _cartItems.Clear();
 
-    public decimal TotalAmount => _cartItems.Sum(i => i.Price);
+    public decimal TotalAmount => _cartItems.Sum(i => i.UnitPrice);
 
     public List<KeyValuePair<Guid, int>> AggregatToProducts => _cartItems.GroupBy(i => i.ProductId)
             .Select(g => new KeyValuePair<Guid, int>(g.Key, g.Count()))
             .ToList();
+
+    private CartItem FindProductItem(Guid productId) => _cartItems.FirstOrDefault(x => x.ProductId == productId);
+
     #region Infra
     private ShoppingCart() : this(Guid.NewGuid(), null)
     {

@@ -1,4 +1,5 @@
-﻿using Amazon.Cart.Domain.ValueObjects;
+﻿using Amazon.Cart.Domain.ShoppingCarts;
+using Amazon.Cart.Domain.ValueObjects;
 
 namespace Amazon.Cart.Domain.Factories;
 

@@ -1,9 +1,9 @@
 ﻿using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Mappers;
 using Amazon.Cart.Application.Payments.Dtos;
-using Amazon.Cart.Domain;
 using Amazon.Cart.Domain.Integrations.Customers;
 using Amazon.Cart.Domain.Payments;
+using Amazon.Cart.Domain.ShoppingCarts;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Common.Services;
 using Amazon.SharedKernel.Extensions;

@@ -21,7 +21,7 @@ export class CartItemDetailsComponent extends AppServicesProvider {
     this.onAllItemsRemoved.emit();
   }
   get quantity(): number {
-    return this.cartItem?.itemIds?.length ?? 0;
+    return this.cartItem?.quantity;
   }
 
   get unitPrice(): number | null {

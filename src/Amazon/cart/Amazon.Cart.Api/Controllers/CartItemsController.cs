@@ -12,9 +12,6 @@ public class CartItemsController(CartAppService _cartService) : ApiControllerBas
     public async Task<IActionResult> AddItemToCart(Guid cartId, [FromBody] CartItemCreateDto cartItem)
     {
         var result = await _cartService.AddItemToCartAsync(cartId, cartItem);
-        if (result.IsSuccess)
-            return Ok(result.Value);
-
         return RestResult(result);
     }
 

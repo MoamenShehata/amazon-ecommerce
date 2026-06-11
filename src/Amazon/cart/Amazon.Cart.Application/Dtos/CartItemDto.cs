@@ -4,7 +4,7 @@
         Guid ProductId,
         string ProductName,
         string ProductImageUrl,
-        List<int> ItemIds,
+        int Quantity,
         decimal UnitPrice,
         bool IsAvailable);
 }

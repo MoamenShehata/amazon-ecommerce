@@ -1,11 +1,11 @@
-﻿using Amazon.Cart.Domain;
-using Amazon.Cart.Domain.Entities;
-using Amazon.Cart.Domain.Integrations;
+﻿using Amazon.Cart.Domain.Integrations;
 using Amazon.Cart.Domain.Integrations.Customers;
 using Amazon.Cart.Domain.Integrations.Orders;
 using Amazon.Cart.Domain.Payments;
 using Amazon.Cart.Domain.Products;
 using Amazon.Cart.Domain.Services;
+using Amazon.Cart.Domain.ShoppingCarts;
+using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Cart.Infrastructure.Data.Models;
 using Amazon.Cart.Infrastructure.Integrations;
 using Amazon.Cart.Infrastructure.Integrations.Customers;
@@ -81,13 +81,6 @@ public static class InfrastructureDependencyRegistrar
             cm.AutoMap();
 
             cm.MapField("_cartItems");
-        });
-
-        BsonClassMap.RegisterClassMap<CartItem>(cm =>
-        {
-            cm.AutoMap();
-
-            cm.UnmapMember(x => x.Product);
         });
     }
 }
