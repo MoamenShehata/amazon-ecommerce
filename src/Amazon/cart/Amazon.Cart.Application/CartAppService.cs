@@ -116,8 +116,7 @@ namespace Amazon.Cart.Application
             if (!checkoutResponse.IsSuccess)
                 return checkoutResponse;
 
-            await _unitOfWork.CommitAsync();
-            return RestResponse<ChallengePaymentResponse>.Success(checkoutResponse);
+            return (await CommitAsync()).MapTo(checkoutResponse);
         }
 
         public async Task<RestResponse<Guid>> ConfirmPaymentAsync(Guid cartId, ConfirmPaymentRequest request)
@@ -133,8 +132,7 @@ namespace Amazon.Cart.Application
             _eventStoreService.Append(new OrderPaymentConfirmedEvent(cartResult.Value.OrderId.Value, paymentConfimration));
             _carts.Remove(cartResult.Value);
 
-            await _unitOfWork.CommitAsync();
-            return RestResponse<Guid>.Success(cartResult.Value.OrderId.Value);
+            return (await CommitAsync()).MapTo(cartResult.Value.OrderId.Value);
         }
 
         private async Task<RestResponse<CheckoutPaymentInfo>> HandlePaymentConfirmationAsync(ShoppingCart shoppingCart, ConfirmPaymentRequest request)
