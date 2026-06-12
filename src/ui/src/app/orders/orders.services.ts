@@ -13,7 +13,7 @@ export class OrdersService {
     private http: HttpClient,
   ) { }
 
-  baseUrl = `${environment.ordersBaseUrl}/orders`;
+  baseUrl = `${environment.gatewayBaseUrl}/orders`;
 
   getOrdersPageForCurrentUser(searchRequest: SearchOrdersRequest) {
     let queryString = `?pageNumber=${searchRequest.pageNumber}&pageSize=${searchRequest.pageSize}`;

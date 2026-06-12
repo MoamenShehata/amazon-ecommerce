@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { CartItemCreateModel } from "./models/cart-item-create.models";
-import { AuthService } from "../authentication/services/authentication.service";
 import { StorageService } from "../core/services/storage-service";
-import { BehaviorSubject, catchError, map, Observable, tap } from "rxjs";
-import { CartItemModel, CartItemDto, CartCreateResultDto } from "./models/cart-item-model";
+import { BehaviorSubject, catchError, map, Observable } from "rxjs";
+import { CartItemDto, CartCreateResultDto } from "./models/cart-item-model";
 import { HttpClient } from "@angular/common/http";
 import { ShoppingCartState } from "./shopping-cart.state";
 import { AppServicesProvider } from "../core/services/app-services.provider";
@@ -13,9 +12,10 @@ import { AppServicesProvider } from "../core/services/app-services.provider";
   providedIn: "root",
 })
 export class ShoppingCartService extends AppServicesProvider {
-  private cartsBaseUrl = `${environment.cartBaseUrl}/carts`;
+  private cartsBaseUrl = `${environment.gatewayBaseUrl}/carts`;
+
   private get cartItemsBaseUrl() {
-    return `${environment.cartBaseUrl}/carts/${this.activeCartId}/items`;
+    return `${this.cartsBaseUrl}/${this.activeCartId}/items`;
   }
 
   constructor(

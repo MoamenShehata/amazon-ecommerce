@@ -12,17 +12,6 @@ builder.Services
     .AddJwtAuthentication(builder.Configuration);
 ;
 
-builder.Services.AddCors(op =>
-{
-    op.AddPolicy("CORS_Policy", policy =>
-    {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:62832")
-        .AllowCredentials()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-    });
-});
-
 builder.Services.AddAuthorization(op =>
 {
     op.AddPolicy("CUSTOMERS_POLICY", builder =>
@@ -45,7 +34,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseCors("CORS_Policy");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

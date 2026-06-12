@@ -12,8 +12,8 @@ import { CategoryForListModel } from '../models/category-for-list.models';
   providedIn: 'root',
 })
 export class CatalogService {
-  private categoriesBaseUrl = `${environment.catalogBaseUrl}/categories`;
-  private productsBaseUrl = `${environment.catalogBaseUrl}/products`;
+  private categoriesBaseUrl = `${environment.gatewayBaseUrl}/categories`;
+  private productsBaseUrl = `${environment.gatewayBaseUrl}/products`;
 
   constructor(private http: HttpClient) { }
 

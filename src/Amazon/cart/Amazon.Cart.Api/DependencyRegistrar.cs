@@ -40,17 +40,6 @@ public static class DependencyRegistrar
         services.AddControllers();
         services.AddOpenApi();
 
-        services.AddCors(op =>
-        {
-            op.AddPolicy("CORS_Policy", policy =>
-            {
-                policy.WithOrigins("http://localhost:4200", "http://localhost:62832")
-                .AllowCredentials()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-            });
-        });
-
         return services;
     }
 

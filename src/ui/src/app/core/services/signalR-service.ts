@@ -14,7 +14,7 @@ export class SignalRService {
 
     public startConnection() {
         this.hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl(`${environment.notificationBaseUrl}/notificationHub`, {
+            .withUrl(`${environment.gatewayBaseUrl}/notificationHub`, {
                 accessTokenFactory: () => this.authService.accessToken,
                 withCredentials: true,
             })

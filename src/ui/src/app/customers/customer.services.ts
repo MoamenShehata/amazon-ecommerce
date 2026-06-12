@@ -20,7 +20,7 @@ export class CustomerService {
     private http: HttpClient,
   ) { }
 
-  private baseUrl = `${environment.customersBaseUrl}/customers`;
+  private baseUrl = `${environment.gatewayBaseUrl}/customers`;
   private meUrl = `${this.baseUrl}/me`;
 
   getMyProfile() {

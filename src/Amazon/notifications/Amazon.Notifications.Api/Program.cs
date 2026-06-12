@@ -67,26 +67,10 @@ builder.Services.AddMassTransit(config =>
     });
 });
 
-builder.Services.AddCors(op =>
-{
-    op.AddPolicy("Cors", builder =>
-    {
-        builder
-        .WithOrigins("http://localhost:4200")
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials()
-        ;
-
-    });
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseRouting();
-
-app.UseCors("Cors");
 
 app.UseAuthentication();
 app.UseAuthorization();

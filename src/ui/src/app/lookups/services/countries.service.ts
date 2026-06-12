@@ -10,7 +10,7 @@ import { PagedResult } from "../../core/models/paged-result.models";
 export class CountriesService {
   constructor(private http: HttpClient) { }
 
-  private baseUrl = `${environment.lookupsBaseUrl}`;
+  private baseUrl = `${environment.gatewayBaseUrl}`;
 
   getCountries(pageNumber: number, lastSeenValue: number | null) {
     var query = `?pageNumber=${pageNumber}`;

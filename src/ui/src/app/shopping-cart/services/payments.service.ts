@@ -9,7 +9,7 @@ import { tap } from "rxjs";
     providedIn: "root",
 })
 export class PaymentsService {
-    private baseUrl = `${environment.cartBaseUrl}/paymentMethods`;
+    private baseUrl = `${environment.gatewayBaseUrl}/paymentMethods`;
 
 
     constructor(

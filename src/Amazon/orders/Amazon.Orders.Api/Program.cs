@@ -4,17 +4,6 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServices();
 
-builder.Services.AddCors(op =>
-{
-    op.AddPolicy("CORS_Policy", policy =>
-    {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:62832")
-        .AllowCredentials()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-    });
-});
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -42,7 +31,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors("CORS_Policy");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
