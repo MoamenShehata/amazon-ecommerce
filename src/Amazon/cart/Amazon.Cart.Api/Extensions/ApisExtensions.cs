@@ -28,4 +28,12 @@ public static class ApisExtensions
                 return Results.Ok(restResponse.Value);
         }
     }
+
+    public static IResult RestCreatedResult<TValue>(RestResponse<TValue> restResponse, string route, Func<TValue, object> routeValues)
+    {
+        if (!restResponse.IsSuccess)
+            return RestResult(restResponse);
+
+        return Results.CreatedAtRoute(route, routeValues(restResponse.Value), restResponse.Value);
+    }
 }
