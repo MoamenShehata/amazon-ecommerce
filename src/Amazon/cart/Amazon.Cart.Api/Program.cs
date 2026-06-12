@@ -30,7 +30,9 @@ app.MapControllers();
 
 app.MapGet("/api/paymentMethods", async (PaymentsAppService _paymentsAppService) => RestResult(await _paymentsAppService.GetPaymentMethodsAsync()));
 
-var cartsApis = app.MapGroup("/api/carts");
+var cartsApis = app.MapGroup("/api/carts")
+    .RequireAuthorization();
+
 
 cartsApis
     .MapGet("{cartId}", async (Guid cartId, CartAppService _cartService)
@@ -41,10 +43,10 @@ cartsApis
 cartsApis
     .MapPost("", async ([FromBody] CartCreateDto cartModel, CartAppService _cartService)
         => RestCreatedResult(await _cartService.CreateCartAsync(cartModel), "GetCartById", result => new { cartId = result.CartId }))
+    .AllowAnonymous()
     ;
 
-var cartItemsApis = cartsApis.MapGroup("{cartId}/items")
-    .RequireAuthorization();
+var cartItemsApis = cartsApis.MapGroup("{cartId}/items");
 
 cartItemsApis.MapPost("", async (Guid cartId, [FromBody] CartItemCreateDto cartItem, CartAppService _cartService)
     => RestResult(await _cartService.AddItemToCartAsync(cartId, cartItem)));
