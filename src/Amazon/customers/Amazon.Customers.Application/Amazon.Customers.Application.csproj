@@ -1,26 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MassTransit" Version="8.3.5" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.5" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MassTransit" Version="8.3.5" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.3.5" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\shared-kernel\Amazon.SharedKernel\Amazon.SharedKernel.csproj" />
-    <ProjectReference Include="..\Amazon.Customers.Domain\Amazon.Customers.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\shared-kernel\Amazon.SharedKernel\Amazon.SharedKernel.csproj" />
+		<ProjectReference Include="..\Amazon.Customers.Domain\Amazon.Customers.Domain.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Moamen.SDKs.SharedKernel">
-      <HintPath>..\..\..\..\..\02- Developer\08-My SDKs\Moamen.SDKs\Moamen.SDKs.SharedKernel\bin\Debug\net9.0\Moamen.SDKs.SharedKernel.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
+	<ItemGroup>
+		<Reference Include="Moamen.SDKs.SharedKernel">
+			<HintPath>..\..\lib\Moamen.SDKs.SharedKernel.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 </Project>
