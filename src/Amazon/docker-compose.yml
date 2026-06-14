@@ -17,6 +17,7 @@ services:
             "YarbConfigurations:Clusters:catalog-cluster:Destinations:local-instance:Address": "https://amazon-catalog:8081"
             "YarbConfigurations:Clusters:media-cluster:Destinations:local-instance:Address": "https://amazon-media:8081"
             "YarbConfigurations:Clusters:notifications-cluster:Destinations:local-instance:Address": "https://amazon-notifications:8081"
+            "YarbConfigurations:Clusters:lookups-cluster:Destinations:local-instance:Address": "https://host.docker.internal:7158"
             "YarbConfigurations:Clusters:customers-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:cart-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:orders-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
@@ -87,7 +88,8 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
-            "JwtSettings:Issuer": "https://host.docker.internal:5001"
+            "JwtSettings:Authority": "http://host.docker.internal:5000"
+            "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
             "Services:Inventory": "https://amazon-inventory:7047"
             "Front_Url": "http://localhost:4200"
@@ -132,9 +134,10 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
-            "JwtSettings:Issuer": "https://host.docker.internal:5001"
+            "JwtSettings:Authority": "http://host.docker.internal:5000"
+            "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
-            "Services:Lookups": "https://localhost:7158/api/"
+            "Services:Gateway": "https://amazon-gateway:7262"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
 
@@ -172,7 +175,8 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
-            "JwtSettings:Issuer": "https://host.docker.internal:5001"
+            "JwtSettings:Authority": "http://host.docker.internal:5000"
+            "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
