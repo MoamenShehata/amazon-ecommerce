@@ -17,6 +17,7 @@ builder.Services.AddOpenApi();
 builder.Services
     .RegisterApplicationDependencies(builder.Configuration)
     .RegisterInfrastructureDependencies(builder.Configuration)
+    .RegisterSharedServices(builder.Configuration)
     ;
 
 var app = builder.Build();

@@ -1,5 +1,8 @@
+using Amazon.SharedKernel.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.RegisterSharedServices(builder.Configuration);
 builder.Services.AddCors(op =>
 {
     op.AddPolicy("CORS_Policy", builder =>
