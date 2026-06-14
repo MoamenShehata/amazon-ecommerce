@@ -7,6 +7,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["gateway/Amazon.Apis.Gateway/Amazon.Apis.Gateway.csproj", "Amazon.Apis.Gateway/"]
 COPY gateway/ .
+COPY lib/ /lib
+COPY shared-kernel/ /shared-kernel
 RUN dotnet restore "./Amazon.Apis.Gateway/Amazon.Apis.Gateway.csproj"
 
 WORKDIR "/src/Amazon.Apis.Gateway"

@@ -24,6 +24,7 @@ services:
             "YarbConfigurations:Clusters:catalog-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:media-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:notifications-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
 
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
@@ -45,6 +46,7 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
             - D:/backups/media/shared-files:/shared-files
@@ -115,6 +117,7 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
 
@@ -158,6 +161,7 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
 
@@ -180,6 +184,7 @@ services:
             "JwtSettings:Authority": "http://host.docker.internal:5000"
             "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
 
@@ -203,7 +208,7 @@ services:
             "JwtSettings:Authority": "http://host.docker.internal:5000"
             "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
-            "Serilog:WriteTo:0:Name": "Console"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
             - dp_keys:/root/.aspnet/DataProtection-Keys
@@ -224,6 +229,7 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
 
