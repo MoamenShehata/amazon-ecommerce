@@ -5,6 +5,8 @@ using Amazon.Customers.Domain;
 using Amazon.SharedKernel.API;
 using Amazon.SharedKernel.Customers.Events;
 using Amazon.SharedKernel.Extensions;
+using DnsClient.Internal;
+using Microsoft.Extensions.Logging;
 using Moamen.SDKs.SharedKernel;
 
 namespace Amazon.Customers.Application;
@@ -13,7 +15,8 @@ public class CustomerAppService(
     CustomerService _customerService,
     IUnitOfWork _unitOfWork,
     ICustomerProfileService _profilesService,
-    ShippingAddresAdapter _shippingAddresAdapter)
+    ShippingAddresAdapter _shippingAddresAdapter,
+    ILogger<CustomerAppService> _logger)
 {
     public async Task CreateCustomerAsync(NewCustomerRegistrationEvent customerData)
     {
@@ -23,6 +26,8 @@ public class CustomerAppService(
 
     public async Task CreateProfileForCustomerAsync(Guid customerId)
     {
+        _logger.LogDebug("CreateProfileForCustomerAsync based on event handler");
+
         var customerResult = await _customerService.GetByIdAsync(customerId);
         if (!customerResult.IsSuccess) return;
 
