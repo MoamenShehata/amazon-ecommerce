@@ -99,15 +99,12 @@ namespace Amazon.SharedKernel.Extensions
                     {
                         OnAuthenticationFailed = context =>
                         {
-                            //var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger>();
-                            Console.WriteLine("fuck you docker");
                             Console.WriteLine(context.Exception.Message);
                             Console.WriteLine(context.Exception.StackTrace);
                             return Task.CompletedTask;
                         },
                         OnForbidden = context =>
                         {
-                            Console.WriteLine("fuck you docker");
                             Console.WriteLine(context.Result.Failure.Message);
                             Console.WriteLine(context.Result.Failure.StackTrace);
                             return Task.CompletedTask;
