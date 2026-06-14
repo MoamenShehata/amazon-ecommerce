@@ -26,7 +26,7 @@ public class CustomerAppService(
 
     public async Task CreateProfileForCustomerAsync(Guid customerId)
     {
-        _logger.LogDebug("CreateProfileForCustomerAsync based on event handler");
+        _logger.LogDebug("CreateProfileForCustomerAsync based on event handler {customerId}", customerId);
 
         var customerResult = await _customerService.GetByIdAsync(customerId);
         if (!customerResult.IsSuccess) return;
@@ -34,13 +34,9 @@ public class CustomerAppService(
         var existingProfile = await _profilesService.GetByIdAsync(customerId);
         if (existingProfile != null) return;
 
-        var addressesResult = await _shippingAddresAdapter.ToReadModel(customerResult.Value.ShippingInfo);
-        if (!addressesResult.IsSuccess) return; // or get one by one and check if exists, or return error to nack back to broker
-
         var profile = new CustomerProfile()
         {
-            CustomerId = customerId,
-            Addresses = addressesResult.Value
+            CustomerId = customerId
         };
 
         await _profilesService.CreateAsync(profile);
