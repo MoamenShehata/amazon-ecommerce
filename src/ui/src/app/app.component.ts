@@ -5,6 +5,7 @@ import { AppServicesProvider } from "./core/services/app-services.provider";
 import { IdentityControlsComponent } from "./authentication/components/authentication-landing/identity-controls/identity-controls.component";
 import { LoadingSpinnerComponent } from "./core/components/loading-spinner/loading-spinner.component";
 import { SignalRService } from "./core/services/signalR-service";
+import { from, Observable } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -19,6 +20,8 @@ export class AppComponent extends AppServicesProvider {
     private signalRService: SignalRService,
   ) {
     super();
+
+    const src = from([1, 2, 3]);
 
     if (authService.isAuthenticated) {
       this.signalRService.startConnection();

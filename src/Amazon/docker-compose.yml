@@ -1,0 +1,229 @@
+services:
+    amazon-gateway:
+        image: amazon-gateway
+        networks:
+            - shared2-network
+        ports:
+            - 7262:8081
+        environment:
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "YarbConfigurations:Clusters:customers-cluster:Destinations:local-instance:Address": "https://amazon-customers:8081"
+            "YarbConfigurations:Clusters:cart-cluster:Destinations:local-instance:Address": "https://amazon-carts:8081"
+            "YarbConfigurations:Clusters:orders-cluster:Destinations:local-instance:Address": "https://amazon-orders:8081"
+            "YarbConfigurations:Clusters:catalog-cluster:Destinations:local-instance:Address": "https://amazon-catalog:8081"
+            "YarbConfigurations:Clusters:media-cluster:Destinations:local-instance:Address": "https://amazon-media:8081"
+            "YarbConfigurations:Clusters:notifications-cluster:Destinations:local-instance:Address": "https://amazon-notifications:8081"
+            "YarbConfigurations:Clusters:customers-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+            "YarbConfigurations:Clusters:cart-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+            "YarbConfigurations:Clusters:orders-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+            "YarbConfigurations:Clusters:catalog-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+            "YarbConfigurations:Clusters:media-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+            "YarbConfigurations:Clusters:notifications-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+
+    amazon-media:
+        image: amazon-media
+        networks:
+            - shared2-network
+        deploy:
+            replicas: 1
+        environment:
+            "ConnectionStrings:Default": "Server=sql-server,1433;Database=Amazon-Media;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "ConnectionStrings:Redis": "redis:6379"
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+            - D:/backups/media/shared-files:/shared-files
+            - D:/backups/media/private-files:/private-files
+
+    # amazon-auth:
+    #     image: amazon-auth
+    #     networks:
+    #         - shared2-network
+    #     ports:
+    #         - 5001:5001
+    #         - 5000:5000
+    #     environment:
+    #         "ConnectionStrings:DefaultConnection": "Server=sql-server,1433;Database=Amazon;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+    #         "MessageBroker:Host": "amqp://rabbitmq:5672"
+    #         "MessageBroker:User": "guest"
+    #         "MessageBroker:Password": "guest"
+    #         "ASPNETCORE_HTTP_PORTS": "5000"
+    #         "ASPNETCORE_HTTPS_PORTS": "5001"
+    #         "ASPNETCORE_ENVIRONMENT": "Development"
+    #         "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+    #         "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+    #     volumes:
+    #         - ${USERPROFILE}\.aspnet\https:/https:ro
+
+    amazon-carts:
+        image: amazon-carts
+        deploy:
+            replicas: 1
+        networks:
+            - shared2-network
+        environment:
+            "ConnectionStrings:Default": "Server=sql-server,1433;Database=Amazon-cart;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ConnectionStrings:Mongo": "mongodb://mongodb:27017"
+            "ConnectionStrings:Redis": "redis:6379"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "JwtSettings:Issuer": "https://host.docker.internal:5001"
+            "JwtSettings:Audience": "amazon-cart"
+            "Services:Inventory": "https://amazon-inventory:7047"
+            "Front_Url": "http://localhost:4200"
+            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+
+    amazon-inventory:
+        image: amazon-inventory
+        deploy:
+            replicas: 1
+        ports:
+            - 7047:8081
+        networks:
+            - shared2-network
+        environment:
+            "ConnectionStrings:Inventory": "Server=sql-server,1433;Database=Amazon-Inventory;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+
+    amazon-customers:
+        image: amazon-customers
+        deploy:
+            replicas: 1
+        networks:
+            - shared2-network
+        environment:
+            "ConnectionStrings:Customers": "Server=sql-server,1433;Database=Amazon-Customers;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "JwtSettings:Issuer": "https://host.docker.internal:5001"
+            "JwtSettings:Audience": "amazon-cart"
+            "Services:Lookups": "https://localhost:7158/api/"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+
+    amazon-notifications:
+        image: amazon-notifications
+        deploy:
+            replicas: 1
+        networks:
+            - shared2-network
+        environment:
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+
+    amazon-orders:
+        image: amazon-orders
+        deploy:
+            replicas: 1
+        networks:
+            - shared2-network
+        environment:
+            "ConnectionStrings:Orders": "Server=sql-server,1433;Database=Amazon-Orders;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "JwtSettings:Issuer": "https://host.docker.internal:5001"
+            "JwtSettings:Audience": "amazon-cart"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+
+    amazon-catalog:
+        image: amazon-catalog
+        deploy:
+            replicas: 1
+        networks:
+            - shared2-network
+        environment:
+            "ConnectionStrings:CatalogDatabase": "Server=sql-server,1433;Database=Amazon-Catalog;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "ConnectionStrings:CatalogRead": "Server=sql-server,1433;Database=Amazon-Catalog-Read;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "JwtSettings:Authority": "http://host.docker.internal:5000"
+            "JwtSettings:Issuer": "https://localhost:5001"
+            "JwtSettings:Audience": "amazon-cart"
+            "Serilog:WriteTo:0:Name": "Console"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+            - dp_keys:/root/.aspnet/DataProtection-Keys
+
+    amazon-shipping:
+        image: amazon-shipping
+        deploy:
+            replicas: 1
+        networks:
+            - shared2-network
+        environment:
+            "ConnectionStrings:Default": "Server=sql-server,1433;Database=Amazon-Shipping;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "MessageBroker:Host": "amqp://rabbitmq:5672"
+            "MessageBroker:User": "guest"
+            "MessageBroker:Password": "guest"
+            "ASPNETCORE_HTTP_PORTS": "8080"
+            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_ENVIRONMENT": "Development"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+
+networks:
+    shared2-network:
+        external: true
+
+volumes:
+    dp_keys:

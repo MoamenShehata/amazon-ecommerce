@@ -1,0 +1,28 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ["shipping/Amazon.Shipping.Api/Amazon.Shipping.Api.csproj", "Amazon.Shipping.Api/"]
+COPY ["shipping/Amazon.Shipping.Application/Amazon.Shipping.Application.csproj", "Amazon.Shipping.Application/"]
+COPY ["shipping/Amazon.Shipping.Domain/Amazon.Shipping.Domain.csproj", "Amazon.Shipping.Domain/"]
+COPY ["shipping/Amazon.Shipping.Infrastructure/Amazon.Shipping.Infrastructure.csproj", "Amazon.Shipping.Infrastructure/"]
+COPY lib/ /lib
+COPY shipping/ .
+COPY shared-kernel/ /shared-kernel
+RUN dotnet restore "./Amazon.Shipping.Api/Amazon.Shipping.Api.csproj"
+
+WORKDIR "/src/Amazon.Shipping.Api"
+RUN dotnet build "./Amazon.Shipping.Api.csproj" -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "./Amazon.Shipping.Api.csproj" -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+
+ENTRYPOINT ["dotnet", "Amazon.Shipping.Api.dll"]

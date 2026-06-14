@@ -1,0 +1,29 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ["cart/Amazon.Cart.Api/Amazon.Cart.Api.csproj", "Amazon.Cart.Api/"]
+COPY ["cart/Amazon.Cart.Application/Amazon.Cart.Application.csproj", "Amazon.Cart.Application/"]
+COPY ["cart/Amazon.Cart.Domain/Amazon.Cart.Domain.csproj", "Amazon.Cart.Domain/"]
+COPY ["cart/Amazon.Cart.Infrastructure/Amazon.Cart.Infrastructure.csproj", "Amazon.Cart.Infrastructure/"]
+COPY inventory/Amazon.Inventory.Grpc/Protos/ /inventory/Amazon.Inventory.Grpc/Protos
+COPY lib/ /lib
+COPY cart/ .
+COPY shared-kernel/ /shared-kernel
+RUN dotnet restore "./Amazon.Cart.Api/Amazon.Cart.Api.csproj"
+
+WORKDIR "/src/Amazon.Cart.Api"
+RUN dotnet build "./Amazon.Cart.Api.csproj" -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "./Amazon.Cart.Api.csproj" -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+
+ENTRYPOINT ["dotnet", "Amazon.Cart.Api.dll"]

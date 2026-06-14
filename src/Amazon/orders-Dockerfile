@@ -1,0 +1,28 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ["orders/Amazon.Orders.Api/Amazon.Orders.Api.csproj", "Amazon.Orders.Api/"]
+COPY ["orders/Amazon.Orders.Application/Amazon.Orders.Application.csproj", "Amazon.Orders.Application/"]
+COPY ["orders/Amazon.Orders.Domain/Amazon.Orders.Domain.csproj", "Amazon.Orders.Domain/"]
+COPY ["orders/Amazon.Orders.Infrastructure/Amazon.Orders.Infrastructure.csproj", "Amazon.Orders.Infrastructure/"]
+COPY lib/ /lib
+COPY orders/ .
+COPY shared-kernel/ /shared-kernel
+RUN dotnet restore "./Amazon.Orders.Api/Amazon.Orders.Api.csproj"
+
+WORKDIR "/src/Amazon.Orders.Api"
+RUN dotnet build "./Amazon.Orders.Api.csproj" -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "./Amazon.Orders.Api.csproj" -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+
+ENTRYPOINT ["dotnet", "Amazon.Orders.Api.dll"]

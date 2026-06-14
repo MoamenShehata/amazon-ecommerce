@@ -19,4 +19,10 @@
     <ProjectReference Include="..\Amazon.Customers.Infrastructure\Amazon.Customers.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Moamen.SDKs.SharedKernel">
+      <HintPath>..\..\lib\Moamen.SDKs.SharedKernel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

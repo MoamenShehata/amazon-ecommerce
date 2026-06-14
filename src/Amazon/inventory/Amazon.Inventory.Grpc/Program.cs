@@ -1,10 +1,16 @@
-using Amazon.Inventory.Grpc.Services;
 using Amazon.Inventory.Grpc;
+using Amazon.Inventory.Grpc.Services;
+using Amazon.Inventory.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServices();
 
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+var ctx = scope.ServiceProvider.GetRequiredService<InventoryContext>();
+await ctx.Database.MigrateAsync();
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<ProductGrpService>();

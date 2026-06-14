@@ -2,7 +2,9 @@ using Amazon.ProductCatalog.Api;
 using Amazon.ProductCatalog.Api.Jobs;
 using Amazon.ProductCatalog.Application;
 using Amazon.ProductCatalog.Infrastructure;
+using Amazon.ProductCatalog.Infrastructure.Data;
 using Amazon.SharedKernel.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,9 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var ctx = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+await ctx.Database.MigrateAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

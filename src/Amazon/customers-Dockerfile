@@ -1,0 +1,28 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ["customers/Amazon.Customers.API/Amazon.Customers.API.csproj", "Amazon.Customers.API/"]
+COPY ["customers/Amazon.Customers.Application/Amazon.Customers.Application.csproj", "Amazon.Customers.Application/"]
+COPY ["customers/Amazon.Customers.Domain/Amazon.Customers.Domain.csproj", "Amazon.Customers.Domain/"]
+COPY ["customers/Amazon.Customers.Infrastructure/Amazon.Customers.Infrastructure.csproj", "Amazon.Customers.Infrastructure/"]
+COPY lib/ /lib
+COPY customers/ .
+COPY shared-kernel/ /shared-kernel
+RUN dotnet restore "./Amazon.Customers.API/Amazon.Customers.API.csproj"
+
+WORKDIR "/src/Amazon.Customers.API"
+RUN dotnet build "./Amazon.Customers.API.csproj" -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "./Amazon.Customers.API.csproj" -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+
+ENTRYPOINT ["dotnet", "Amazon.Customers.API.dll"]

@@ -1,9 +1,11 @@
-using System.Globalization;
-using System.Text;
 using Amazon.Identity.Presentation;
+using Amazon.Identity.Presentation.Data;
 using Amazon.Identity.Presentation.Data.Seed;
 using Duende.IdentityServer.Licensing;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Globalization;
+using System.Text;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
@@ -23,6 +25,10 @@ try
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
+
+    using var scope = app.Services.CreateScope();
+    var ctx = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await ctx.Database.MigrateAsync();
 
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.

@@ -2,6 +2,9 @@ using Media.Application;
 using Media.Application.Storage;
 using Media.Infrastructure;
 using Amazon.SharedKernel.Extensions;
+using Amazon.SharedKernel.Media;
+using Media.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,10 @@ builder.Services
     ;
 
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+var ctx = scope.ServiceProvider.GetRequiredService<MediaContext>();
+await ctx.Database.MigrateAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

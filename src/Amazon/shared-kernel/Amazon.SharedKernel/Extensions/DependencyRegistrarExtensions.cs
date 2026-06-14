@@ -83,8 +83,9 @@ namespace Amazon.SharedKernel.Extensions
                 .AddJwtBearer(options =>
                 {
                     options.UseSecurityTokenValidators = false;
-                    options.Authority = configuration.GetValue<string>("JwtSettings:Issuer");
+                    options.Authority = configuration.GetValue<string>("JwtSettings:Authority");
                     options.Audience = configuration.GetValue<string>("JwtSettings:Audience");
+                    options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = true,
@@ -98,10 +99,17 @@ namespace Amazon.SharedKernel.Extensions
                     {
                         OnAuthenticationFailed = context =>
                         {
+                            //var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger>();
+                            Console.WriteLine("fuck you docker");
+                            Console.WriteLine(context.Exception.Message);
+                            Console.WriteLine(context.Exception.StackTrace);
                             return Task.CompletedTask;
                         },
                         OnForbidden = context =>
                         {
+                            Console.WriteLine("fuck you docker");
+                            Console.WriteLine(context.Result.Failure.Message);
+                            Console.WriteLine(context.Result.Failure.StackTrace);
                             return Task.CompletedTask;
                         },
                     };

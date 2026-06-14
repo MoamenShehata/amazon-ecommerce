@@ -20,9 +20,16 @@ public abstract class BackgroundJobBase(
         {
             _logger.LogInformation("Background work running at {time}", DateTime.UtcNow);
 
-            await DoAsync(stoppingToken);
+            try
+            {
+                await DoAsync(stoppingToken);
+                await Task.Delay(Interval, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "job {jobName} failed to execute", concreteJobType);
+            }
 
-            await Task.Delay(Interval, stoppingToken);
         }
 
         _logger.LogInformation($"{concreteJobType} stopped");
