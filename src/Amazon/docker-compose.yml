@@ -17,15 +17,17 @@ services:
             "YarbConfigurations:Clusters:catalog-cluster:Destinations:local-instance:Address": "https://amazon-catalog:8081"
             "YarbConfigurations:Clusters:media-cluster:Destinations:local-instance:Address": "https://amazon-media:8081"
             "YarbConfigurations:Clusters:notifications-cluster:Destinations:local-instance:Address": "https://amazon-notifications:8081"
-            "YarbConfigurations:Clusters:lookups-cluster:Destinations:local-instance:Address": "https://host.docker.internal:7158"
+            "YarbConfigurations:Clusters:lookups-cluster:Destinations:local-instance:Address": "https://lookups"
             "YarbConfigurations:Clusters:customers-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:cart-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:orders-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:catalog-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:media-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "YarbConfigurations:Clusters:notifications-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
+            "YarbConfigurations:Clusters:lookups-cluster:HttpClient:DangerousAcceptAnyServerCertificate": "true"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
-            # "Serilog:WriteTo:1:Args:outputTemplate": "[{Level:u3}] {Message}"
+            "Serilog:WriteTo:1:Args:Name": "Console"
+            "Serilog:WriteTo:1:Args:outputTemplate": "[{Level:u3}] {Message}"
 
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
@@ -98,7 +100,7 @@ services:
             "MessageBroker:User": "guest"
             "MessageBroker:Password": "guest"
             "ASPNETCORE_HTTP_PORTS": "8080"
-            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_HTTPS_PORTS": "8081;443"
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
@@ -204,6 +206,22 @@ services:
             - ${USERPROFILE}\.aspnet\https:/https:ro
             - dp_keys:/root/.aspnet/DataProtection-Keys
 
+    lookups:
+        image: lookups:countries
+        deploy:
+            replicas: 1
+        networks:
+            - shared2-network
+        environment:
+            "ConnectionStrings:DefaultConnection": "Server=sql-server,1433;Database=lookups;user Id=sa;password=P@ssw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true"
+            "ASPNETCORE_HTTP_PORTS": "8080;80"
+            "ASPNETCORE_HTTPS_PORTS": "8081;443"
+            "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
+            "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+        volumes:
+            - ${USERPROFILE}\.aspnet\https:/https:ro
+            - dp_keys:/root/.aspnet/DataProtection-Keys
+
     amazon-shipping:
         image: amazon-shipping
         deploy:
@@ -243,6 +261,7 @@ services:
     #         "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
     #     volumes:
     #         - ${USERPROFILE}\.aspnet\https:/https:ro
+
 
 networks:
     shared2-network:

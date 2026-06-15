@@ -10,6 +10,7 @@ import { InjectJwtInterceptor } from './core/interceptors/inject-jwt-interceptor
 import { BadRequestInterceptor } from './core/interceptors/bad-request-interceptor';
 import { ServerErrorInterceptor } from './core/interceptors/server-error-interceptor';
 import { loadingInterceptor } from './core/interceptors/spinner-interceptor';
+import { ConfictErrorInterceptor } from './core/interceptors/ConfictErrorInterceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: BadRequestInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ConfictErrorInterceptor,
       multi: true
     },
     {
