@@ -3,7 +3,6 @@ using Amazon.Cart.Api.Seed;
 using Amazon.Cart.Application;
 using Amazon.Cart.Application.Dtos;
 using Amazon.Cart.Application.Payments;
-using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Microsoft.AspNetCore.Mvc;
 using static Amazon.Cart.Api.Extensions.ApisExtensions;
 

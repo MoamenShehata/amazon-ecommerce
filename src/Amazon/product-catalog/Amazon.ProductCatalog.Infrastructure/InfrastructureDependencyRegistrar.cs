@@ -21,6 +21,12 @@ namespace Amazon.ProductCatalog.Infrastructure
 
             services
             .AddHttpClient<MediaRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
+            .ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                })
             .AddHttpMessageHandler<HttpClientErrorHandler>()
             ;
 

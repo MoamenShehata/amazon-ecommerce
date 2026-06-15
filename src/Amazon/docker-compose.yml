@@ -6,8 +6,8 @@ services:
         ports:
             - 7262:8081
         environment:
-            "ASPNETCORE_HTTP_PORTS": "8080"
-            "ASPNETCORE_HTTPS_PORTS": "8081"
+            "ASPNETCORE_HTTP_PORTS": "8080;80"
+            "ASPNETCORE_HTTPS_PORTS": "8081;443"
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
@@ -47,7 +47,7 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
-            "Services:Gateway": "https://amazon-gateway:7262"
+            "Services:Gateway": "https://localhost:7262"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
             # "Serilog:WriteTo:1:Args:outputTemplate": "[{Level:u3}] {Message}"
         volumes:
@@ -145,7 +145,7 @@ services:
             "JwtSettings:Authority": "http://host.docker.internal:5000"
             "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
-            "Services:Gateway": "https://amazon-gateway:7262"
+            "Services:Gateway": "https://amazon-gateway"
             "Serilog:WriteTo:0:Name": "Seq"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
             # "Serilog:WriteTo:1:Args:outputTemplate": "[{Level:u3}] {Message}"
@@ -216,7 +216,7 @@ services:
             "JwtSettings:Authority": "http://host.docker.internal:5000"
             "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
-            "Services:Gateway": "https://amazon-gateway:7262/"
+            "Services:Gateway": "https://amazon-gateway/"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
             # "Serilog:WriteTo:1:Args:outputTemplate": "[{Level:u3}] {Message}"
         volumes:
