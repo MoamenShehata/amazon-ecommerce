@@ -54,12 +54,12 @@ public static class ApplicationDependencyRegistrar
             ;
     }
 
-    private static void AddApplicationServices(IServiceCollection services)
+    private static void AddApplicationServices(IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddScoped<CartAppService>()
             .AddScoped<PaymentsAppService>()
-            .AddSingleton(new Stripe.StripeClient("sk_test_51TgdiIE2V1ENgl2scqHP7VqPguTjjPiWDYBIuqfJVxcH4BU9dSRkW6maVUpnvlIbK7NKBBOviQoEEsktTfXYP8UY00P9zeItkb"))
+            .AddSingleton(new Stripe.StripeClient(configuration.GetValue<string>("PaymentGateways:Stripe:Secret")))
             .AddScoped<PaymentMethodChallengeStartegy>()
             .AddScoped<StripeServices>()
             ;
