@@ -37,7 +37,7 @@ A scalable, modular e-commerce application built with .NET, following Domain-Dri
 
 
 ### ◆ Microservices architecture
-    - ### Divide the system into individual components to allow for
+- ### Divide the system into individual components to allow for
         - easier deployments
         
         - different data models(NoSql,SQL)
