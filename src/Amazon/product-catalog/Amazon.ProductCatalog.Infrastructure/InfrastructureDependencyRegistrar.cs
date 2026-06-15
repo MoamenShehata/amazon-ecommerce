@@ -1,6 +1,7 @@
 ﻿using Amazon.ProductCatalog.Domain.Products;
 using Amazon.ProductCatalog.Infrastructure.Data;
 using Amazon.ProductCatalog.Infrastructure.Integration;
+using Amazon.SharedKernel.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,10 @@ namespace Amazon.ProductCatalog.Infrastructure
                 .AddBaseContext<CatalogDbContext>(o => o.UseSqlServer(configuration.GetConnectionString("CatalogDatabase")));
             ;
 
-            services.AddHttpClient();
+            services
+            .AddHttpClient<MediaRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
+            .AddHttpMessageHandler<HttpClientErrorHandler>()
+            ;
 
             services
                 .AddScoped<IMediaService, ProductMediaService>()

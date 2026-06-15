@@ -1,9 +1,8 @@
 ﻿using Amazon.ProductCatalog.Domain.Products;
 using Amazon.SharedKernel.Media;
+using DnsClient.Internal;
 using Microsoft.Extensions.Configuration;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace Amazon.ProductCatalog.Infrastructure.Integration;
 
@@ -13,40 +12,24 @@ internal class UploadFileResult
 }
 
 public class ProductMediaService(
-    IHttpClientFactory _httpClientFactory,
+    ILogger<ProductMediaService> _logger,
+    MediaRestClient _mediaRestClient,
     IConfiguration _configuration
     ) : IMediaService
 {
-    private readonly string basePath = $"{_configuration.GetValue<string>("Services:Gateway")}files";
-
     public async Task<string> UploadFileAsync(MediaContent uploadRequest)
     {
-        // call the actual media service
-        using var client = _httpClientFactory.CreateClient();
-
-        var requestBody = new
-        {
-            OwnerId = Guid.NewGuid(),
-            IsPublic = true,
-            uploadRequest.Content,
-            uploadRequest.MimeType,
-            uploadRequest.Name,
-        };
-
-        var requestAsJson = JsonSerializer.Serialize(requestBody);
-
         try
         {
-            var response = await client.PostAsync(basePath, new StringContent(requestAsJson, new MediaTypeHeaderValue("application/json")));
-            response.EnsureSuccessStatusCode();
+            _logger.LogDebug("Uploading product image {imageName}", uploadRequest.Name);
 
-            var responseBody = await response.Content.ReadFromJsonAsync<UploadFileResult>();
-            return responseBody.Url;
+            var uploadedFileUrl = await _mediaRestClient.UploadFileAsync(new UploadFileRequest(Guid.NewGuid(), true, uploadRequest.Content, uploadRequest.MimeType, uploadRequest.Name));
+            return uploadedFileUrl;
         }
         catch (Exception ex)
         {
             return string.Empty;
-            //if it fails we can upload it on the server as a fallback and return it temprarily and create an event to fix it later
+            _logger.LogError(ex, "Failed to upload product image {imageName}", uploadRequest.Name);
         }
 
     }
