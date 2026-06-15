@@ -26,6 +26,7 @@ namespace Amazon.SharedKernel.Extensions
                 .AddSerilog((services, lc) =>
                 {
                     lc.Enrich.FromLogContext();
+                    lc.WriteTo.Console();
                     lc.ReadFrom.Configuration(configuration);
                 });
 
