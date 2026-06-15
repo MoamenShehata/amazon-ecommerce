@@ -46,11 +46,12 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
+            "Services:Gateway": "https://amazon-gateway:7262"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
-            - D:/backups/media/shared-files:/shared-files
-            - D:/backups/media/private-files:/private-files
+            - D:/backups/media/shared-files:/app/shared-files
+            - D:/backups/media/private-files:/app/private-files
 
     # amazon-auth:
     #     image: amazon-auth
@@ -208,6 +209,7 @@ services:
             "JwtSettings:Authority": "http://host.docker.internal:5000"
             "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
+            "Services:Gateway": "https://amazon-gateway:7262/"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
@@ -229,7 +231,7 @@ services:
             "ASPNETCORE_ENVIRONMENT": "Development"
             "ASPNETCORE_Kestrel:Certificates:Default:Path": "/https/aspnetapp.pfx"
             "ASPNETCORE_Kestrel:Certificates:Default:Password": "password123"
-            "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
+            # "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
 

@@ -7,7 +7,7 @@ namespace Media.Api.Controllers;
 
 [ApiController]
 [Route("files")]
-public class MediaController(MediaService _mediaService) : ControllerBase
+public class MediaController(MediaService _mediaService, IConfiguration _configuration) : ControllerBase
 {
     [ResponseCache(Duration = 600, Location = ResponseCacheLocation.Any)]
     [HttpGet("{id}")]
@@ -23,6 +23,6 @@ public class MediaController(MediaService _mediaService) : ControllerBase
     {
         var media = await _mediaService.CreateAsync(Guid.NewGuid(), request.OwnerId, new MediaContent(request.Content, request.MimeType, request.Name), request.IsPublic);
 
-        return Ok(new { Url = $"http://localhost:5104/files/{media.Id}" });
+        return Ok(new { Url = $"{_configuration.GetValue<string>("Services:Gateway")}/files/{media.Id}" });
     }
 }
