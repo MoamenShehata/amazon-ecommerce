@@ -37,7 +37,8 @@
         <json-to-list [value]="orderDetails.paymentInfo" />
 
         <h6>Deliver to Address:</h6>
-        <json-to-list [value]="orderDetails.deliveryAddress" />
+        {{deliverToAddress.buildingNumber}} - {{deliverToAddress.street}} - {{deliverToAddress.city}} -
+        {{deliverToAddress.country}}
 
 
         <button class="btn btn-danger" (click)="cancelOrder()" *ngIf="orderDetails.canBeCanceled">

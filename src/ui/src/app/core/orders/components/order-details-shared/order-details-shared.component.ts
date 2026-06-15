@@ -4,6 +4,8 @@ import { OrdersService } from '../../../../orders/orders.services';
 import { AppServicesProvider } from '../../../services/app-services.provider';
 import { JsonToListComponent } from '../../../components/json-to-list/json-to-list.component';
 import { CommonModule } from '@angular/common';
+import { CustomerService } from '../../../../customers/customer.services';
+import { CustomerProfileAddress } from '../../../../customers/models/customer-profile.model';
 
 @Component({
   selector: 'order-details-shared',
@@ -20,7 +22,11 @@ export class OrderDetailsSharedComponent extends AppServicesProvider {
   orderDetails: OrderDetailsDto;
 
   isLoading = false;
-  constructor(private ordersService: OrdersService) {
+  constructor(
+    private ordersService: OrdersService,
+    private customerService: CustomerService,
+
+  ) {
     super();
   }
 
@@ -28,12 +34,17 @@ export class OrderDetailsSharedComponent extends AppServicesProvider {
     this.loadOrderDetails();
   }
 
+  deliverToAddress: CustomerProfileAddress;
+
   loadOrderDetails() {
     this.isLoading = true;
     this.ordersService.getOrderDetails(this.orderId).subscribe({
       next: (details) => {
         this.loaded.emit(details);
         this.orderDetails = details;
+        this.customerService.getMyProfile().subscribe((profile) => {
+          this.deliverToAddress = profile.addresses.find(a => a.countryId == this.orderDetails.deliveryAddress.city.countryId && a.cityId == this.orderDetails.deliveryAddress.city.cityId)!;
+        })
         this.isLoading = false;
       }
     });

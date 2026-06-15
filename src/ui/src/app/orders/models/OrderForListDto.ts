@@ -7,6 +7,24 @@ export interface OrderForListDto {
   createdByEmail: string;
 }
 
+export interface DeliveryAddress {
+  city: CityInfo;
+  appartment: HouseInfo;
+}
+
+export interface CityInfo {
+  countryId: number;
+  cityId: number;
+  postalCode: string;
+}
+
+export interface HouseInfo {
+  street: string;
+  phoneNumber: string;
+  buildingNumber: number;
+  apartmentNumber: number | null;
+}
+
 export interface OrderDetailsDto {
   id: string;
   status: string;
@@ -16,6 +34,6 @@ export interface OrderDetailsDto {
   createdAt: Date;
   canBeCanceled: boolean;
   items: OrderItemDto[];
-  deliveryAddress: any;
+  deliveryAddress: DeliveryAddress;
   paymentInfo: any;
 }

@@ -9,7 +9,9 @@ export interface CustomerProfile {
 export interface CustomerProfileAddress {
   id?: number;
   country: string;
+  countryId: number;
   city: string;
+  cityId: number;
   street: string;
   buildingNumber: number;
   apartmentNumber: number | null;
