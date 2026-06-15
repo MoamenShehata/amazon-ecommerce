@@ -317,4 +317,4 @@ A scalable, modular e-commerce application built with .NET, following Domain-Dri
 
  - ### Ef Core inheritance capabilities
         - To represent Stakeholder domain objects(ORDERs service)
-            - and not worry how to obtain the concrete object a runtime
+            - and not worry how to obtain the concrete object at runtime
