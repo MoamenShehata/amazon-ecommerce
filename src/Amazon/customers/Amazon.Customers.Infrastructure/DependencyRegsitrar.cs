@@ -31,6 +31,12 @@ public static class InfrastructureDependencyRegistrar
 
         services
             .AddHttpClient<ILookupsIntegrationClient, LookupsRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
+            .ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                })
             .AddHttpMessageHandler<HttpClientErrorHandler>()
             ;
 

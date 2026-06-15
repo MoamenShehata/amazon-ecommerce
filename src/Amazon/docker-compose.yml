@@ -79,6 +79,7 @@ services:
             "Services:Inventory": "https://amazon-inventory:7047"
             "Front_Url": "http://localhost:4200"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
+            "Services:Gateway": "https://amazon-gateway/"
             # "Serilog:WriteTo:1:Args:outputTemplate": "[{Level:u3}] {Message}"
         volumes:
             - ${USERPROFILE}\.aspnet\https:/https:ro
@@ -125,7 +126,7 @@ services:
             "JwtSettings:Authority": "http://host.docker.internal:5000"
             "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
-            "Services:Gateway": "https://amazon-gateway"
+            "Services:Gateway": "https://amazon-gateway/"
             "Serilog:WriteTo:0:Name": "Seq"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
             # "Serilog:WriteTo:1:Args:outputTemplate": "[{Level:u3}] {Message}"

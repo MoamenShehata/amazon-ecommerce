@@ -62,11 +62,23 @@ public static class InfrastructureDependencyRegistrar
             ;
 
         services.AddHttpClient<ICustomersIntegrationClient, CustomersRestClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
+            .ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                })
             .AddHttpMessageHandler<HttpClientErrorHandler>()
             .AddHttpMessageHandler<InjectJwtFromCurrentSessionHandler>()
             ;
 
         services.AddHttpClient<OrdersIntegrationClient>(x => x.BaseAddress = new Uri(configuration.GetValue<string>("Services:Gateway")))
+            .ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                })
             .AddHttpMessageHandler<HttpClientErrorHandler>()
             .AddHttpMessageHandler<InjectJwtFromCurrentSessionHandler>()
             ;
