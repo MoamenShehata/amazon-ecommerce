@@ -1,14 +1,15 @@
 ﻿using Amazon.Cart.Domain.Integrations.Inventory;
-using Amazon.Cart.Domain.ShoppingCarts.Entites;
 using Amazon.Inventory.Grpc;
 using Amazon.SharedKernel.API;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using static Amazon.Inventory.Grpc.ProductService;
 
 namespace Amazon.Cart.Infrastructure.Integrations.Inventory;
 
-internal class InventoryIntegration(IConfiguration _configuration) : IInventoryIntegration
+internal class InventoryIntegration(IConfiguration _configuration,
+    ILogger<InventoryIntegration> _logger) : IInventoryIntegration
 {
     public async Task<RestResponse<bool>> IsProductAvailableForQuantityAsync(Guid productId, int quantity)
     {
@@ -16,7 +17,10 @@ internal class InventoryIntegration(IConfiguration _configuration) : IInventoryI
 
         try
         {
-            using var call = client.IsProductAvailableInStockAsync(new ProductAvailabilityRequest { ProductId = productId.ToString(), Quantity = quantity }, new Grpc.Core.CallOptions(deadline: DateTime.UtcNow.AddSeconds(2)));
+            using var call = client.IsProductAvailableInStockAsync(new ProductAvailabilityRequest { ProductId = productId.ToString(), Quantity = quantity }, new Grpc.Core.CallOptions(deadline: DateTime.UtcNow.AddSeconds(10)), headers: new Grpc.Core.Metadata
+            {
+
+            });
             var result = await call.ResponseAsync;
 
             if (!result.IsAvailableInStock)
@@ -26,6 +30,7 @@ internal class InventoryIntegration(IConfiguration _configuration) : IInventoryI
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "checking for cart item Availablity failed {productId}", productId);
             return RestResponse<bool>.Failure("Inventory service unavailable, canot check item availablity right now");
         }
 
@@ -33,7 +38,14 @@ internal class InventoryIntegration(IConfiguration _configuration) : IInventoryI
 
     private ProductServiceClient CreateProductServiceClient()
     {
-        var channel = GrpcChannel.ForAddress(_configuration.GetValue<string>("Services:Inventory"));
+        var channel = GrpcChannel.ForAddress(_configuration.GetValue<string>("Services:Inventory"), new GrpcChannelOptions
+        {
+            HttpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            }
+        });
         return new ProductServiceClient(channel);
     }
 }

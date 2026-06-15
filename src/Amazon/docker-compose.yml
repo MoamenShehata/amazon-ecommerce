@@ -76,7 +76,7 @@ services:
             "JwtSettings:Authority": "http://host.docker.internal:5000"
             "JwtSettings:Issuer": "https://localhost:5001"
             "JwtSettings:Audience": "amazon-cart"
-            "Services:Inventory": "https://host.docker.internal:7047"
+            "Services:Inventory": "https://amazon-inventory"
             "Front_Url": "http://localhost:4200"
             "Serilog:WriteTo:0:Args:ServerUrl": "http://seq:5341"
             "Services:Gateway": "https://amazon-gateway/"
