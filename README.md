@@ -48,25 +48,20 @@ A scalable, modular e-commerce application built with .NET, following Domain-Dri
 
 
 ### ◆ Domain-Driven Design (DDD)
-    ● Several/Different Bounded Contexts
-        ● (where each Bounded Context has it`s own definition/meaning of their domain objects)
+- ### Several/Different Bounded Contexts
+    ● (where each Bounded Context has it`s own definition/meaning of their domain objects)
         ● ex: : ORDERs service/Bounded Context defines a domain object called **Stakeholder**
-
-                ● can be of THREE kinds
-                    ● Admin
-                        ● Can access any queried order
-
-                    ● Customer
-                        -Only accesses owned orders
-
-                    ● Delivery Employee
-                        ● Should only access orders they received by the shipping company assigned to that order
-                            ● ONLY at the required stage
-                            ● Not implemented, but the code is ready to do that
-                
-                    ● In the Identity service/Bounded Context these same objects are called users and differentiaited by roles
-
-                    ● In the Customers service/Bounded Context we only have customers domain objects
+            ● can be of THREE kinds
+                ● Admin
+                    ● Can access any queried order
+                ● Customer
+                    -Only accesses owned orders
+                ● Delivery Employee
+                    ● Should only access orders they received by the shipping company assigned to that order
+                        ● ONLY at the required stage
+                        ● Not implemented, but the code is ready to do that
+                ● In the Identity service/Bounded Context these same objects are called users and differentiaited by roles
+                ● In the Customers service/Bounded Context we only have customers domain objects
 
     ● AGGREGATES
         ● Responsible of transactional consistency
