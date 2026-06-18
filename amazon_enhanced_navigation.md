@@ -244,27 +244,27 @@ A scalable, modular e-commerce application built with .NET, following Domain-Dri
 
 ## 🛠️ Tech Stack
 
-- ###  .NET 9
-- ###  ASP.NET Core Controllers
-- ###  ASP.NET Core Minimal APIs
-- ###  REST for the public facing
-- ###  gRPC for internal communication(Inventory)
-- ###  YARP API Gateway
-- ###  Ef Core 9
-- ###  Ms SQL Server
-- ###  MongoDb
-- ###  Redis
-- ###  RabbitMQ
-- ###  MassTransit
-- ###  Fluent Validation
-- ###  Docker & Docker swarm
-- ###  Serilog + Seq for logging
-- ###  JWT / Duende to implement OIDS/oAuth
-- ###  Angular 17 for the front end
-- ###  SignalR
-- ###  Framework Hosted Services
-- ###  Framework Dependency Container
-- ###  Stripe as a Payment Gateway
+• .NET 9
+• ASP.NET Core Controllers
+• ASP.NET Core Minimal APIs
+• REST for the public facing
+• gRPC for internal communication(Inventory)
+• YARP API Gateway
+• Ef Core 9
+• Ms SQL Server
+• MongoDb
+• Redis
+• RabbitMQ
+• MassTransit
+• Fluent Validation
+• Docker & Docker swarm
+• Serilog + Seq for logging
+• JWT / Duende to implement OIDS/oAuth
+• Angular 17 for the front end
+• SignalR
+• Framework Hosted Services
+• Framework Dependency Container
+• Stripe as a Payment Gateway
 
 <br />
 
