@@ -20,7 +20,7 @@ public static class ApplicationDependencyRegistrar
         IConfiguration configuration)
     {
         AddDomainServices(services);
-        AddApplicationServices(services);
+        AddApplicationServices(services, configuration);
 
         services.AddMassTransit(config =>
         {
