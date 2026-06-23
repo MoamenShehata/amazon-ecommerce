@@ -21,14 +21,15 @@ export default function ProductList({ }) {
             lastSeenValue: lastSeenValue,
         };
 
-        catalogServices.getProductsPage(pageRequest).then(page => {
-            setProductsPage(page.data);
-            setLastSeenValue(page.data.lastSeenValue);
-            setIsLoading(false);
-        }, err => {
-            alert('Error');
-            console.log(err)
-        })
+        catalogServices.getProductsPage(pageRequest)
+            .then(page => {
+                setProductsPage(page.data);
+                setLastSeenValue(page.data.lastSeenValue);
+                setIsLoading(false);
+            }, err => {
+                alert('Error');
+                console.log(err)
+            })
 
         return () => { console.log('clean up getting product page') }
     }, [pageNumber]);
@@ -41,7 +42,11 @@ export default function ProductList({ }) {
     }
 
     function onProductDeleted(product: ProductForListModel) {
-        productsPage.items = productsPage.items.filter(x => x.id != product.id);
+        setProductsPage({
+            totalCount: productsPage!?.totalCount - 1,
+            lastSeenValue: productsPage?.lastSeenValue,
+            items: productsPage?.items.filter(x => x.id != product.id)!
+        })
     }
 
     let productsDiv = (productsPage?.items || []).map(p => <ProductPreview product={p} onDeleted={() => onProductDeleted(p)} />);

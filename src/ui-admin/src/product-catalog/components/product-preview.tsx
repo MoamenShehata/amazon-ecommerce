@@ -1,12 +1,15 @@
 import type { ProductForListModel } from "./models/product-for-list-model";
+import catalogServices from "../services/catalog.services";
 
 export function ProductPreview({ product, onDeleted }: Readonly<{ product: ProductForListModel, onDeleted: () => void }>) {
     function deleteProduct() {
-        onDeleted();
-        // this.catalogService.deleteProduct(this.product.id)
-        //   .subscribe(() => {
-        //     this.deleted.emit();
-        //   })
+        catalogServices.deleteProduct(product.id)
+            .then(res => {
+                onDeleted();
+
+            }, err => {
+
+            });
     }
 
     return (
