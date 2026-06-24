@@ -7,8 +7,11 @@ import { MayBeEmptyList } from "../../core/components/may-be-empty-list";
 import { ProductPreview } from "./product-preview";
 import catalogServices from "../services/catalog.services";
 import type { PageRequest } from "../../core/models/page-request.models";
+import DataPaginator from "../../core/components/data-paginator/data-paginator";
 
 export default function ProductList({ }) {
+    const pageSize = 1;
+
     const [productsPage, setProductsPage] = useState<PagedResult<ProductForListModel> | null>(null);
     const [lastSeenValue, setLastSeenValue] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +20,7 @@ export default function ProductList({ }) {
     useEffect(() => {
         let pageRequest: PageRequest = {
             pageNumber: pageNumber,
-            pageSize: 100,
+            pageSize: pageSize,
             lastSeenValue: lastSeenValue,
         };
 
@@ -62,11 +65,16 @@ export default function ProductList({ }) {
             )}
 
             {(productsPage && !isLoading) && (
-                <div className="row mt-4" >
-                    <MayBeEmptyList list={productsPage.items} component={productsDiv} />
-                </div >
+                <>
+                    <div className="row mt-4" >
+                        <MayBeEmptyList list={productsPage.items} component={productsDiv} />
+                    </div >
+
+                    <DataPaginator currentPageNumber={pageNumber} totalCount={productsPage.totalCount} pageSize={pageSize} onPageChanged={setPageNumber} />
+                </>
             )
             }
+
 
 
         </Container >
