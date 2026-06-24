@@ -8,12 +8,18 @@ import { ProductPreview } from "./product-preview";
 import catalogServices from "../services/catalog.services";
 import type { PageRequest } from "../../core/models/page-request.models";
 import DataPaginator from "../../core/components/data-paginator/data-paginator";
+import RenderIf from "../../core/render-if";
 
 export default function ProductList({}) {
   const pageSize = 1;
 
-  const [productsPage, setProductsPage] =
-    useState<PagedResult<ProductForListModel> | null>(null);
+  const [productsPage, setProductsPage] = useState<
+    PagedResult<ProductForListModel>
+  >({
+    items: [],
+    lastSeenValue: null,
+    totalCount: 0,
+  });
   const [lastSeenValue, setLastSeenValue] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
@@ -63,33 +69,46 @@ export default function ProductList({}) {
   }
 
   let productsDiv = (productsPage?.items || []).map((p) => (
-    <ProductPreview product={p} onDeleted={() => onProductDeleted(p)} />
+    <ProductPreview
+      key={p.id}
+      product={p}
+      onDeleted={() => onProductDeleted(p)}
+    />
   ));
 
   return (
     <Container classes="p-2">
       {productsHeader}
 
-      {isLoading && (
-        <div className="alert alert-info" role="alert">
-          Loading products...
-        </div>
-      )}
-
-      {productsPage && !isLoading && (
-        <>
-          <div className="row mt-4">
-            <MayBeEmptyList list={productsPage.items} component={productsDiv} />
+      <RenderIf
+        flag={isLoading}
+        component={
+          <div className="alert alert-info" role="alert">
+            Loading products...
           </div>
+        }
+      />
 
-          <DataPaginator
-            currentPageNumber={pageNumber}
-            totalCount={productsPage.totalCount}
-            pageSize={pageSize}
-            onPageChanged={setPageNumber}
-          />
-        </>
-      )}
+      <RenderIf
+        flag={productsPage != null && !isLoading}
+        component={
+          <>
+            <div className="row mt-4">
+              <MayBeEmptyList
+                list={productsPage.items}
+                component={productsDiv}
+              />
+            </div>
+
+            <DataPaginator
+              currentPageNumber={pageNumber}
+              totalCount={productsPage.totalCount}
+              pageSize={pageSize}
+              onPageChanged={setPageNumber}
+            />
+          </>
+        }
+      />
     </Container>
   );
 }
