@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import Container from "../../core/bootstrap/components/bootstrap-container";
 import { HeaderWithButton } from "../../core/components/header-with-button";
 import type { PagedResult } from "../../core/models/paged-result.models";
-import type { ProductForListModel } from "./models/product-for-list-model";
+import type { ProductForListModel } from "../models/product-for-list-model";
 import { MayBeEmptyList } from "../../core/components/may-be-empty-list";
 import { ProductPreview } from "./product-preview";
-import catalogServices from "../services/catalog.services";
 import type { PageRequest } from "../../core/models/page-request.models";
 import DataPaginator from "../../core/components/data-paginator/data-paginator";
 import RenderIf from "../../core/render-if";
+import { useNavigate } from "react-router-dom";
+
+import catalogServices from "../services/catalog.services";
 
 export default function ProductList({}) {
   const pageSize = 1;
@@ -23,6 +25,8 @@ export default function ProductList({}) {
   const [lastSeenValue, setLastSeenValue] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     let pageRequest: PageRequest = {
@@ -52,13 +56,9 @@ export default function ProductList({}) {
     <HeaderWithButton
       header="Products"
       displayButton={true}
-      onClick={openForm}
+      onClick={() => navigate("/catalog/products/create")}
     />
   );
-
-  function openForm() {
-    alert("new product form");
-  }
 
   function onProductDeleted(product: ProductForListModel) {
     setProductsPage({

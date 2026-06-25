@@ -2,9 +2,9 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import "./App.css";
 import Container from "./core/bootstrap/components/bootstrap-container";
 import LoadingSpinner from "./core/components/loading-spinner/loading-spinner";
-import IdentityControls from "./identity-controls";
 import ProductList from "./product-catalog/components/products-list";
 import Header from "./core/layout/header";
+import CreateProduct from "./product-catalog/components/create-product/create-product";
 
 function App() {
   const router = createBrowserRouter([
@@ -25,8 +25,17 @@ function App() {
       ),
       children: [
         {
-          path: "products",
-          element: <ProductList />,
+          path: "catalog",
+          children: [
+            {
+              path: "products",
+              element: <ProductList />,
+            },
+            {
+              path: "products/create",
+              element: <CreateProduct />,
+            },
+          ],
         },
       ],
     },

@@ -2,22 +2,52 @@ import axios from "axios";
 import { environment } from "../../environment";
 import type { PageRequest } from "../../core/models/page-request.models";
 import type { PagedResult } from "../../core/models/paged-result.models";
-import type { ProductForListModel } from "../components/models/product-for-list-model";
-import type { CategoryForListModel } from "../components/models/category-for-list.models";
-import type { ProductCreateRequest } from "../components/models/product-create.model";
+import type { ProductForListModel } from "../models/product-for-list-model";
+import type { CategoryForListModel } from "../models/category-for-list.models";
+import type { ProductCreateRequest } from "../models/product-create.model";
+import { Observable } from "rxjs";
 
 export class CatalogService {
   private categoriesBaseUrl = `${environment.gatewayBaseUrl}/categories`;
   private productsBaseUrl = `${environment.gatewayBaseUrl}/products`;
 
-  getCategoriesPage(pageRequest: PageRequest) {
-    return axios.get<PagedResult<CategoryForListModel>>(
-      `${this.categoriesBaseUrl}?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}&lastSeenValue=${pageRequest.lastSeenValue}`,
-    );
+  getCategoriesPage(
+    pageRequest: PageRequest,
+  ): Observable<PagedResult<CategoryForListModel>> {
+    return new Observable((observer) => {
+      axios
+        .get<
+          PagedResult<CategoryForListModel>
+        >(`${this.categoriesBaseUrl}?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}&lastSeenValue=${pageRequest.lastSeenValue}`)
+        .then(
+          (res) => {
+            observer.next(res.data);
+            observer.complete();
+          },
+          (err) => {
+            observer.error(err);
+          },
+        );
+    });
   }
 
-  createCategory(categoryRequest: { name: string; parentCategoryId?: string | null }) {
-    return axios.post<CategoryForListModel>(this.categoriesBaseUrl, categoryRequest);
+  createCategory(categoryRequest: {
+    name: string;
+    parentCategoryId?: string | null;
+  }): Observable<CategoryForListModel> {
+    return new Observable((observer) => {
+      axios
+        .post<CategoryForListModel>(this.categoriesBaseUrl, categoryRequest)
+        .then(
+          (res) => {
+            observer.next(res.data);
+            observer.complete();
+          },
+          (err) => {
+            observer.error(err);
+          },
+        );
+    });
   }
 
   getProductsPage(pageRequest: PageRequest) {
@@ -28,12 +58,12 @@ export class CatalogService {
 
   createProduct(productRequest: ProductCreateRequest, image?: File) {
     const formData = new FormData();
-    formData.append('categoryId', productRequest.categoryId);
-    formData.append('name', productRequest.name);
-    formData.append('inStockCount', productRequest.inStockCount.toString());
-    formData.append('price', productRequest.price.toString());
-    formData.append('minimumPrice', productRequest.minimumPrice.toString());
-    formData.append('maximumPrice', productRequest.maximumPrice.toString());
+    formData.append("categoryId", productRequest.categoryId);
+    formData.append("name", productRequest.name);
+    formData.append("inStockCount", productRequest.inStockCount.toString());
+    formData.append("price", productRequest.price.toString());
+    formData.append("minimumPrice", productRequest.minimumPrice.toString());
+    formData.append("maximumPrice", productRequest.maximumPrice.toString());
 
     // Append properties with proper indexing for ASP.NET Core model binding
     productRequest.properties.forEach((prop, index) => {
@@ -43,14 +73,14 @@ export class CatalogService {
 
     // Append image if provided
     if (image) {
-      formData.append('image', image, image.name);
+      formData.append("image", image, image.name);
     }
 
     return axios.post<{ id: string }>(this.productsBaseUrl, formData);
   }
 
   deleteProduct(id: string) {
-    return axios.delete(`${this.productsBaseUrl}/${id}`)
+    return axios.delete(`${this.productsBaseUrl}/${id}`);
   }
 }
 
