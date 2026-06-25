@@ -80,35 +80,24 @@ export default function ProductList({}) {
     <Container classes="p-2">
       {productsHeader}
 
-      <RenderIf
-        flag={isLoading}
-        component={
-          <div className="alert alert-info" role="alert">
-            Loading products...
-          </div>
-        }
-      />
+      <RenderIf flag={isLoading}>
+        <div className="alert alert-info" role="alert">
+          Loading products...
+        </div>
+      </RenderIf>
 
-      <RenderIf
-        flag={productsPage != null && !isLoading}
-        component={
-          <>
-            <div className="row mt-4">
-              <MayBeEmptyList
-                list={productsPage.items}
-                component={productsDiv}
-              />
-            </div>
+      <RenderIf flag={productsPage != null && !isLoading}>
+        <div className="row mt-4">
+          <MayBeEmptyList list={productsPage.items} component={productsDiv} />
+        </div>
 
-            <DataPaginator
-              currentPageNumber={pageNumber}
-              totalCount={productsPage.totalCount}
-              pageSize={pageSize}
-              onPageChanged={setPageNumber}
-            />
-          </>
-        }
-      />
+        <DataPaginator
+          currentPageNumber={pageNumber}
+          totalCount={productsPage.totalCount}
+          pageSize={pageSize}
+          onPageChanged={setPageNumber}
+        />
+      </RenderIf>
     </Container>
   );
 }

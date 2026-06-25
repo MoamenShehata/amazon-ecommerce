@@ -1,4 +1,5 @@
 import "./App.css";
+import Container from "./core/bootstrap/components/bootstrap-container";
 import LoadingSpinner from "./core/components/loading-spinner/loading-spinner";
 import IdentityControls from "./identity-controls";
 import ProductList from "./product-catalog/components/products-list";
@@ -9,7 +10,7 @@ function App() {
       <LoadingSpinner />
       <div className="min-vh-100 bg-light">
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-          <div className="container">
+          <Container>
             <a className="navbar-brand fw-bold" href="#">
               Amazon
             </a>
@@ -29,13 +30,13 @@ function App() {
             <div className="collapse navbar-collapse" id="navbarNav">
               <IdentityControls isAuthenticated={false} />
             </div>
-          </div>
+          </Container>
         </nav>
 
-        <div className="container my-5">
+        <Container classes="my-5">
           <ProductList />
           {/* <router-outlet></router-outlet> */}
-        </div>
+        </Container>
       </div>
     </>
   );

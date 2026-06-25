@@ -1,10 +1,7 @@
-import type React from "react";
+import type { PropsWithChildren } from "react";
 
-export default function Container({ children, classes }: Readonly<{
-    children: React.ReactNode,
-    classes: string
-}>) {
-    let className = "container";
-    if (classes) className += " " + classes;
-    return <div className={className}>{children}</div>;
+export default function Container(props: PropsWithChildren<any>) {
+  let className = "container";
+  if (props.classes) className += " " + props.classes;
+  return <div className={className}>{props.children}</div>;
 }
