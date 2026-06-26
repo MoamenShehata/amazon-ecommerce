@@ -65,7 +65,11 @@ export default function SelectCategoryControl() {
         <h5>
           <Modal
             header="Create New Category"
-            isSubmitDisabled={false}
+            isSubmitDisabled={
+              formValue == null ||
+              formValue.categoryName == null ||
+              formValue.categoryName == ""
+            }
             onClosed={closeCategoryModal}
             onSubmitted={() => createNewCategory()}
           >
