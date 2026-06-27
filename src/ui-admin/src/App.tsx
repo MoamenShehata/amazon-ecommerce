@@ -5,6 +5,7 @@ import LoadingSpinner from "./core/components/loading-spinner/loading-spinner";
 import ProductList from "./product-catalog/components/products-list";
 import Header from "./core/layout/header";
 import CreateProduct from "./product-catalog/components/create-product/create-product";
+import ThemeProvider from "./core/providers/theme-provider";
 
 function App() {
   const router = createBrowserRouter([
@@ -14,13 +15,13 @@ function App() {
         <>
           <LoadingSpinner />
 
-          <div className="min-vh-100 bg-light">
+          <ThemeProvider settings={{ mode: "Light" }}>
             <Header />
 
             <Container classes="my-5">
               <Outlet />
             </Container>
-          </div>
+          </ThemeProvider>
         </>
       ),
       children: [
