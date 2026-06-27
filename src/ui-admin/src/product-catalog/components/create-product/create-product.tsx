@@ -2,59 +2,20 @@
 
 import { useState } from "react";
 import SelectCategoryControl from "../category-select-control/select-category-control";
-import RenderIf from "../../../core/render-if";
+import BrowseImage from "../../../core/components/files/browse-image";
+import type { ProductCreateRequest } from "../../models/product-create.model";
+import KeyValuePairsForm from "../../../core/components/forms/key-value-pairs-form";
 
 export default function CreateProduct() {
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [propertiesArray, setPropertiesArray] = useState<[]>([]);
-  const [form, setForm] = useState();
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [form, setForm] = useState<ProductCreateRequest | null>(null);
 
   function onSubmit() {}
-
-  function onImageSelected(event: any): void {
-    const file: File = event.target.files[0];
-    if (file) {
-      // Validate file type
-      const validImageTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
-      if (!validImageTypes.includes(file.type)) {
-        alert("Please select a valid image file (JPEG, PNG, GIF, or WebP)");
-        return;
-      }
-
-      // Validate file size (5MB max)
-      const maxSizeInBytes = 5 * 1024 * 1024;
-      if (file.size > maxSizeInBytes) {
-        alert("Image file size must not exceed 5MB");
-        return;
-      }
-
-      setSelectedImage(file);
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        setImagePreviewUrl(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  function removeImage() {
-    setSelectedImage(null);
-    setImagePreviewUrl(null);
-  }
 
   function resetForm() {
     //  createForm.reset();
     setPropertiesArray([]);
-    setSelectedImage(null);
-    setImagePreviewUrl(null);
   }
 
   return (
@@ -68,7 +29,9 @@ export default function CreateProduct() {
 
             <div className="card-body p-4">
               <form onSubmit={onSubmit}>
-                <SelectCategoryControl />
+                <SelectCategoryControl
+                  onSelected={(id) => setForm({ ...form!, categoryId: id })}
+                />
               </form>
 
               <div className="mb-3">
@@ -81,62 +44,15 @@ export default function CreateProduct() {
                   className="form-control"
                   id="name"
                   placeholder="Enter product name"
+                  onChange={(e) => setForm({ ...form!, name: e.target.value })}
                 />
               </div>
 
-              <div className="mb-3">
-                <label htmlFor="productImage" className="form-label">
-                  Product Image
-                </label>
-
-                <div className="card bg-light">
-                  <div className="card-body">
-                    <div className="mb-3">
-                      <input
-                        type="file"
-                        className="form-control"
-                        id="productImage"
-                        accept="image/*"
-                        onChange={onImageSelected}
-                      />
-                      <small className="text-muted d-block mt-2">
-                        Supported formats: JPEG, PNG, GIF, WebP. Max size: 5MB
-                      </small>
-                    </div>
-
-                    <RenderIf flag={imagePreviewUrl} className="mt-3">
-                      <div className="d-flex justify-content-between align-items-start">
-                        <div>
-                          <label className="form-label">Preview:</label>
-                          <img
-                            src={imagePreviewUrl!}
-                            alt="Preview"
-                            className="img-thumbnail"
-                            style={{ maxWidth: "200px", maxHeight: "200px" }}
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={removeImage}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </RenderIf>
-
-                    <RenderIf
-                      flag={selectedImage && !imagePreviewUrl}
-                      className="mt-3"
-                    >
-                      <small className="text-success">
-                        <i className="bi bi-check-circle"></i>
-                        {selectedImage?.name} selected
-                      </small>
-                    </RenderIf>
-                  </div>
-                </div>
-              </div>
+              <BrowseImage
+                label="Product Image"
+                onSelected={setSelectedImage}
+                onCleared={() => setSelectedImage(null)}
+              />
 
               <div className="mb-3">
                 <label htmlFor="inStockCount" className="form-label">
@@ -148,6 +64,12 @@ export default function CreateProduct() {
                   className="form-control"
                   id="inStockCount"
                   placeholder="Enter in Stock Count"
+                  onChange={(e) =>
+                    setForm({
+                      ...form!,
+                      inStockCount: parseInt(e.target.value),
+                    })
+                  }
                 />
               </div>
 
@@ -166,6 +88,12 @@ export default function CreateProduct() {
                       placeholder="0.00"
                       min="0"
                       step="0.01"
+                      onChange={(e) =>
+                        setForm({
+                          ...form!,
+                          price: parseFloat(e.target.value),
+                        })
+                      }
                     />
                   </div>
                 </div>
@@ -184,6 +112,12 @@ export default function CreateProduct() {
                       placeholder="0.00"
                       min="0"
                       step="0.01"
+                      onChange={(e) =>
+                        setForm({
+                          ...form!,
+                          minimumPrice: parseFloat(e.target.value),
+                        })
+                      }
                     />
                   </div>
                 </div>
@@ -202,6 +136,12 @@ export default function CreateProduct() {
                       placeholder="0.00"
                       min="0"
                       step="0.01"
+                      onChange={(e) =>
+                        setForm({
+                          ...form!,
+                          maximumPrice: parseFloat(e.target.value),
+                        })
+                      }
                     />
                   </div>
                 </div>
@@ -211,14 +151,12 @@ export default function CreateProduct() {
                 <div className="card-header bg-secondary">
                   <h5 className="mb-0 text-white">Product Properties</h5>
                 </div>
-                <div className="card-body">
-                  <RenderIf flag={propertiesArray.length === 0}>
-                    <div className="text-muted">
-                      No properties added yet. Click "Add Property" to get
-                      started.
-                    </div>
-                  </RenderIf>
-                </div>
+                <KeyValuePairsForm
+                  emptyMessage={
+                    'No properties added yet. Click "Add Property" to get started.'
+                  }
+                  onChange={(props) => alert(props[0]["value"])}
+                />
               </div>
 
               <div className="d-flex gap-2 justify-content-end">

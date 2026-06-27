@@ -8,7 +8,9 @@ import CreateCategoryForm, {
   type CategoryCreateModel,
 } from "../create-category-form";
 
-export default function SelectCategoryControl() {
+export default function SelectCategoryControl({
+  onSelected,
+}: Readonly<{ onSelected: (id: string) => void }>) {
   const [categories, setCategories] = useState<CategoryForListModel[]>([]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
@@ -86,7 +88,7 @@ export default function SelectCategoryControl() {
           Category
         </label>
         <div className="input-group">
-          <CategorySelect categories={categories} />
+          <CategorySelect categories={categories} onSelected={onSelected} />
 
           <button
             type="button"
