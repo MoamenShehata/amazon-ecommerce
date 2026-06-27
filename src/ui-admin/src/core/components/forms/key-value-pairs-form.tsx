@@ -8,20 +8,22 @@ export default function KeyValuePairsForm({
   emptyMessage: string;
   onChange: (items: { key: string; value: string }[]) => void;
 }>) {
-  const [propertiesArray, setPropertiesArray] = useState<any[]>([]);
+  const [propertiesArray, setPropertiesArray] = useState<
+    { key: string; value: string }[]
+  >([]);
 
   function addProperty(): void {
-    updatePropeties;
-    [...propertiesArray, {}];
+    updatePropeties([...propertiesArray, { key: "", value: "" }]);
   }
 
   function removeProperty(index: number): void {
     setPropertiesArray(propertiesArray.filter((x, i) => i != index));
   }
 
-  function updatePropeties(items: []) {
+  function updatePropeties(items: { key: string; value: string }[]) {
     setPropertiesArray(items);
 
+    debugger;
     onChange(propertiesArray);
   }
 
@@ -60,9 +62,7 @@ export default function KeyValuePairsForm({
                   type="text"
                   className="form-control"
                   placeholder="Property Name"
-                  onChange={(e) =>
-                    updatePropertyName(i, e.target.validationMessage)
-                  }
+                  onChange={(e) => updatePropertyName(i, e.target.value)}
                 />
               </div>
               <div className="col-md-5">
@@ -70,9 +70,7 @@ export default function KeyValuePairsForm({
                   type="text"
                   className="form-control"
                   placeholder="Property Value"
-                  onChange={(e) =>
-                    updatePropertyValue(i, e.target.validationMessage)
-                  }
+                  onChange={(e) => updatePropertyValue(i, e.target.value)}
                 />
               </div>
               <div className="col-md-2">
