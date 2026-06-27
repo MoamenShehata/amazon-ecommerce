@@ -107,36 +107,37 @@
                               createCategoryForm.get('name')?.touched
                             "
                           />
-                        <div
-                          class="invalid-feedback"
-                          *ngIf="
-                            createCategoryForm.get('name')?.invalid &&
-                            createCategoryForm.get('name')?.touched
-                          "
-                        >
-                          Category name is required and must be at least 3 characters.
+                          <div
+                            class="invalid-feedback"
+                            *ngIf="
+                              createCategoryForm.get('name')?.invalid &&
+                              createCategoryForm.get('name')?.touched
+                            "
+                          >
+                            Category name is required and must be at least 3
+                            characters.
+                          </div>
+                        </div>
+
+                        <div class="mb-3">
+                          <label for="parentCategoryId" class="form-label">
+                            Parent Category
+                          </label>
+                          <select
+                            id="parentCategoryId"
+                            class="form-select"
+                            formControlName="parentCategoryId"
+                          >
+                            <option [ngValue]="null">None</option>
+                            <option
+                              *ngFor="let category of categories"
+                              [ngValue]="category.id"
+                            >
+                              {{ category.name }}
+                            </option>
+                          </select>
                         </div>
                       </div>
-
-                      <div class="mb-3">
-                        <label for="parentCategoryId" class="form-label">
-                          Parent Category
-                        </label>
-                        <select
-                          id="parentCategoryId"
-                          class="form-select"
-                          formControlName="parentCategoryId"
-                        >
-                          <option [ngValue]="null">None</option>
-                          <option
-                            *ngFor="let category of categories"
-                            [ngValue]="category.id"
-                          >
-                            {{ category.name }}
-                          </option>
-                        </select>
-                      </div>
-                    </div>
                     </form>
                     <div class="modal-footer">
                       <button
@@ -155,7 +156,11 @@
                         "
                         (click)="onCreateCategory()"
                       >
-                        {{ categoryModalIsSubmitting ? 'Saving...' : 'Save Category' }}
+                        {{
+                          categoryModalIsSubmitting
+                            ? "Saving..."
+                            : "Save Category"
+                        }}
                       </button>
                     </div>
                   </div>

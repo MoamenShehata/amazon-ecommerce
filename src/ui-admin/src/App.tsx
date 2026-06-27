@@ -6,6 +6,9 @@ import ProductList from "./product-catalog/components/products-list";
 import Header from "./core/layout/header";
 import CreateProduct from "./product-catalog/components/create-product/create-product";
 import ThemeProvider from "./core/providers/theme-provider";
+import { AuthProvider } from "oidc-react";
+import { environment } from "./environment";
+import Login from "./authentication/components/login";
 
 function App() {
   const router = createBrowserRouter([
@@ -16,15 +19,29 @@ function App() {
           <LoadingSpinner />
 
           <ThemeProvider settings={{ mode: "Light" }}>
-            <Header />
+            <AuthProvider
+              clientId="amazon.angular"
+              authority={environment.authenticationBaseUrl}
+              responseType="code"
+              redirectUri={`${window.location.origin}/auth/login`}
+              scope="openid profile email"
+              silentRedirectUri={`${window.location.origin}/silent-refresh.html`}
+              postLogoutRedirectUri={window.location.origin}
+            >
+              <Header />
 
-            <Container classes="my-5">
-              <Outlet />
-            </Container>
+              <Container classes="my-5">
+                <Outlet />
+              </Container>
+            </AuthProvider>
           </ThemeProvider>
         </>
       ),
       children: [
+        {
+          path: "auth/login",
+          element: <Login />,
+        },
         {
           path: "catalog",
           children: [

@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "angular-oauth2-oidc": "^20.0.2",
     "axios": "^1.18.1",
     "bootstrap": "^5.3.8",
+    "oidc-react": "^4.0.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.0",
