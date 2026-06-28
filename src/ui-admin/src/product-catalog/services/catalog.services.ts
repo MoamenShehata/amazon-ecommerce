@@ -5,7 +5,7 @@ import type { PagedResult } from "../../core/models/paged-result.models";
 import type { ProductForListModel } from "../models/product-for-list-model";
 import type { CategoryForListModel } from "../models/category-for-list.models";
 import type { ProductCreateRequest } from "../models/product-create.model";
-import { Observable } from "rxjs";
+import { observable, Observable } from "rxjs";
 
 export class CatalogService {
   private categoriesBaseUrl = `${environment.gatewayBaseUrl}/categories`;
@@ -76,7 +76,17 @@ export class CatalogService {
       formData.append("image", image, image.name);
     }
 
-    return axios.post<{ id: string }>(this.productsBaseUrl, formData);
+    return new Observable<{ id: string }>((observer) => {
+      axios.post<{ id: string }>(this.productsBaseUrl, formData).then(
+        (res) => {
+          observer.next({ id: res.data.id });
+          observer.complete();
+        },
+        (err) => {
+          observer.error(err);
+        },
+      );
+    });
   }
 
   deleteProduct(id: string) {

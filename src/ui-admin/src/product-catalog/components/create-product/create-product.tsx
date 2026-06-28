@@ -5,17 +5,43 @@ import SelectCategoryControl from "../category-select-control/select-category-co
 import BrowseImage from "../../../core/components/files/browse-image";
 import type { ProductCreateRequest } from "../../models/product-create.model";
 import KeyValuePairsForm from "../../../core/components/forms/key-value-pairs-form";
+import catalogServices from "../../services/catalog.services";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateProduct() {
-  const [propertiesArray, setPropertiesArray] = useState<[]>([]);
+  // const [propertiesArray, setPropertiesArray] = useState<[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [form, setForm] = useState<ProductCreateRequest | null>(null);
+
+  const navigator = useNavigate();
 
   function onSubmit() {}
 
   function resetForm() {
-    //  createForm.reset();
-    setPropertiesArray([]);
+    setForm(null);
+  }
+
+  function createProduct() {
+    const formValue = form!;
+
+    const productRequest: ProductCreateRequest = {
+      categoryId: formValue.categoryId,
+      name: formValue.name,
+      inStockCount: formValue.inStockCount,
+      price: formValue.price,
+      minimumPrice: formValue.minimumPrice,
+      maximumPrice: formValue.maximumPrice,
+      properties: formValue.properties,
+    };
+
+    catalogServices.createProduct(productRequest, selectedImage!).subscribe({
+      next: () => {
+        navigator("/catalog/products");
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   return (
@@ -155,7 +181,12 @@ export default function CreateProduct() {
                   emptyMessage={
                     'No properties added yet. Click "Add Property" to get started.'
                   }
-                  onChange={(props) => alert(props[0]["value"])}
+                  onChange={(props) =>
+                    setForm({
+                      ...form!,
+                      properties: props,
+                    })
+                  }
                 />
               </div>
 
@@ -167,7 +198,11 @@ export default function CreateProduct() {
                 >
                   Reset
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={createProduct}
+                >
                   <span>Create Product</span>
                 </button>
               </div>

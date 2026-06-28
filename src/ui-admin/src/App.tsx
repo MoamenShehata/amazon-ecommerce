@@ -24,7 +24,7 @@ function App() {
               authority={environment.authenticationBaseUrl}
               responseType="code"
               redirectUri={`${window.location.origin}/auth/login`}
-              scope="openid profile email"
+              scope="openid profile email amazon.catalog amazon.cart amazon.customers"
               silentRedirectUri={`${window.location.origin}/silent-refresh.html`}
               postLogoutRedirectUri={window.location.origin}
             >

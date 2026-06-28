@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import catalogServices from "../services/catalog.services";
 
 export default function ProductList({}) {
-  const pageSize = 1;
+  const pageSize = 10;
 
   const [productsPage, setProductsPage] = useState<
     PagedResult<ProductForListModel>

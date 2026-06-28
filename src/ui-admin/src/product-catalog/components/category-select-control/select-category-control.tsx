@@ -16,6 +16,22 @@ export default function SelectCategoryControl({
 
   const [formValue, setFormValue] = useState<CategoryCreateModel | null>(null);
 
+  useEffect(() => {
+    const subscription = catalogServices
+      .getCategoriesPage({
+        pageNumber: 1,
+        pageSize: 100,
+        lastSeenValue: null,
+      })
+      .subscribe((page) => {
+        setCategories(page.items);
+      });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   function openCategoryModal() {
     setIsCategoryModalOpen(true);
   }
@@ -48,18 +64,6 @@ export default function SelectCategoryControl({
 
     closeCategoryModal();
   }
-
-  useEffect(() => {
-    catalogServices
-      .getCategoriesPage({
-        pageNumber: 1,
-        pageSize: 100,
-        lastSeenValue: null,
-      })
-      .subscribe((page) => {
-        setCategories(page.items);
-      });
-  });
 
   return (
     <>

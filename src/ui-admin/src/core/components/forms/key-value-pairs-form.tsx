@@ -6,31 +6,30 @@ export default function KeyValuePairsForm({
   onChange,
 }: Readonly<{
   emptyMessage: string;
-  onChange: (items: { key: string; value: string }[]) => void;
+  onChange: (items: { name: string; value: string }[]) => void;
 }>) {
   const [propertiesArray, setPropertiesArray] = useState<
-    { key: string; value: string }[]
+    { name: string; value: string }[]
   >([]);
 
   function addProperty(): void {
-    updatePropeties([...propertiesArray, { key: "", value: "" }]);
+    updatePropeties([...propertiesArray, { name: "", value: "" }]);
   }
 
   function removeProperty(index: number): void {
     setPropertiesArray(propertiesArray.filter((x, i) => i != index));
   }
 
-  function updatePropeties(items: { key: string; value: string }[]) {
+  function updatePropeties(items: { name: string; value: string }[]) {
     setPropertiesArray(items);
 
-    debugger;
     onChange(propertiesArray);
   }
 
   function updatePropertyName(index: number, name: string) {
-    setPropertiesArray(
+    updatePropeties(
       propertiesArray.map((x, i) => {
-        if (i == index) x.key = name;
+        if (i == index) x.name = name;
 
         return x;
       }),
