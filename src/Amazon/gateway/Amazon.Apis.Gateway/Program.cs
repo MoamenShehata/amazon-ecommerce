@@ -2,6 +2,7 @@ using Amazon.SharedKernel.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.RegisterSharedServices(builder.Configuration);
 builder.Services.AddCors(op =>
 {

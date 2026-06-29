@@ -1,101 +1,67 @@
-import { useEffect, useState } from "react";
 import Container from "../../core/bootstrap/components/bootstrap-container";
 import { HeaderWithButton } from "../../core/components/header-with-button";
-import type { PagedResult } from "../../core/models/paged-result.models";
-import type { ProductForListModel } from "../models/product-for-list-model";
-import { MayBeEmptyList } from "../../core/components/may-be-empty-list";
 import { ProductPreview } from "./product-preview";
-import type { PageRequest } from "../../core/models/page-request.models";
 import DataPaginator from "../../core/components/data-paginator/data-paginator";
 import RenderIf from "../../core/render-if";
 import { useNavigate } from "react-router-dom";
 
-import catalogServices from "../services/catalog.services";
+import UseProductsPage from "../effects/use-products";
 
 export default function ProductList({}) {
-  const pageSize = 10;
-
-  const [productsPage, setProductsPage] = useState<
-    PagedResult<ProductForListModel>
-  >({
-    items: [],
-    lastSeenValue: null,
-    totalCount: 0,
-  });
-  const [lastSeenValue, setLastSeenValue] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [pageState, dispatcher] = UseProductsPage();
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    let pageRequest: PageRequest = {
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-      lastSeenValue: lastSeenValue,
-    };
-
-    catalogServices.getProductsPage(pageRequest).then(
-      (page) => {
-        setProductsPage(page.data);
-        setLastSeenValue(page.data.lastSeenValue);
-        setIsLoading(false);
-      },
-      (err) => {
-        alert("Error");
-        console.log(err);
-      },
-    );
-
-    return () => {
-      console.log("clean up getting product page");
-    };
-  }, [pageNumber]);
-
-  let productsHeader = (
-    <HeaderWithButton
-      header="Products"
-      displayButton={true}
-      onClick={() => navigate("/catalog/products/create")}
-    />
-  );
-
-  function onProductDeleted(product: ProductForListModel) {
-    setProductsPage({
-      totalCount: productsPage!?.totalCount - 1,
-      lastSeenValue: productsPage?.lastSeenValue,
-      items: productsPage?.items.filter((x) => x.id != product.id)!,
-    });
-  }
-
-  let productsDiv = (productsPage?.items || []).map((p) => (
+  let productsDiv = (pageState.page.items || []).map((p) => (
     <ProductPreview
       key={p.id}
       product={p}
-      onDeleted={() => onProductDeleted(p)}
+      onDeleted={() => dispatcher({ type: "delete", productId: p.id })}
     />
   ));
 
   return (
     <Container classes="p-2">
-      {productsHeader}
+      <HeaderWithButton
+        header="Products"
+        displayButton={true}
+        onClick={() => navigate("/catalog/products/create")}
+      />
 
-      <RenderIf flag={isLoading}>
+      <RenderIf flag={pageState.isLoading}>
         <div className="alert alert-info" role="alert">
           Loading products...
         </div>
       </RenderIf>
 
-      <RenderIf flag={productsPage != null && !isLoading}>
-        <div className="row mt-4">
-          <MayBeEmptyList list={productsPage.items} component={productsDiv} />
+      <RenderIf
+        flag={
+          pageState.page != null &&
+          pageState.page.totalCount == 0 &&
+          !pageState.isLoading
+        }
+      >
+        <div className="alert alert-warning" role="alert">
+          No Data found.
         </div>
+      </RenderIf>
+
+      <RenderIf
+        flag={
+          pageState.page &&
+          pageState.page.totalCount > 0 &&
+          !pageState.isLoading
+        }
+      >
+        {productsDiv}
 
         <DataPaginator
-          currentPageNumber={pageNumber}
-          totalCount={productsPage.totalCount}
-          pageSize={pageSize}
-          onPageChanged={setPageNumber}
+          currentPageNumber={pageState.pageNumber}
+          totalCount={pageState.page.totalCount}
+          pageSize={pageState.pageSize}
+          onPageChanged={(pageNumber) =>
+            dispatcher({ type: "navigateToPage", pageNumber: pageNumber })
+          }
         />
       </RenderIf>
     </Container>

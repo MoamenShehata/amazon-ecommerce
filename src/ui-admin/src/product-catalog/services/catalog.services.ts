@@ -51,9 +51,21 @@ export class CatalogService {
   }
 
   getProductsPage(pageRequest: PageRequest) {
-    return axios.get<PagedResult<ProductForListModel>>(
-      `${this.productsBaseUrl}?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}&lastSeenValue=${pageRequest.lastSeenValue}`,
-    );
+    return new Observable<PagedResult<ProductForListModel>>((observer) => {
+      axios
+        .get<
+          PagedResult<ProductForListModel>
+        >(`${this.productsBaseUrl}?pageNumber=${pageRequest.pageNumber}&pageSize=${pageRequest.pageSize}&lastSeenValue=${pageRequest.lastSeenValue}`)
+        .then(
+          (res) => {
+            observer.next(res.data);
+            observer.complete();
+          },
+          (err) => {
+            observer.error(err);
+          },
+        );
+    });
   }
 
   createProduct(productRequest: ProductCreateRequest, image?: File) {
