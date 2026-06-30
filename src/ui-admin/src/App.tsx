@@ -9,13 +9,14 @@ import ThemeProvider from "./core/providers/theme-provider";
 import { AuthProvider } from "oidc-react";
 import { environment } from "./environment";
 import Login from "./authentication/components/login";
+import LoadingSpinnerContextProvider from "./core/components/loading-spinner/loading-context-provider";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: (
-        <>
+        <LoadingSpinnerContextProvider>
           <LoadingSpinner />
 
           <ThemeProvider settings={{ mode: "Light" }}>
@@ -35,7 +36,7 @@ function App() {
               </Container>
             </AuthProvider>
           </ThemeProvider>
-        </>
+        </LoadingSpinnerContextProvider>
       ),
       children: [
         {

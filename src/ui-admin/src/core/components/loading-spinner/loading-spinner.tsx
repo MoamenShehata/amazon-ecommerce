@@ -1,9 +1,14 @@
-import loadingService from "../../services/loading.services";
+import { useLoadingSpinner } from "./loading-spinner-context";
+import classes from "./loading-spinner.module.css";
 
 export default function LoadingSpinner() {
-    return !loadingService.loading ? <></> : (
-        <div className="overlay">
-            <div className="spinner"></div>
-        </div >
-    );
+  const spinnerContext = useLoadingSpinner()!;
+  debugger;
+  return !spinnerContext.isLoading ? (
+    <></>
+  ) : (
+    <div className={classes.overlay}>
+      <div className={classes.spinner}></div>
+    </div>
+  );
 }

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import UseProductsPage from "../effects/use-products";
 
 export default function ProductList({}) {
+  debugger;
   const [pageState, dispatcher] = UseProductsPage();
 
   const navigate = useNavigate();
